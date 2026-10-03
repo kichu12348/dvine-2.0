@@ -1,6 +1,13 @@
 import type { Metadata } from "next";
 import { Space_Grotesk, Inter } from "next/font/google";
+import localFont from "next/font/local";
 import "./globals.css";
+
+const owners = localFont({
+  src: "../public/assets/owners.ttf",
+  variable: "--font-owners",
+  display: "swap",
+});
 
 const spaceGrotesk = Space_Grotesk({
   subsets: ["latin"],
@@ -16,8 +23,13 @@ const inter = Inter({
 });
 
 export const metadata: Metadata = {
-  title: "D'VINE | From Vision to Creation",
+  title: "D'VINE 2.0",
   description: "D'VINE is a UI/UX hackathon for ideas that deserve to be felt.",
+  icons: {
+    icon: "/assets/dvine_favicon.ico",
+    shortcut: "/assets/dvine_favicon.ico",
+    apple: "/assets/dvine_favicon.ico",
+  },
 };
 
 export default function RootLayout({ children }: LayoutProps<"/">) {
