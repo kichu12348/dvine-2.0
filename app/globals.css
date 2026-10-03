@@ -1,6 +1,15 @@
 @import "tailwindcss";
 
+@font-face {
+  font-family: "Owners";
+  src: url("/assets/owners.ttf") format("truetype");
+  font-weight: 100 900;
+  font-style: normal;
+  font-display: swap;
+}
+
 :root {
+  --font-owners: "Owners", sans-serif;
   --ink: #020817;
   --ink-blue: #061634;
   --surface: #0a2149;
