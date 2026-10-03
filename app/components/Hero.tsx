@@ -17,12 +17,15 @@ export default function Hero() {
     >
       <ShootingStars
         background="transparent"
-        starCount={80}
+        starCount={200}
         nebula={false}
-        interval={3000}
-        maxActiveShootingStars={2}
+        interval={650}
+        maxActiveShootingStars={10}
+        trailLength={[180, 340]}
+        speed={[16, 28]}
         trailColor="#38BDF8"
         angle={42}
+        showEmbers={true}
         parallax={true}
         clickToSpawn={true}
         className="!absolute inset-0 z-0 pointer-events-auto"
@@ -48,30 +51,25 @@ export default function Hero() {
         aria-hidden="true"
       />
 
-      <div className="relative z-10 w-full max-w-[1110px] mx-auto animate-[hero-enter_900ms_cubic-bezier(0.16,1,0.3,1)_both] flex flex-col items-center sm:items-start">
+      <div className="pointer-events-none relative z-10 w-full max-w-[1110px] mx-auto animate-[hero-enter_900ms_cubic-bezier(0.16,1,0.3,1)_both] flex flex-col items-center sm:items-start">
         <h1 id="hero-title" className="sr-only">
           D&apos;VINE 2.0
         </h1>
 
         {/* Main Logo */}
-        <div className="w-full max-w-[21rem] xs:max-w-[24rem] sm:max-w-[32rem] md:max-w-[38rem] lg:max-w-[41rem]">
+        <div className="w-full max-w-[21rem] xs:max-w-[24rem] sm:max-w-[32rem] md:max-w-[38rem] lg:max-w-[41rem] select-none">
           <Image
-            src="/dvine.svg"
+            src="/assets/dvine_sub.svg"
             alt="D'VINE 2.0"
-            className="block w-full h-auto drop-shadow-[0_0_26px_rgba(74,184,255,0.18)]"
+            className="block w-full h-auto drop-shadow-[0_0_26px_rgba(74,184,255,0.18)] select-none pointer-events-none"
             width={831}
             height={322}
             priority
           />
         </div>
 
-        <p className="w-fit mt-4 sm:mt-5 pt-2.5 sm:pt-3 border-t border-[var(--line-strong)] text-[var(--blue-light)] text-[clamp(0.72rem,2.8vw,0.9rem)] font-bold tracking-[0.24em] sm:tracking-[0.28em] uppercase">
-          From <em className="not-italic text-[var(--text)]">vision</em> to
-          creation
-        </p>
-
         {/* Hero Mobile/Tablet CTAs */}
-        <div className="mt-8 sm:mt-10 flex flex-wrap items-center justify-center sm:justify-start gap-3.5 sm:gap-4 w-full">
+        <div className="pointer-events-auto mt-8 sm:mt-10 flex flex-wrap items-center justify-center sm:justify-start gap-3.5 sm:gap-4 w-full">
           <a
             href="#schedule"
             className="inline-flex items-center justify-center gap-2 rounded-full border border-cyan-200/50 bg-gradient-to-r from-[#1abaff] to-[#0088ff] px-6 py-2.5 sm:px-7 sm:py-3 text-xs sm:text-sm font-extrabold uppercase tracking-wider text-[#020817] shadow-[0_0_24px_rgba(26,186,255,0.45)] transition-all duration-300 hover:scale-105 hover:shadow-[0_0_35px_rgba(26,186,255,0.7)] active:scale-95"
