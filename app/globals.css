@@ -54,6 +54,11 @@ summary:focus-visible {
   outline-offset: 5px;
 }
 
+.focus-ring:focus-visible {
+  outline: 2px solid var(--blue);
+  outline-offset: 2px;
+}
+
 /* Animations & Transitions */
 @keyframes hero-enter {
   from {
