@@ -66,7 +66,7 @@ export default function Footer() {
       {/* Kinetic marquee strip on a white band */}
       <div
         aria-hidden="true"
-        className="marquee marquee-light border-y border-black/10 bg-white py-6 sm:py-8"
+        className="marquee marquee-light border-y border-black/10 bg-white py-4 sm:py-5"
       >
         <div className="marquee-track">
           <MarqueeGroup />
@@ -74,119 +74,73 @@ export default function Footer() {
         </div>
       </div>
 
-      {/* Content row: description left · nav right */}
-      <div className="mx-auto flex w-full max-w-[1240px] flex-col gap-12 px-6 pb-12 pt-16 sm:px-8 sm:pb-14 sm:pt-20 md:flex-row md:items-start md:justify-between md:gap-16 md:px-12 md:pt-24">
-        {/* Left: tagline + CTA + social */}
-        <div className="flex max-w-sm flex-col gap-6">
-          <p className="text-[clamp(1rem,2.5vw,1.25rem)] leading-[1.6] text-[var(--muted)]">
-            A 24-hour designathon bringing together the brightest
-            creative minds.
+      {/* Editorial footer: identity header, statement, and navigation matrix */}
+      <div className="mx-auto w-full max-w-[1240px] px-6 pb-10 pt-10 sm:px-8 md:px-12 md:pt-12">
+
+        <div className="grid gap-7 py-9 md:grid-cols-[minmax(0,1fr)_auto] md:items-end md:gap-16 md:py-12">
+          <p className="max-w-[48rem] font-[family-name:var(--font-heading)] text-[clamp(2.2rem,6vw,5.5rem)] font-medium leading-[0.94] tracking-[-0.07em] text-[var(--text)]">
+            Make ideas
+            <span className="block bg-[linear-gradient(90deg,#2D86CE,#A3E0FC)] bg-clip-text text-transparent">
+              impossible to ignore.
+            </span>
           </p>
-          <div className="flex items-center gap-5">
+          <div className="flex flex-col items-center gap-4 md:items-end">
+            <p className="max-w-[15rem] text-center text-sm leading-5 text-[var(--muted)] md:text-right">
+              A 24-hour designathon for ideas that deserve to be felt.
+            </p>
             <a
               href="#schedule"
-              className="group inline-flex items-center gap-2 font-[family-name:var(--font-heading)] text-xs font-bold uppercase tracking-[0.16em] text-[var(--blue)] transition-colors hover:text-[var(--blue-light)]"
+              className="group inline-flex min-w-[6.4rem] items-center justify-center gap-1.5 rounded-full px-4 py-2.5 text-[0.65rem] font-bold uppercase tracking-[0.2em] text-[#1a9ce2] transition-all duration-300 bg-[var(--blue)] hover:shadow-[0_0_28px_rgba(45,134,206,0.35)]"
             >
-              Register now
-              <span
-                aria-hidden="true"
-                className="transition-transform duration-200 group-hover:translate-x-1"
-              >
-                →
+              Join us
+              <span aria-hidden="true" className="translate-x-0.5 transition-all duration-300 group-hover:translate-x-1">
+                ↗
               </span>
             </a>
-            <span aria-hidden="true" className="text-[var(--line)]">
-              ·
-            </span>
-            <a
-              href="https://instagram.com"
-              target="_blank"
-              rel="noopener noreferrer"
-              aria-label="Follow us on Instagram"
-              className="text-[var(--muted)] transition-colors duration-200 hover:text-[var(--text)]"
-            >
-              <InstagramIcon className="size-[18px]" />
+          </div>
+        </div>
+
+        <div className="grid gap-6 border-t border-[var(--line)] pt-5 sm:grid-cols-[auto_1fr_auto] sm:gap-9">
+          <p className="text-[0.65rem] font-bold uppercase tracking-[0.28em] text-[var(--muted)]/50">
+            Explore
+          </p>
+          <nav aria-label="Footer navigation" className="grid grid-cols-2 gap-x-8 gap-y-3 sm:grid-cols-3">
+            {footerNav.map((item, index) => (
+              <a
+                key={item.href}
+                href={item.href}
+                className="group flex items-center gap-3 text-sm text-[var(--muted)] transition-colors duration-300 hover:text-[var(--text)] focus-visible:text-[var(--text)]"
+              >
+                <span className="font-mono text-[0.6rem] text-[var(--blue)]/70">0{index + 1}</span>
+                <span className="relative">
+                  {item.label}
+                  <span className="absolute -bottom-1 left-0 h-px w-0 bg-[var(--blue-light)] transition-all duration-300 group-hover:w-full group-focus-visible:w-full" />
+                </span>
+                <span className="-translate-x-1 opacity-0 transition-all duration-300 group-hover:translate-x-0 group-hover:opacity-100">↗</span>
+              </a>
+            ))}
+          </nav>
+          <div className="flex flex-col gap-3 text-sm text-[var(--muted)] sm:items-end">
+            <p className="text-[0.65rem] font-bold uppercase tracking-[0.28em] text-[var(--muted)]/50">Connect</p>
+            <a href="mailto:hello@dvine.in" className="transition-colors duration-300 hover:text-[var(--blue-light)]">hello@dvine.in</a>
+            <a href="https://instagram.com" target="_blank" rel="noopener noreferrer" className="group inline-flex items-center gap-2 transition-colors duration-300 hover:text-[var(--blue-light)]">
+              <InstagramIcon className="size-4 transition-transform duration-300 group-hover:rotate-12 group-hover:scale-110" />
+              Instagram
             </a>
           </div>
-          <p className="text-xs uppercase tracking-[0.2em] text-[var(--muted)]/50">
-            IEEE SB CEC × IEDC
-          </p>
         </div>
-
-        {/* Right: nav columns */}
-        <div className="flex gap-16 sm:gap-20">
-          <nav aria-label="Footer navigation">
-            <p className="mb-5 text-xs font-semibold uppercase tracking-[0.2em] text-[var(--muted)]/50">
-              Navigate
-            </p>
-            <ul className="flex flex-col gap-3 text-sm text-[var(--muted)]">
-              {footerNav.map((item) => (
-                <li key={item.href}>
-                  <a
-                    href={item.href}
-                    className="transition-colors duration-200 hover:text-[var(--text)] focus-visible:text-[var(--text)]"
-                  >
-                    {item.label}
-                  </a>
-                </li>
-              ))}
-            </ul>
-          </nav>
-
-          <div>
-            <p className="mb-5 text-xs font-semibold uppercase tracking-[0.2em] text-[var(--muted)]/50">
-              Contact
-            </p>
-            <ul className="flex flex-col gap-3 text-sm text-[var(--muted)]">
-              <li>
-                <a
-                  href="mailto:hello@dvine.in"
-                  className="transition-colors duration-200 hover:text-[var(--text)]"
-                >
-                  hello@dvine.in
-                </a>
-              </li>
-              <li>
-                <a
-                  href="https://instagram.com"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="transition-colors duration-200 hover:text-[var(--text)]"
-                >
-                  Instagram
-                </a>
-              </li>
-            </ul>
-          </div>
-        </div>
-      </div>
-
-      {/* Divider */}
-      <div className="mx-auto max-w-[1240px] px-6 sm:px-8 md:px-12">
-        <div className="h-px w-full bg-[var(--line)]" />
       </div>
 
       {/* Giant wordmark */}
-      <div className="relative overflow-hidden px-6 pb-6 pt-8 sm:px-8 sm:pt-10 md:px-12 md:pt-12">
+      <div className="relative overflow-hidden px-6 pb-6 pt-0 sm:px-8 sm:pb-8 md:px-12">
         <p
           aria-hidden="true"
-          className="footer-wordmark select-none whitespace-nowrap text-center font-[family-name:var(--font-heading)] text-[clamp(5rem,18vw,16rem)] font-black uppercase leading-[0.85] tracking-[-0.04em]"
+          className="select-none whitespace-nowrap bg-[linear-gradient(90deg,#2D86CE_0%,#2D86CE_18%,#A3E0FC_23%,#fff_31%,#fff_100%)] bg-clip-text text-center font-[family-name:var(--font-owners)] text-[clamp(5rem,18vw,16rem)] font-black uppercase leading-[0.85] tracking-[-0.04em] text-transparent transition-transform duration-500 hover:scale-[1.015]"
         >
           D&apos;vine 2.0
         </p>
       </div>
 
-      {/* Copyright bar */}
-      <div className="mx-auto flex w-full max-w-[1240px] items-center justify-between px-6 pb-6 text-xs tracking-wide text-[var(--muted)]/40 sm:px-8 md:px-12">
-        <p>© {year} D&apos;VINE 2.0</p>
-        <a
-          href="#hero"
-          className="transition-colors duration-200 hover:text-[var(--text)]"
-        >
-          Back to top ↑
-        </a>
-      </div>
     </footer>
   );
 }
-
