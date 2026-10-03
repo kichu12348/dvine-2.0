@@ -16,8 +16,13 @@ const inter = Inter({
 });
 
 export const metadata: Metadata = {
-  title: "D'VINE | From Vision to Creation",
+  title: "D'VINE 2.0",
   description: "D'VINE is a UI/UX hackathon for ideas that deserve to be felt.",
+  icons: {
+    icon: "/assets/dvine_favicon.ico",
+    shortcut: "/assets/dvine_favicon.ico",
+    apple: "/assets/dvine_favicon.ico",
+  },
 };
 
 export default function RootLayout({ children }: LayoutProps<"/">) {
