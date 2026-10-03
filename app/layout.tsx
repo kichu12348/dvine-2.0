@@ -23,7 +23,14 @@ export const metadata: Metadata = {
 export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
     <html lang="en" className={`${spaceGrotesk.variable} ${inter.variable}`}>
-      <body>{children}</body>
+      {/*
+        suppressHydrationWarning on <body> only: browser extensions (Grayscale,
+        ad blockers, dark-mode toggles) inject data-* attributes onto <body>
+        before React hydrates, which React reports as an attribute mismatch.
+        Scoping it here silences that one known false positive without hiding
+        real mismatches anywhere else in the tree.
+      */}
+      <body suppressHydrationWarning>{children}</body>
     </html>
   );
 }

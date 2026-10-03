@@ -47,8 +47,15 @@ summary:focus-visible {
 
 /* Animations & Transitions */
 @keyframes hero-enter {
-  from { opacity: 0; transform: translateY(1.5rem); }
-  to { opacity: 1; transform: translateY(0); }
+  from {
+    opacity: 0;
+    transform: translateY(1.5rem);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 .motion-ready .reveal,
@@ -58,9 +65,17 @@ summary:focus-visible {
   transform: translateY(2rem) scale(0.985);
 }
 
-.motion-ready .process-card-2 { transform: translateX(2rem) rotate(2deg); }
-.motion-ready .process-card-3 { transform: translateX(-2rem) rotate(-2deg); }
-.motion-ready .process-cursor { transform: translate(2rem, -1rem) scale(0.6); }
+.motion-ready .process-card-2 {
+  transform: translateX(2rem) rotate(2deg);
+}
+
+.motion-ready .process-card-3 {
+  transform: translateX(-2rem) rotate(-2deg);
+}
+
+.motion-ready .process-cursor {
+  transform: translate(2rem, -1rem) scale(0.6);
+}
 
 .motion-ready .reveal.is-visible,
 .motion-ready .process-card.is-visible,
@@ -70,11 +85,192 @@ summary:focus-visible {
   transition: opacity 720ms cubic-bezier(0.16, 1, 0.3, 1), transform 720ms cubic-bezier(0.16, 1, 0.3, 1);
 }
 
-.motion-ready .reveal-delay.is-visible { transition-delay: 100ms; }
-.motion-ready .reveal-step-2.is-visible { transition-delay: 90ms; }
-.motion-ready .reveal-step-3.is-visible { transition-delay: 180ms; }
+.motion-ready .reveal-delay.is-visible {
+  transition-delay: 100ms;
+}
+
+.motion-ready .reveal-step-2.is-visible {
+  transition-delay: 90ms;
+}
+
+.motion-ready .reveal-step-3.is-visible {
+  transition-delay: 180ms;
+}
+
+/* Keyword typography: gradient fill + thin stroke + accent underline */
+.text-keyword {
+  position: relative;
+  display: inline-block;
+  white-space: nowrap;
+  background-image: linear-gradient(100deg, var(--blue) 0%, var(--blue-light) 55%, #38bdf8 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  color: transparent;
+  -webkit-text-stroke: 1px rgba(157, 228, 255, 0.55);
+  filter: drop-shadow(0 0 14px rgba(26, 186, 255, 0.22));
+  padding-bottom: 0.04em;
+}
+
+.text-keyword::after {
+  content: "";
+  position: absolute;
+  left: 0.03em;
+  right: 0.03em;
+  bottom: 0;
+  height: 0.075em;
+  border-radius: 999px;
+  background: linear-gradient(90deg, var(--blue) 0%, rgba(157, 228, 255, 0.7) 55%, transparent 100%);
+  pointer-events: none;
+}
+
+/* Hollow display type: transparent fill + light stroke */
+.text-outline {
+  position: relative;
+  display: inline-block;
+  white-space: nowrap;
+  color: transparent;
+  -webkit-text-stroke: 0.04em rgba(157, 228, 255, 0.72);
+  filter: drop-shadow(0 0 16px rgba(26, 186, 255, 0.2));
+}
+
+/* Gradient-only text (no stroke / underline) */
+.text-gradient {
+  background-image: linear-gradient(100deg, var(--blue) 0%, var(--blue-light) 55%, #38bdf8 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  color: transparent;
+}
+
+/* Kinetic marquee strip */
+.marquee {
+  position: relative;
+  overflow: hidden;
+  -webkit-mask-image: linear-gradient(90deg, transparent, #000 9%, #000 91%, transparent);
+  mask-image: linear-gradient(90deg, transparent, #000 9%, #000 91%, transparent);
+}
+
+.marquee-track {
+  display: flex;
+  width: max-content;
+  animation: marquee-scroll 30s linear infinite;
+  will-change: transform;
+}
+
+/* Keep the moving type light — the glow filter is expensive on a repeating track */
+.marquee .text-outline {
+  filter: none;
+}
+
+/* Marquee on a white band: invert the display type so it stays crisp */
+.marquee-light .marquee-out {
+  color: transparent;
+  -webkit-text-stroke: 0.04em rgba(2, 8, 23, 0.82);
+}
+
+.marquee-light .marquee-solid {
+  background-image: linear-gradient(100deg, #0a2149 0%, #1abaff 60%, #0369a1 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  color: transparent;
+}
+
+.marquee-light .marquee-dot {
+  color: #0a6cff;
+}
+
+@keyframes marquee-scroll {
+  from { transform: translateX(0); }
+  to { transform: translateX(-50%); }
+}
+
+/* Massive stroked editorial typography styles */
+.text-stroke-huge {
+  color: transparent;
+  -webkit-text-stroke: 1.5px rgba(207, 206, 206, 0.707);
+  transition: -webkit-text-stroke 0.4s ease, filter 0.4s ease;
+}
+
+.text-stroke-huge:hover {
+  -webkit-text-stroke: 1.5px rgba(26, 186, 255, 0.85);
+  filter: drop-shadow(0 0 24px rgba(26, 186, 255, 0.35));
+}
+
+.text-stroke-solid {
+  -webkit-text-stroke: 1px rgba(157, 228, 255, 0.45);
+}
+
+.footer-wordmark {
+  color: transparent;
+  -webkit-text-stroke: 1.5px rgba(255, 255, 255, 0.22);
+  cursor: default;
+  transition: color 0.45s cubic-bezier(0.16, 1, 0.3, 1),
+              -webkit-text-stroke 0.45s cubic-bezier(0.16, 1, 0.3, 1),
+              filter 0.45s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.footer-wordmark:hover {
+  color: #ffffff;
+  -webkit-text-stroke: 1.5px transparent;
+  filter: drop-shadow(0 0 35px rgba(26, 186, 255, 0.45));
+}
+
+/* Hollow keyword type for smaller sizes: transparent fill, thin stroke */
+.text-stroke-key {
+  color: transparent;
+  -webkit-text-stroke: 1px rgb(59, 175, 220);
+  transition: -webkit-text-stroke 0.35s ease;
+}
+
+/* Matching hover response: hollow keywords brighten when their whole row is hovered */
+.group:hover .text-stroke-key-hover {
+  -webkit-text-stroke: 1.75px rgba(26, 186, 255, 0.95);
+}
+
+/* Curtain reveal: text wipes up from behind a clipped edge */
+.curtain {
+  overflow: hidden;
+}
+
+.curtain-inner {
+  transition: transform 860ms cubic-bezier(0.16, 1, 0.3, 1);
+  will-change: transform;
+}
+
+.curtain.is-armed .curtain-inner {
+  transform: translateY(105%);
+}
+
+.curtain.is-shown .curtain-inner {
+  transform: translateY(0);
+}
+
+/* Diagonal aperture: an elongated diamond on the top-left → bottom-right axis
+   opens out to the full rectangle. Point counts match so the polygon interpolates. */
+.aperture {
+  clip-path: polygon(50% 22%, 78% 50%, 50% 78%, 22% 50%);
+  transition: clip-path 1000ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.aperture.is-open {
+  clip-path: polygon(0% 0%, 100% 0%, 100% 100%, 0% 100%);
+}
 
 @media (prefers-reduced-motion: reduce) {
-  html { scroll-behavior: auto; }
-  *, *::before, *::after { animation-duration: 0.01ms !important; transition-duration: 0.01ms !important; }
+  html {
+    scroll-behavior: auto;
+  }
+
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
+
+  .marquee-track {
+    animation: none !important;
+  }
 }
