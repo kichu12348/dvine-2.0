@@ -230,8 +230,12 @@ export default function Galaxy({
     const renderer = new Renderer({
       alpha: transparent,
       premultipliedAlpha: false,
+      dpr: Math.min(window.devicePixelRatio || 1, 1.5),
     });
     const gl = renderer.gl;
+    const reducedMotion = window.matchMedia(
+      "(prefers-reduced-motion: reduce)"
+    ).matches;
 
     if (lightMode) {
       gl.clearColor(1, 1, 1, 1);
@@ -243,25 +247,8 @@ export default function Galaxy({
       gl.clearColor(0, 0, 0, 1);
     }
 
-    let program: Program;
-
-    function resize() {
-      if (!ctn) return;
-      const scale = 1;
-      renderer.setSize(ctn.offsetWidth * scale, ctn.offsetHeight * scale);
-      if (program) {
-        program.uniforms.uResolution.value = new Color(
-          gl.canvas.width,
-          gl.canvas.height,
-          gl.canvas.width / gl.canvas.height
-        );
-      }
-    }
-    window.addEventListener("resize", resize, false);
-    resize();
-
     const geometry = new Triangle(gl);
-    program = new Program(gl, {
+    const program = new Program(gl, {
       vertex: vertexShader,
       fragment: fragmentShader,
       uniforms: {
@@ -298,11 +285,26 @@ export default function Galaxy({
       },
     });
 
+    function resize() {
+      if (!ctn) return;
+      const scale = 1;
+      renderer.setSize(ctn.offsetWidth * scale, ctn.offsetHeight * scale);
+      program.uniforms.uResolution.value = new Color(
+        gl.canvas.width,
+        gl.canvas.height,
+        gl.canvas.width / gl.canvas.height
+      );
+    }
+    window.addEventListener("resize", resize, false);
+    resize();
+
     const mesh = new Mesh(gl, { geometry, program });
     let animateId: number;
+    let visible = true;
+    let pageVisible = !document.hidden;
 
     function update(t: number) {
-      animateId = requestAnimationFrame(update);
+      animateId = 0;
       if (!disableAnimation) {
         program.uniforms.uTime.value = t * 0.001;
         program.uniforms.uStarSpeed.value = (t * 0.001 * starSpeed) / 10.0;
@@ -322,9 +324,31 @@ export default function Galaxy({
       program.uniforms.uMouseActiveFactor.value = smoothMouseActive.current;
 
       renderer.render({ scene: mesh });
+
+      if (visible && pageVisible && !reducedMotion && !disableAnimation) {
+        animateId = requestAnimationFrame(update);
+      }
     }
-    animateId = requestAnimationFrame(update);
+    const wake = () => {
+      if (!animateId && visible && pageVisible) {
+        animateId = requestAnimationFrame(update);
+      }
+    };
+    const visibilityObserver = new IntersectionObserver(
+      ([entry]) => {
+        visible = entry.isIntersecting;
+        if (visible) wake();
+      },
+      { threshold: 0 }
+    );
+    visibilityObserver.observe(ctn);
+    const handleVisibilityChange = () => {
+      pageVisible = !document.hidden;
+      if (pageVisible) wake();
+    };
+    document.addEventListener("visibilitychange", handleVisibilityChange);
     ctn.appendChild(gl.canvas);
+    wake();
 
     function handleMouseMove(e: MouseEvent) {
       if (!ctn) return;
@@ -346,6 +370,8 @@ export default function Galaxy({
 
     return () => {
       cancelAnimationFrame(animateId);
+      visibilityObserver.disconnect();
+      document.removeEventListener("visibilitychange", handleVisibilityChange);
       window.removeEventListener("resize", resize);
       if (mouseInteraction) {
         window.removeEventListener("mousemove", handleMouseMove);
