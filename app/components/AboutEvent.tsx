@@ -44,7 +44,7 @@ export default function AboutEvent() {
             <div>
               {/* Subheadline — editorial ramp: quiet connectors, one dominant word */}
               <Reveal delay={0}>
-                <h3 className="group/sub font-[family-name:var(--font-heading)] text-[clamp(1.3rem,5vw,1.4rem)] md:text-[clamp(0.8rem,2.9vw,1.9rem)] md:whitespace-nowrap uppercase sm:leading-[1.1] tracking-[-0.025em]">
+                <h3 className="group/sub font-[family-name:var(--font-heading)] text-[clamp(1.2rem,5vw,1.4rem)] text-center md:text-[clamp(0.8rem,2.9vw,1.9rem)] md:whitespace-nowrap uppercase sm:leading-[1.1] tracking-[-0.025em]">
                 {/* 01 — outlined, the premise */}
                 <span className="whitespace-nowrap">
                   <span className="text-stroke-key">Where</span>
