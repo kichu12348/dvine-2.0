@@ -454,10 +454,10 @@ section[id] {
   justify-content: center;
   gap: 10px;
   font-size: 14px;
-  background-color: white;
+  background-color: transparent;
   background-image: none;
   color: var(--ink);
-  border: solid 2px var(--ink-blue);
+  border: dashed 1px var(--text);
   height: 50px;
   padding: 0px 20px;
   border-radius: 9px;
@@ -465,6 +465,10 @@ section[id] {
   transform: scale(0.89);
   position: relative;
   /* box-shadow: 0 0 26px rgba(0, 218, 253, 0.5); */
+}
+
+.anatomy-btn:hover {
+  border: 1px solid var(--blue);
 }
 
 /* The default CTA is intentionally background-free: the label carries the
@@ -518,7 +522,7 @@ section[id] {
   width: 6px;
   height: 6px;
   transform: translate(-50%, -50%);
-  background-color: rgb(255, 0, 170);
+  background-color: var(--blue-light);
   border-radius: 100%;
 }
 
@@ -532,12 +536,12 @@ section[id] {
   height: 33px;
   background-color: transparent;
   border-radius: 12px 22px 2px 2px;
-  border-right: solid 2px rgb(255, 0, 170);
+  border-right: solid 2px var(--blue-light);
   border-top: solid 2px transparent;
 }
 
 .anatomy-btn .icon .text-icon {
-  color: rgb(255, 0, 170);
+  color: var(--text);
   position: absolute;
   font-size: 12px;
   left: -37px;
@@ -564,14 +568,14 @@ section[id] {
 }
 
 .anatomy-btn:hover .icon .icon-slot {
-  border: solid 2px rgba(255, 0, 170, 0.692);
+  border: solid 2px var(--ink);
 }
 
 .anatomy-btn .padding-left {
   position: absolute;
   width: 20px;
   height: 2px;
-  background-color: rgb(255, 0, 170);
+  background-color: var(--ink);
   left: 0;
   top: 50%;
   transform: translateY(-50%);
@@ -581,7 +585,7 @@ section[id] {
   content: "";
   width: 2px;
   height: 10px;
-  background-color: rgb(255, 0, 170);
+  background-color: var(--ink);
   position: absolute;
   left: 0;
   top: 50%;
@@ -592,7 +596,7 @@ section[id] {
   content: "";
   width: 2px;
   height: 10px;
-  background-color: rgb(255, 0, 170);
+  background-color: var(--ink);
   position: absolute;
   right: 0;
   top: 50%;
@@ -603,7 +607,7 @@ section[id] {
   position: absolute;
   width: 30px;
   height: 2px;
-  background-color: rgb(255, 0, 170);
+  background-color: var(--blue-light);
   left: -24px;
   top: 11px;
   transform: rotate(-50deg);
@@ -617,12 +621,12 @@ section[id] {
   width: 6px;
   height: 6px;
   transform: translate(-50%, -50%);
-  background-color: rgb(255, 0, 170);
+  background-color: var(--blue-light);
   border-radius: 100%;
 }
 
 .anatomy-btn .padding-left-text {
-  color: rgb(255, 0, 170);
+  color: var(--text);
   font-size: 12px;
   position: absolute;
   white-space: nowrap;
@@ -635,7 +639,7 @@ section[id] {
   position: absolute;
   width: 20px;
   height: 2px;
-  background-color: rgb(255, 0, 170);
+  background-color: var(--ink);
   right: 0;
   top: 50%;
   transform: translateY(-50%);
@@ -645,7 +649,7 @@ section[id] {
   content: "";
   width: 2px;
   height: 10px;
-  background-color: rgb(255, 0, 170);
+  background-color: var(--ink);
   position: absolute;
   left: 0;
   top: 50%;
@@ -656,7 +660,7 @@ section[id] {
   content: "";
   width: 2px;
   height: 10px;
-  background-color: rgb(255, 0, 170);
+  background-color: var(--ink);
   position: absolute;
   right: 0;
   top: 50%;
@@ -667,7 +671,7 @@ section[id] {
   position: absolute;
   width: 30px;
   height: 2px;
-  background-color: rgb(255, 0, 170);
+  background-color: var(--blue-light);
   right: -24px;
   top: 11px;
   transform: rotate(50deg);
@@ -681,12 +685,12 @@ section[id] {
   width: 6px;
   height: 6px;
   transform: translate(-50%, -50%);
-  background-color: rgb(255, 0, 170);
+  background-color: var(--blue-light);
   border-radius: 100%;
 }
 
 .anatomy-btn .padding-right-text {
-  color: rgb(255, 0, 170);
+  color: var(--text);
   font-size: 12px;
   position: absolute;
   white-space: nowrap;
@@ -708,7 +712,7 @@ section[id] {
   height: 53px;
   background-color: transparent;
   border-radius: 0px 0px 22px 22px;
-  border-right: solid 2px rgb(255, 0, 170);
+  border-right: solid 2px var(--blue-light);
   border-bottom: solid 2px transparent;
 }
 
@@ -719,13 +723,13 @@ section[id] {
   bottom: -20px;
   width: 6px;
   height: 6px;
-  background-color: rgb(255, 0, 170);
+  background-color: var(--blue-light);
   border-radius: 100%;
 }
 
 .anatomy-btn .background-text {
   position: absolute;
-  color: rgb(255, 0, 170);
+  color: var(--text);
   font-size: 12px;
   bottom: -70px;
   left: -115px;
@@ -741,7 +745,7 @@ section[id] {
   content: "";
   width: 15px;
   height: 15px;
-  border: solid 2px rgb(255, 0, 170);
+  border: solid 2px var(--blue-light);
   position: absolute;
   right: 0%;
   top: 0;
@@ -753,7 +757,7 @@ section[id] {
   content: "";
   width: 2px;
   height: 25px;
-  background-color: rgb(255, 0, 170);
+  background-color: var(--blue-light);
   position: absolute;
   right: -10px;
   top: -15px;
@@ -762,7 +766,7 @@ section[id] {
 
 .anatomy-btn .border .border-text {
   position: absolute;
-  color: rgb(255, 0, 170);
+  color: var(--text);
   font-size: 12px;
   right: -112px;
   top: -30px;
