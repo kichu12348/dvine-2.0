@@ -20,8 +20,6 @@ const secondaryLinks = [
   { label: "Instagram", href: "https://instagram.com", external: true },
 ];
 
-/* Flow budget: open sweep 1000ms; exit = 800ms circle-shrink at full strength,
-   last (topmost) link finishes sinking at 815ms */
 const MENU_EXIT_MS = 860;
 
 /* Big menu links: brand heading face, tight leading, cyan flip on hover */
@@ -81,12 +79,15 @@ export default function NavbarMenu() {
     }
     closingRef.current = true;
     setMenuClosing(true);
+    const exitDuration = window.matchMedia("(max-width: 640px)").matches
+      ? 420
+      : MENU_EXIT_MS;
     exitTimerRef.current = window.setTimeout(() => {
       exitTimerRef.current = null;
       closingRef.current = false;
       setMenuClosing(false);
       setMenuOpen(false);
-    }, MENU_EXIT_MS);
+    }, exitDuration);
   };
 
   /* Open: capture the button's centre so the veil grows out of it */

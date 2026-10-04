@@ -183,6 +183,29 @@ section[id] {
   animation: menu-item-out 500ms cubic-bezier(0.45, 0, 0.55, 1) both;
 }
 
+@media (max-width: 640px) {
+  .menu-panel {
+    -webkit-backdrop-filter: blur(12px);
+    backdrop-filter: blur(12px);
+  }
+
+  .menu-panel-in {
+    animation-duration: 420ms;
+  }
+
+  .menu-panel-out {
+    animation-duration: 360ms;
+  }
+
+  .menu-item {
+    animation-duration: 360ms;
+  }
+
+  .menu-item-out {
+    animation-duration: 260ms;
+  }
+}
+
 .motion-ready .reveal,
 .motion-ready .process-card,
 .motion-ready .process-cursor {
@@ -789,6 +812,7 @@ section[id] {
   transform: none;
   isolation: isolate;
   overflow: hidden;
+  touch-action: manipulation;
 }
 
 /* The rising fill — bottom-anchored (top: auto), height 0 → 100% */
