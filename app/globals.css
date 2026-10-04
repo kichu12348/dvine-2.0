@@ -37,7 +37,11 @@ body {
   margin: 0;
   overflow-x: clip;
   background:
-    radial-gradient(circle at 80% 4%, rgba(22, 119, 255, 0.14), transparent 23rem),
+    radial-gradient(
+      circle at 80% 4%,
+      rgba(22, 119, 255, 0.14),
+      transparent 23rem
+    ),
     var(--ink);
   color: var(--text);
   font-family: var(--font-body), Arial, sans-serif;
@@ -59,6 +63,11 @@ summary:focus-visible {
   outline-offset: 2px;
 }
 
+/* Fixed header clearance: anchor jumps must not hide section titles underneath it */
+section[id] {
+  scroll-margin-top: 5.25rem;
+}
+
 /* Animations & Transitions */
 @keyframes hero-enter {
   from {
@@ -70,6 +79,108 @@ summary:focus-visible {
     opacity: 1;
     transform: translateY(0);
   }
+}
+
+/* Fullscreen menu: header wordmark fades in/out (it sits above the panel's clip) */
+@keyframes menu-fade-in {
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes menu-item-in {
+  from {
+    transform: translateY(1.1rem);
+  }
+
+  to {
+    transform: translateY(0);
+  }
+}
+
+.menu-fade {
+  animation: menu-fade-in 600ms cubic-bezier(0.45, 0, 0.55, 1) both;
+}
+
+.menu-item {
+  animation: menu-item-in 700ms cubic-bezier(0.45, 0, 0.55, 1) both;
+}
+
+/* Closing: the circle collapses back into the button at full strength — the clip
+   alone does the hiding, links keep sinking and are cut off at the edge */
+@keyframes menu-fade-out {
+  from {
+    opacity: 1;
+  }
+
+  to {
+    opacity: 0;
+  }
+}
+
+/* Intro reveal: the veil grows out of the Menu button (origin vars set in openMenu) */
+@keyframes menu-panel-reveal {
+  from {
+    clip-path: circle(0px at var(--reveal-x, 50%) var(--reveal-y, 0px));
+  }
+
+  to {
+    clip-path: circle(
+      var(--reveal-radius, 150vmax) at var(--reveal-x, 50%) var(--reveal-y, 0px)
+    );
+  }
+}
+
+/* …and gets pulled back into it on close */
+@keyframes menu-panel-shrink {
+  from {
+    clip-path: circle(
+      var(--reveal-radius, 150vmax) at var(--reveal-x, 50%) var(--reveal-y, 0px)
+    );
+  }
+
+  to {
+    clip-path: circle(0px at var(--reveal-x, 50%) var(--reveal-y, 0px));
+  }
+}
+
+@keyframes menu-item-out {
+  from {
+    transform: translateY(0);
+  }
+
+  to {
+    transform: translateY(0.9rem);
+  }
+}
+
+/* Heavy-veil glass: 40% ink over a strongly blurred page */
+.menu-panel {
+  background: color-mix(in srgb, var(--ink) 40%, transparent);
+  -webkit-backdrop-filter: blur(30px);
+  backdrop-filter: blur(30px);
+}
+
+.menu-fade-out {
+  animation: menu-fade-out 600ms cubic-bezier(0.45, 0, 0.55, 1) both;
+}
+
+/* Solid sweep with cinematic pacing: the clip alone reveals/conceals at full
+   strength — slow, even ease-in-out so open and close flow at the same tempo */
+.menu-panel-in {
+  animation: menu-panel-reveal 1000ms cubic-bezier(0.45, 0, 0.55, 1) both;
+}
+
+.menu-panel-out {
+  animation: menu-panel-shrink 800ms cubic-bezier(0.45, 0, 0.55, 1) both;
+}
+
+.menu-item-out {
+  animation: menu-item-out 500ms cubic-bezier(0.45, 0, 0.55, 1) both;
 }
 
 .motion-ready .reveal,
@@ -96,7 +207,9 @@ summary:focus-visible {
 .motion-ready .process-cursor.is-visible {
   opacity: 1;
   transform: translate(0) rotate(0) scale(1);
-  transition: opacity 720ms cubic-bezier(0.16, 1, 0.3, 1), transform 720ms cubic-bezier(0.16, 1, 0.3, 1);
+  transition:
+    opacity 720ms cubic-bezier(0.16, 1, 0.3, 1),
+    transform 720ms cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .motion-ready .reveal-delay.is-visible {
@@ -116,7 +229,12 @@ summary:focus-visible {
   position: relative;
   display: inline-block;
   white-space: nowrap;
-  background-image: linear-gradient(100deg, var(--blue) 0%, var(--blue-light) 55%, #38bdf8 100%);
+  background-image: linear-gradient(
+    100deg,
+    var(--blue) 0%,
+    var(--blue-light) 55%,
+    #38bdf8 100%
+  );
   -webkit-background-clip: text;
   background-clip: text;
   -webkit-text-fill-color: transparent;
@@ -134,7 +252,12 @@ summary:focus-visible {
   bottom: 0;
   height: 0.075em;
   border-radius: 999px;
-  background: linear-gradient(90deg, var(--blue) 0%, rgba(157, 228, 255, 0.7) 55%, transparent 100%);
+  background: linear-gradient(
+    90deg,
+    var(--blue) 0%,
+    rgba(157, 228, 255, 0.7) 55%,
+    transparent 100%
+  );
   pointer-events: none;
 }
 
@@ -150,7 +273,12 @@ summary:focus-visible {
 
 /* Gradient-only text (no stroke / underline) */
 .text-gradient {
-  background-image: linear-gradient(100deg, var(--blue) 0%, var(--blue-light) 55%, #38bdf8 100%);
+  background-image: linear-gradient(
+    100deg,
+    var(--blue) 0%,
+    var(--blue-light) 55%,
+    #38bdf8 100%
+  );
   -webkit-background-clip: text;
   background-clip: text;
   -webkit-text-fill-color: transparent;
@@ -161,8 +289,20 @@ summary:focus-visible {
 .marquee {
   position: relative;
   overflow: hidden;
-  -webkit-mask-image: linear-gradient(90deg, transparent, #000 9%, #000 91%, transparent);
-  mask-image: linear-gradient(90deg, transparent, #000 9%, #000 91%, transparent);
+  -webkit-mask-image: linear-gradient(
+    90deg,
+    transparent,
+    #000 9%,
+    #000 91%,
+    transparent
+  );
+  mask-image: linear-gradient(
+    90deg,
+    transparent,
+    #000 9%,
+    #000 91%,
+    transparent
+  );
 }
 
 .marquee-track {
@@ -184,7 +324,12 @@ summary:focus-visible {
 }
 
 .marquee-light .marquee-solid {
-  background-image: linear-gradient(100deg, #0a2149 0%, #1abaff 60%, #0369a1 100%);
+  background-image: linear-gradient(
+    100deg,
+    #0a2149 0%,
+    #1abaff 60%,
+    #0369a1 100%
+  );
   -webkit-background-clip: text;
   background-clip: text;
   -webkit-text-fill-color: transparent;
@@ -196,15 +341,21 @@ summary:focus-visible {
 }
 
 @keyframes marquee-scroll {
-  from { transform: translateX(0); }
-  to { transform: translateX(-50%); }
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(-50%);
+  }
 }
 
 /* Massive stroked editorial typography styles */
 .text-stroke-huge {
   color: transparent;
   -webkit-text-stroke: 1.5px rgba(207, 206, 206, 0.707);
-  transition: -webkit-text-stroke 0.4s ease, filter 0.4s ease;
+  transition:
+    -webkit-text-stroke 0.4s ease,
+    filter 0.4s ease;
 }
 
 .text-stroke-huge:hover {
@@ -220,9 +371,10 @@ summary:focus-visible {
   color: transparent;
   -webkit-text-stroke: 1.5px rgba(255, 255, 255, 0.22);
   cursor: default;
-  transition: color 0.45s cubic-bezier(0.16, 1, 0.3, 1),
-              -webkit-text-stroke 0.45s cubic-bezier(0.16, 1, 0.3, 1),
-              filter 0.45s cubic-bezier(0.16, 1, 0.3, 1);
+  transition:
+    color 0.45s cubic-bezier(0.16, 1, 0.3, 1),
+    -webkit-text-stroke 0.45s cubic-bezier(0.16, 1, 0.3, 1),
+    filter 0.45s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .footer-wordmark:hover {

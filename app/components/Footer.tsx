@@ -135,9 +135,9 @@ export default function Footer() {
       <div className="relative overflow-hidden px-6 pb-6 pt-0 sm:px-8 sm:pb-8 md:px-12">
         <p
           aria-hidden="true"
-          className="select-none whitespace-nowrap bg-[linear-gradient(90deg,#2D86CE_0%,#2D86CE_18%,#A3E0FC_23%,#fff_31%,#fff_100%)] bg-clip-text text-center font-[family-name:var(--font-owners)] text-[clamp(5rem,18vw,16rem)] font-black uppercase leading-[0.85] tracking-[-0.04em] text-transparent transition-transform duration-500 hover:scale-[1.015]"
+          className="select-none whitespace-nowrap bg-[linear-gradient(90deg,#2D86CE_0%,#2D86CE_18%,#A3E0FC_23%,#fff_31%,#fff_100%)] bg-clip-text text-center font-[family-name:var(--font-owners)] text-[clamp(3.1rem,15.5vw,16rem)] font-black uppercase leading-[0.85] tracking-[-0.04em] text-transparent transition-transform duration-500 hover:scale-[1.015]"
         >
-          D&apos;vine 2.0
+          D&apos;vine <span className="font-[family-name:var(--font-heading)]">2.0</span>
         </p>
       </div>
 
