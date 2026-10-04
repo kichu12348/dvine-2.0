@@ -4,7 +4,7 @@ import { useRef } from "react";
 import Image from "next/image";
 import { motion, useScroll, useTransform } from "motion/react";
 import Galaxy from "./ui/Galaxy";
-import LiquidButton from "./ui/LiquidButton";
+import AnatomyButton from "./ui/AnatomyButton";
 
 export default function Hero() {
   const sectionRef = useRef<HTMLElement>(null);
@@ -101,14 +101,14 @@ export default function Hero() {
           SB CEC.
         </motion.p>
 
-        {/* Action Buttons with LiquidButton */}
+        {/* Action Buttons */}
         <motion.div
           initial={{ opacity: 0, y: 16 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1], delay: 0.4 }}
           className="relative z-30 mt-10 flex flex-wrap items-center justify-center gap-4"
         >
-          <LiquidButton href="/register" text="REGISTER NOW" size="lg" />
+          <AnatomyButton href="/register">REGISTER NOW</AnatomyButton>
           <a
             href="#about-event"
             className="inline-flex items-center justify-center gap-2 rounded-full border border-white/15 bg-white/[0.04] px-6 py-3 text-xs sm:text-sm font-bold uppercase tracking-wider text-[#c2d7e9] backdrop-blur-sm transition-all duration-200 hover:bg-white/10 hover:border-cyan-400/40 hover:text-white active:scale-95"

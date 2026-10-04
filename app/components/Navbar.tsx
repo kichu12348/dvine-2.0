@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState, type CSSProperties } from "react";
 import Letter3DSwap from "./ui/Letter3DSwap";
+import AnatomyButton from "./ui/AnatomyButton";
 
 /* Primary destinations — the big stacked list inside the overlay */
 const primaryLinks = [
@@ -165,13 +166,10 @@ export default function NavbarMenu() {
             </a>
           )}
 
-          {/* White capsule CTA — the reference's "Join", pointed at registration */}
-          <a
-            href="/register"
-            className="focus-ring inline-flex items-center rounded-full bg-white px-4 py-2 text-[0.72rem] font-bold tracking-[0.02em] text-[var(--ink)] transition-all duration-300 hover:scale-105 hover:shadow-[0_0_24px_rgba(255,255,255,0.35)] sm:px-5 sm:text-[0.78rem]"
-          >
+          {/* Anatomy CTA — blue-gradient button with hover measurement callouts */}
+          <AnatomyButton href="/register" variant="navbar">
             Register
-          </a>
+          </AnatomyButton>
         </div>
       </header>
 

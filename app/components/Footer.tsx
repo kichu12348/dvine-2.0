@@ -1,3 +1,5 @@
+import AnatomyButton from "./ui/AnatomyButton";
+
 const footerNav = [
   { label: "About", href: "#about-event" },
   { label: "Organizers", href: "#about-organizers" },
@@ -88,15 +90,9 @@ export default function Footer() {
             <p className="max-w-[15rem] text-center text-sm leading-5 text-[var(--muted)] md:text-right">
               A 24-hour designathon for ideas that deserve to be felt.
             </p>
-            <a
-              href="#schedule"
-              className="group inline-flex min-w-[6.4rem] items-center justify-center gap-1.5 rounded-full px-4 py-2.5 text-[0.65rem] font-bold uppercase tracking-[0.2em] text-[#1a9ce2] transition-all duration-300 bg-[var(--blue)] hover:shadow-[0_0_28px_rgba(45,134,206,0.35)]"
-            >
+            <AnatomyButton href="#schedule">
               Join us
-              <span aria-hidden="true" className="translate-x-0.5 transition-all duration-300 group-hover:translate-x-1">
-                ↗
-              </span>
-            </a>
+            </AnatomyButton>
           </div>
         </div>
 

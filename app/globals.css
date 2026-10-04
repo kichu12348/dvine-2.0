@@ -440,3 +440,423 @@ section[id] {
     animation: none !important;
   }
 }
+
+/* ============================================================================
+   Anatomy CTA — blue-gradient button that reveals pink measurement callouts
+   on hover (padding ticks, background / border-radius labels, icon highlight).
+   Ported from the styled-components reference into plain CSS, scoped under
+   .anatomy-btn. Live instances: Navbar "Register", Footer "Join us".
+   ============================================================================ */
+.anatomy-btn {
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  font-size: 14px;
+  background-color: white;
+  background-image: none;
+  color: var(--ink);
+  border: solid 2px var(--ink-blue);
+  height: 50px;
+  padding: 0px 20px;
+  border-radius: 9px;
+  font-weight: 600;
+  transform: scale(0.89);
+  position: relative;
+  /* box-shadow: 0 0 26px rgba(0, 218, 253, 0.5); */
+}
+
+/* The default CTA is intentionally background-free: the label carries the
+   visual weight through the same blue gradient used by the site wordmark. */
+.anatomy-btn:not(.anatomy-btn-navbar) .title {
+  /* Uppercase display type — brand heading face, wide tracking, heavy weight */
+  font-family: var(--font-heading);
+  font-size: 0.78rem;
+  font-weight: 800;
+  letter-spacing: 0.14em;
+  line-height: 1;
+  text-transform: uppercase;
+  white-space: nowrap;
+  background-image: linear-gradient(
+    100deg,
+    #00dafd 0%,
+    var(--blue-light) 52%,
+    #0080ff 100%
+  );
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  color: transparent;
+}
+
+.anatomy-btn:not(.anatomy-btn-navbar) .icon {
+  color: var(--blue-light);
+}
+
+.anatomy-btn:not(:hover) .hide,
+.anatomy-btn:not(:hover) .icon::before,
+.anatomy-btn:not(:hover) .icon::after {
+  opacity: 0;
+  visibility: hidden;
+  transform: scale(1.4);
+}
+
+.anatomy-btn .hide {
+  transition: all 0.2s ease;
+}
+
+.anatomy-btn .icon {
+  position: relative;
+}
+
+.anatomy-btn .icon::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 6px;
+  height: 6px;
+  transform: translate(-50%, -50%);
+  background-color: rgb(255, 0, 170);
+  border-radius: 100%;
+}
+
+.anatomy-btn .icon::after {
+  content: "";
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  transform: translate(-19%, -60%);
+  width: 100px;
+  height: 33px;
+  background-color: transparent;
+  border-radius: 12px 22px 2px 2px;
+  border-right: solid 2px rgb(255, 0, 170);
+  border-top: solid 2px transparent;
+}
+
+.anatomy-btn .icon .text-icon {
+  color: rgb(255, 0, 170);
+  position: absolute;
+  font-size: 12px;
+  left: -37px;
+  top: -38px;
+}
+
+/* Icon slot: 20px box whose border lights up pink on hover. The reference put
+   this border on the SVG directly; the slot lets any glyph (↗) sit in it. */
+.anatomy-btn .icon .icon-slot {
+  width: 20px;
+  height: 20px;
+  border: solid 2px transparent;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 16px;
+  line-height: 1;
+}
+
+.anatomy-btn .icon .icon-slot svg {
+  width: 100%;
+  height: 100%;
+  display: flex;
+}
+
+.anatomy-btn:hover .icon .icon-slot {
+  border: solid 2px rgba(255, 0, 170, 0.692);
+}
+
+.anatomy-btn .padding-left {
+  position: absolute;
+  width: 20px;
+  height: 2px;
+  background-color: rgb(255, 0, 170);
+  left: 0;
+  top: 50%;
+  transform: translateY(-50%);
+}
+
+.anatomy-btn .padding-left:before {
+  content: "";
+  width: 2px;
+  height: 10px;
+  background-color: rgb(255, 0, 170);
+  position: absolute;
+  left: 0;
+  top: 50%;
+  transform: translateY(-50%);
+}
+
+.anatomy-btn .padding-left:after {
+  content: "";
+  width: 2px;
+  height: 10px;
+  background-color: rgb(255, 0, 170);
+  position: absolute;
+  right: 0;
+  top: 50%;
+  transform: translateY(-50%);
+}
+
+.anatomy-btn .padding-left-line {
+  position: absolute;
+  width: 30px;
+  height: 2px;
+  background-color: rgb(255, 0, 170);
+  left: -24px;
+  top: 11px;
+  transform: rotate(-50deg);
+}
+
+.anatomy-btn .padding-left-line::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 6px;
+  height: 6px;
+  transform: translate(-50%, -50%);
+  background-color: rgb(255, 0, 170);
+  border-radius: 100%;
+}
+
+.anatomy-btn .padding-left-text {
+  color: rgb(255, 0, 170);
+  font-size: 12px;
+  position: absolute;
+  white-space: nowrap;
+  transform: rotate(50deg);
+  bottom: 30px;
+  left: -67px;
+}
+
+.anatomy-btn .padding-right {
+  position: absolute;
+  width: 20px;
+  height: 2px;
+  background-color: rgb(255, 0, 170);
+  right: 0;
+  top: 50%;
+  transform: translateY(-50%);
+}
+
+.anatomy-btn .padding-right:before {
+  content: "";
+  width: 2px;
+  height: 10px;
+  background-color: rgb(255, 0, 170);
+  position: absolute;
+  left: 0;
+  top: 50%;
+  transform: translateY(-50%);
+}
+
+.anatomy-btn .padding-right:after {
+  content: "";
+  width: 2px;
+  height: 10px;
+  background-color: rgb(255, 0, 170);
+  position: absolute;
+  right: 0;
+  top: 50%;
+  transform: translateY(-50%);
+}
+
+.anatomy-btn .padding-right-line {
+  position: absolute;
+  width: 30px;
+  height: 2px;
+  background-color: rgb(255, 0, 170);
+  right: -24px;
+  top: 11px;
+  transform: rotate(50deg);
+}
+
+.anatomy-btn .padding-right-line::before {
+  content: "";
+  position: absolute;
+  left: 30px;
+  top: 0;
+  width: 6px;
+  height: 6px;
+  transform: translate(-50%, -50%);
+  background-color: rgb(255, 0, 170);
+  border-radius: 100%;
+}
+
+.anatomy-btn .padding-right-text {
+  color: rgb(255, 0, 170);
+  font-size: 12px;
+  position: absolute;
+  white-space: nowrap;
+  transform: rotate(-50deg);
+  bottom: 33px;
+  left: 18px;
+}
+
+.anatomy-btn .background {
+  position: absolute;
+}
+
+.anatomy-btn .background::before {
+  content: "";
+  position: absolute;
+  right: 27px;
+  bottom: -70px;
+  width: 100px;
+  height: 53px;
+  background-color: transparent;
+  border-radius: 0px 0px 22px 22px;
+  border-right: solid 2px rgb(255, 0, 170);
+  border-bottom: solid 2px transparent;
+}
+
+.anatomy-btn .background::after {
+  content: "";
+  position: absolute;
+  right: 25px;
+  bottom: -20px;
+  width: 6px;
+  height: 6px;
+  background-color: rgb(255, 0, 170);
+  border-radius: 100%;
+}
+
+.anatomy-btn .background-text {
+  position: absolute;
+  color: rgb(255, 0, 170);
+  font-size: 12px;
+  bottom: -70px;
+  left: -115px;
+}
+
+.anatomy-btn .border {
+  position: absolute;
+  right: 0;
+  top: 0;
+}
+
+.anatomy-btn .border:before {
+  content: "";
+  width: 15px;
+  height: 15px;
+  border: solid 2px rgb(255, 0, 170);
+  position: absolute;
+  right: 0%;
+  top: 0;
+  transform: translate(50%, -50%);
+  border-radius: 100%;
+}
+
+.anatomy-btn .border:after {
+  content: "";
+  width: 2px;
+  height: 25px;
+  background-color: rgb(255, 0, 170);
+  position: absolute;
+  right: -10px;
+  top: -15px;
+  transform: translate(50%, -50%) rotate(60deg);
+}
+
+.anatomy-btn .border .border-text {
+  position: absolute;
+  color: rgb(255, 0, 170);
+  font-size: 12px;
+  right: -112px;
+  top: -30px;
+  white-space: nowrap;
+}
+
+/* --- Navbar CTA: an underline appears on hover, then the same edge expands
+   UPWARD (bottom fixed) into a white rectangular block that fills the button;
+   the label flips to ink as the fill rises. --- */
+.anatomy-btn-navbar {
+  display: inline-flex;
+  height: auto;
+  min-height: 0;
+  padding: 8px 10px;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  box-shadow: none;
+  color: transparent;
+  transform: none;
+  isolation: isolate;
+  overflow: hidden;
+}
+
+/* The rising fill — bottom-anchored (top: auto), height 0 → 100% */
+.anatomy-btn-navbar::before {
+  content: "";
+  position: absolute;
+  inset: auto 0 0 0;
+  height: 0;
+  z-index: -1;
+  background: #fff;
+  transition: height 380ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+/* The underline that shows up first; the fill then rises over it */
+.anatomy-btn-navbar::after {
+  content: "";
+  position: absolute;
+  left: 10px;
+  right: 10px;
+  bottom: 3px;
+  height: 2px;
+  z-index: -1;
+  background: linear-gradient(90deg, var(--blue), var(--blue-light));
+  transform: scaleX(0);
+  transform-origin: center;
+  transition: transform 200ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.anatomy-btn-navbar .navbar-cta-label {
+  position: relative;
+  z-index: 1;
+  background-image: linear-gradient(
+    100deg,
+    var(--blue) 0%,
+    var(--blue-light) 55%,
+    #38bdf8 100%
+  );
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  color: transparent;
+  font-size: 0.875rem;
+  font-weight: 800;
+  letter-spacing: 0.01em;
+  line-height: 1;
+}
+
+.anatomy-btn-navbar:hover::before,
+.anatomy-btn-navbar:focus-visible::before {
+  height: 100%;
+}
+
+.anatomy-btn-navbar:hover::after,
+.anatomy-btn-navbar:focus-visible::after {
+  transform: scaleX(1);
+}
+
+/* Cyan label can't sit on the white fill — flip to ink the moment it rises */
+.anatomy-btn-navbar:hover .navbar-cta-label,
+.anatomy-btn-navbar:focus-visible .navbar-cta-label {
+  background-image: none;
+  -webkit-text-fill-color: var(--ink);
+  color: var(--ink);
+}
+
+@media (max-width: 420px) {
+  .anatomy-btn-navbar {
+    padding-inline: 7px;
+  }
+
+  .anatomy-btn-navbar::after {
+    left: 7px;
+    right: 7px;
+  }
+}
