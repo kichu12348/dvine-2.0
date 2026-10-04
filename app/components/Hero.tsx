@@ -1,90 +1,137 @@
+"use client";
+
+import { useRef } from "react";
 import Image from "next/image";
-import { ShootingStars } from "./ui/shootingstar";
+import { motion, useScroll, useTransform } from "motion/react";
+import Galaxy from "./ui/Galaxy";
+import LiquidButton from "./ui/LiquidButton";
 
 export default function Hero() {
+  const sectionRef = useRef<HTMLElement>(null);
+
+  const { scrollY } = useScroll();
+  const opacity = useTransform(scrollY, [0, 480], [1, 0]);
+  const y = useTransform(scrollY, [0, 480], [0, -80]);
+
   return (
     <section
+      ref={sectionRef}
       id="hero"
-      className="relative flex min-h-[100dvh] flex-col justify-center items-center isolate overflow-hidden px-5 py-24 sm:px-8 md:px-12 sm:items-start sm:text-left text-center"
-      style={{
-        background: [
-          "linear-gradient(90deg, rgba(2,8,23,0.89), rgba(2,8,23,0.5) 60%, rgba(2,8,23,0.13))",
-          "linear-gradient(180deg, rgba(2,8,23,0.16), rgba(2,8,23,0.88))",
-          'url("/hero-bg.jpg") 68% center / cover',
-        ].join(", "),
-      }}
+      className="relative flex min-h-[100dvh] flex-col justify-center items-center overflow-hidden bg-[#020817]"
       aria-labelledby="hero-title"
     >
-      <ShootingStars
-        background="transparent"
-        starCount={200}
-        nebula={false}
-        interval={650}
-        maxActiveShootingStars={10}
-        trailLength={[180, 340]}
-        speed={[16, 28]}
-        trailColor="#38BDF8"
-        angle={42}
-        showEmbers={true}
-        parallax={true}
-        clickToSpawn={true}
-        className="!absolute inset-0 z-0 pointer-events-auto"
+      {/* Interactive WebGL Galaxy Background (Layer 0) */}
+      <div className="absolute inset-0 z-0 pointer-events-auto">
+        <Galaxy
+          density={1.2}
+          glowIntensity={0.5}
+          twinkleIntensity={0.4}
+          starSpeed={0.5}
+          speed={0.8}
+          rotationSpeed={0.06}
+          mouseRepulsion={true}
+          repulsionStrength={2.5}
+          transparent={true}
+          className="w-full h-full"
+        />
+      </div>
+
+      {/* Subtle blueprint grid overlay (Layer 0) */}
+      <div
+        aria-hidden="true"
+        className="absolute inset-0 z-0 pointer-events-none"
+        style={{
+          backgroundImage: `
+            linear-gradient(rgba(26,186,255,0.025) 1px, transparent 1px),
+            linear-gradient(90deg, rgba(26,186,255,0.025) 1px, transparent 1px)
+          `,
+          backgroundSize: "72px 72px",
+        }}
       />
 
-      {/* Decorative orbits */}
+      {/* Vignette depth (Layer 0) */}
       <div
-        className="pointer-events-none absolute -z-1 border border-[rgba(68,172,255,0.38)] rounded-full -rotate-[18deg] -right-48 -bottom-32 w-[34rem] h-40 hidden sm:block"
         aria-hidden="true"
-      />
-      <div
-        className="pointer-events-none absolute -z-1 border border-[rgba(47,112,222,0.38)] rounded-full -rotate-[18deg] -right-64 -bottom-52 w-[43rem] h-60 hidden sm:block"
-        aria-hidden="true"
-      />
-
-      {/* Decorative wedge */}
-      <div
-        className="pointer-events-none absolute -z-1 -right-16 -bottom-16 w-56 aspect-square border border-[rgba(154,224,255,0.3)] rounded-[var(--radius)] rotate-[30deg] opacity-60 sm:opacity-100"
+        className="absolute inset-0 z-0 pointer-events-none"
         style={{
           background:
-            "linear-gradient(135deg, rgba(41,149,255,0.17), transparent 68%)",
+            "radial-gradient(ellipse 85% 75% at 50% 50%, transparent 35%, rgba(2,8,23,0.72) 100%)",
         }}
-        aria-hidden="true"
       />
 
-      <div className="pointer-events-none relative z-10 w-full max-w-[1110px] mx-auto animate-[hero-enter_900ms_cubic-bezier(0.16,1,0.3,1)_both] flex flex-col items-center sm:items-start">
-        <h1 id="hero-title" className="sr-only">
-          D&apos;VINE 2.0
-        </h1>
+      {/* Bottom section blend fade (Layer 0, behind content) */}
+      <div
+        aria-hidden="true"
+        className="absolute bottom-0 left-0 right-0 h-36 sm:h-44 z-0 pointer-events-none"
+        style={{
+          background: "linear-gradient(to bottom, transparent, #020817)",
+        }}
+      />
 
-        {/* Main Logo */}
-        <div className="w-full max-w-[21rem] xs:max-w-[24rem] sm:max-w-[32rem] md:max-w-[38rem] lg:max-w-[41rem] select-none">
+      {/* Hero Foreground Content — High z-index Layer */}
+      <motion.div
+        style={{ opacity, y }}
+        className="relative z-20 flex flex-col items-center text-center px-5 sm:px-8 max-w-5xl mx-auto w-full pointer-events-auto"
+      >
+        <motion.h1
+          id="hero-title"
+          initial={{ opacity: 0, y: 24 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.9, ease: [0.16, 1, 0.3, 1], delay: 0.12 }}
+          className="relative z-30 w-full flex justify-center items-center select-none"
+        >
           <Image
             src="/assets/dvine_sub.svg"
-            alt="D'VINE 2.0"
-            className="block w-full h-auto drop-shadow-[0_0_26px_rgba(74,184,255,0.18)] select-none pointer-events-none"
+            alt="D'VINE 2.0 - From Vision to Creation"
             width={831}
-            height={322}
+            height={323}
             priority
+            className="relative z-30 w-full h-auto max-w-[420px] xs:max-w-[520px] sm:max-w-[640px] md:max-w-[760px] lg:max-w-[831px] object-contain drop-shadow-[0_0_35px_rgba(0,141,254,0.25)]"
           />
-        </div>
+          <span className="sr-only">D&apos;VINE 2.0 - From Vision to Creation</span>
+        </motion.h1>
 
-        {/* Hero Mobile/Tablet CTAs */}
-        <div className="pointer-events-auto mt-8 sm:mt-10 flex flex-wrap items-center justify-center sm:justify-start gap-3.5 sm:gap-4 w-full">
-          <a
-            href="#schedule"
-            className="inline-flex items-center justify-center gap-2 rounded-full border border-cyan-200/50 bg-gradient-to-r from-[#1abaff] to-[#0088ff] px-6 py-2.5 sm:px-7 sm:py-3 text-xs sm:text-sm font-extrabold uppercase tracking-wider text-[#020817] shadow-[0_0_24px_rgba(26,186,255,0.45)] transition-all duration-300 hover:scale-105 hover:shadow-[0_0_35px_rgba(26,186,255,0.7)] active:scale-95"
-          >
-            Register Now
-            <span className="text-sm font-bold">→</span>
-          </a>
+        <motion.p
+          initial={{ opacity: 0, y: 18 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1], delay: 0.26 }}
+          className="relative z-20 mt-6 max-w-xl text-[1rem] sm:text-[1.1rem] leading-relaxed text-[#9cbad1]"
+        >
+          The ultimate 2-member UI/UX hackathon by IEDC BOOTCAMP CEC &amp; IEEE
+          SB CEC.
+        </motion.p>
+
+        {/* Action Buttons with LiquidButton */}
+        <motion.div
+          initial={{ opacity: 0, y: 16 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1], delay: 0.4 }}
+          className="relative z-30 mt-10 flex flex-wrap items-center justify-center gap-4"
+        >
+          <LiquidButton href="/register" text="REGISTER NOW" size="lg" />
           <a
             href="#about-event"
-            className="inline-flex items-center justify-center rounded-full border border-white/15 bg-white/[0.04] px-5 py-2.5 sm:px-6 sm:py-3 text-xs sm:text-sm font-bold uppercase tracking-wider text-[#c2d7e9] backdrop-blur-sm transition-all duration-200 hover:bg-white/10 hover:border-cyan-400/40 hover:text-white"
+            className="inline-flex items-center justify-center gap-2 rounded-full border border-white/15 bg-white/[0.04] px-6 py-3 text-xs sm:text-sm font-bold uppercase tracking-wider text-[#c2d7e9] backdrop-blur-sm transition-all duration-200 hover:bg-white/10 hover:border-cyan-400/40 hover:text-white active:scale-95"
           >
-            Explore Event ↓
+            Explore Event
+            <svg
+              width="12"
+              height="12"
+              viewBox="0 0 12 12"
+              fill="none"
+              className="mt-0.5"
+            >
+              <path
+                d="M6 2v8M2 8l4 4 4-4"
+                stroke="currentColor"
+                strokeWidth="1.5"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              />
+            </svg>
           </a>
-        </div>
-      </div>
+        </motion.div>
+      </motion.div>
     </section>
   );
 }
