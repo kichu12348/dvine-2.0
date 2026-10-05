@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState, type CSSProperties } from "react";
 import Letter3DSwap from "./ui/Letter3DSwap";
 import AnatomyButton from "./ui/AnatomyButton";
+import ScrollProgress from "./ScrollProgress";
 
 /* Primary destinations — the big stacked list inside the overlay */
 const primaryLinks = [
@@ -173,6 +174,8 @@ export default function NavbarMenu() {
           </AnatomyButton>
         </div>
       </header>
+
+      <ScrollProgress menuOpen={menuOpen} />
 
       {/* Fullscreen takeover: low-opacity veil that circles out of the Menu button (origin vars set in openMenu) */}
       {menuOpen && (
