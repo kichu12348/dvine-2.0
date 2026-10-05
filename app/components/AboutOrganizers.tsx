@@ -179,7 +179,7 @@ export default function AboutOrganizers() {
               width={302}
               height={65}
               alt="IEEE Student Branch CEC"
-              className="h-auto w-[245px] max-w-[82vw] md:w-[330px]"
+              className="h-auto w-[345px] max-w-[82vw] md:w-[370px]"
             />
           </h3>
           <p data-together-intro data-organizer-copy className="relative mx-auto my-0 max-w-[760px] text-[15px] leading-[1.85] text-[var(--muted)] md:text-[19px] md:leading-[1.8]">Two communities coming together to create a platform where <span className="text-[var(--blue-light)]">design, technology, creativity, and innovation</span> meet.</p>
