@@ -61,10 +61,10 @@ export default function Prizepool() {
     <section ref={rootRef} id="prizepool" aria-labelledby="prizepool-title" className="relative overflow-clip bg-[var(--ink)] px-5 py-16 text-[var(--text)] sm:px-8 sm:py-24 lg:px-12 lg:py-28">
       <div aria-hidden="true" className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_at_85%_65%,#1abaff0a,transparent_60%)]" />
       <div className="relative mx-auto max-w-[1240px]">
-        <div className="flex flex-wrap justify-between gap-3 font-mono text-[8px] tracking-[0.1em] text-[var(--muted)] sm:text-[10px]">
+        {/* <div className="flex flex-wrap justify-between gap-3 font-mono text-[8px] tracking-[0.1em] text-[var(--muted)] sm:text-[10px]">
           <span className="text-[var(--blue-light)]">THE REWARD AWAITS</span>
           <span>ANNOUNCEMENT / 10.10.26</span>
-        </div>
+        </div> */}
 
         <div className="grid gap-8 pt-10 pb-10 sm:pt-12 sm:pb-14 lg:grid-cols-[1.3fr_0.7fr] lg:items-end lg:gap-20">
           <h2 id="prizepool-title" data-prize-reveal className="m-0 font-[family-name:var(--font-heading)] font-semibold tracking-[-0.065em]">

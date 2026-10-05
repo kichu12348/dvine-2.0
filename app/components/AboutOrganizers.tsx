@@ -68,14 +68,53 @@ export default function AboutOrganizers() {
         });
       });
       const together = root.querySelector("[data-together]");
-      gsap.fromTo(root.querySelectorAll("[data-connection]"),
-        { strokeDasharray: 1, strokeDashoffset: 1 },
-        { strokeDashoffset: 0, stagger: .12, ease: "none",
-          scrollTrigger: { trigger: together, start: "top 90%", end: "top 55%", scrub: .8 } },
+      const connectionParts = Array.from(
+        root.querySelectorAll<SVGPathElement>("[data-connection]"),
       );
-      gsap.fromTo(root.querySelector("[data-union]"), { scale: .6, rotation: -90, opacity: .2 }, {
-        scale: 1, rotation: 0, opacity: 1, ease: "power2.out",
-        scrollTrigger: { trigger: together, start: "top 85%", end: "top 50%", scrub: .8 },
+      connectionParts.forEach((path) => {
+        const length = path.getTotalLength();
+        gsap.set(path, {
+          strokeDasharray: length,
+          strokeDashoffset: length,
+          opacity: 1,
+        });
+      });
+      const togetherTimeline = gsap.timeline({ paused: true });
+      togetherTimeline
+        .to(
+          root.querySelectorAll("[data-line-outer]"),
+          { strokeDashoffset: 0, duration: .6, stagger: .08, ease: "power2.inOut" },
+        )
+        .to(
+          root.querySelectorAll("[data-line-vertical]"),
+          { strokeDashoffset: 0, duration: .65, ease: "power2.inOut" },
+        )
+        .to(
+          root.querySelectorAll("[data-line-curve]"),
+          { strokeDashoffset: 0, duration: .7, ease: "power2.inOut" },
+        )
+        .to(
+          root.querySelectorAll("[data-line-center]"),
+          { strokeDashoffset: 0, duration: .3, ease: "power2.inOut" },
+        )
+        .to({}, { duration: .2 })
+        .fromTo(
+          root.querySelectorAll("[data-together-intro]"),
+          { opacity: 0, y: 26, scale: .97 },
+          {
+            y: 0,
+            scale: 1,
+            opacity: 1,
+            duration: .75,
+            stagger: .08,
+            ease: "power3.out",
+          },
+        );
+      ScrollTrigger.create({
+        trigger: together,
+        start: "top 75%",
+        once: true,
+        onEnter: () => togetherTimeline.play(),
       });
     }, root);
     let cancelled = false;
@@ -87,7 +126,7 @@ export default function AboutOrganizers() {
     <section ref={sectionRef} id="about-organizers" aria-labelledby="organizers-title" className="relative overflow-clip bg-[var(--ink)] px-6 py-[70px] text-[var(--text)] max-[400px]:px-5 md:px-8 md:py-20 min-[68.8125rem]:px-12 min-[68.8125rem]:pt-[100px] min-[68.8125rem]:pb-[90px]">
       <div className="mx-auto max-w-[1240px]">
         <header className="border-b border-[var(--line)] pb-[30px] md:pb-[42px]">
-          <div className="flex justify-between gap-5 font-mono text-[7px] tracking-[0.05em] text-[var(--muted)] max-[400px]:gap-2.5 max-[400px]:text-[6px] md:text-[9px] md:tracking-[0.1em]"><span className="text-[var(--blue-light)]">THE PEOPLE BEHIND THE SPRINT</span><span>02 COMMUNITIES / 01 VISION</span></div>
+          {/* <div className="flex justify-between gap-5 font-mono text-[7px] tracking-[0.05em] text-[var(--muted)] max-[400px]:gap-2.5 max-[400px]:text-[6px] md:text-[9px] md:tracking-[0.1em]"><span className="text-[var(--blue-light)]">THE PEOPLE BEHIND THE SPRINT</span><span>02 COMMUNITIES / 01 VISION</span></div> */}
           <h2 id="organizers-title" aria-label="About the organizers" className="mt-8 mb-0 font-[family-name:var(--font-heading)] text-[clamp(45px,9.8vw,74px)] leading-[0.98] font-semibold tracking-[-0.07em] max-[400px]:text-[clamp(39px,10.3vw,45px)] md:text-[clamp(54px,8.6vw,122px)]">
             <span data-organizer-heading className={headingLineClass}><span>ABOUT THE</span></span>
             <span data-organizer-heading className={`${headingLineClass} text-transparent [-webkit-text-stroke:1px_#9de4ffaa]`}><span>ORGANIZERS<span className="text-[var(--blue)] [-webkit-text-stroke:0]">.</span></span></span>
@@ -112,18 +151,40 @@ export default function AboutOrganizers() {
           ))}
         </div>
 
-        <div data-together className="relative pt-[105px] text-center md:px-[15px] md:pt-[122px] min-[68.8125rem]:px-[70px]">
+        <div data-together className="relative pt-[180px] text-center md:px-[15px] md:pt-[198px] min-[68.8125rem]:px-[70px]">
           <div aria-hidden="true" className="pointer-events-none absolute inset-x-0 top-[45px] bottom-[-90px] bg-[radial-gradient(ellipse_at_50%_55%,#1abaff0b,transparent_65%)]" />
-          <svg viewBox="0 0 1000 100" preserveAspectRatio="none" className="absolute top-[22px] left-0 h-[66px] w-full stroke-[var(--blue)] stroke-1 opacity-50 md:top-7 md:h-20" fill="none" aria-hidden="true">
-            <path data-connection pathLength="1" d="M235 0V25Q235 50 260 50H475Q500 50 500 75V100" />
-            <path data-connection pathLength="1" d="M765 0V25Q765 50 740 50H525Q500 50 500 75V100" />
+          <svg viewBox="0 0 1000 180" preserveAspectRatio="none" className="absolute top-[22px] left-0 h-[152px] w-full stroke-[var(--blue)] stroke-1 opacity-50 md:top-7 md:h-[176px]" fill="none" aria-hidden="true">
+            <path data-connection data-line-outer d="M120 0V45" />
+            <path data-connection data-line-outer d="M880 0V45" />
+            <path data-connection data-line-vertical d="M120 45V72" />
+            <path data-connection data-line-vertical d="M880 45V72" />
+            <path data-connection data-line-curve d="M120 72Q120 105 165 105H400Q500 105 500 145" />
+            <path data-connection data-line-curve d="M880 72Q880 105 835 105H600Q500 105 500 145" />
+            <path data-connection data-line-center d="M500 145V180" />
           </svg>
-          <span className="relative font-mono text-[9px] tracking-[0.17em] text-[var(--blue-light)] uppercase">Together</span>
-          <h3 className="relative my-[22px] flex flex-col items-center justify-center gap-3.5 font-[family-name:var(--font-heading)] text-[21px] leading-[1.35] font-medium tracking-[-0.04em] md:my-[25px] md:flex-row md:gap-5 md:text-[clamp(17px,2vw,26px)] min-[68.8125rem]:gap-[30px]"><span>IEDC BOOTCAMP CEC</span><span data-union className="inline-block text-[30px] leading-none font-normal text-[var(--blue)] md:text-[40px]" aria-label="and">×</span><span>IEEE Student Branch CEC</span></h3>
-          <p data-organizer-copy className="relative mx-auto my-0 max-w-[760px] text-[15px] leading-[1.85] text-[var(--muted)] md:text-[19px] md:leading-[1.8]">Two communities coming together to create a platform where <span className="text-[var(--blue-light)]">design, technology, creativity, and innovation</span> meet.</p>
+          <span data-together-intro className="relative font-mono text-[9px] tracking-[0.17em] text-[var(--blue-light)] uppercase">Together</span>
+          <h3 data-together-intro aria-label="IEDC Bootcamp CEC and IEEE Student Branch CEC" className="relative my-[22px] flex flex-col items-center justify-center gap-5 md:my-[25px] md:flex-row md:gap-5 min-[68.8125rem]:gap-[30px]">
+            <Image
+              data-together-intro
+              src="/assets/IEDC_logosvg.svg"
+              width={99}
+              height={60}
+              alt="IEDC Bootcamp CEC"
+              className="h-auto w-[190px] max-w-[72vw] md:w-[220px]"
+            />
+            <span data-together-intro className="inline-block text-[30px] leading-none font-normal text-[var(--blue)] md:text-[40px]" aria-hidden="true">×</span>
+            <Image
+              data-together-intro
+              src="/assets/ieee_logo.svg"
+              width={302}
+              height={65}
+              alt="IEEE Student Branch CEC"
+              className="h-auto w-[245px] max-w-[82vw] md:w-[330px]"
+            />
+          </h3>
+          <p data-together-intro data-organizer-copy className="relative mx-auto my-0 max-w-[760px] text-[15px] leading-[1.85] text-[var(--muted)] md:text-[19px] md:leading-[1.8]">Two communities coming together to create a platform where <span className="text-[var(--blue-light)]">design, technology, creativity, and innovation</span> meet.</p>
         </div>
       </div>
     </section>
   );
 }
-

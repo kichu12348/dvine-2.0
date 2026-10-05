@@ -9,7 +9,7 @@ import Reveal from "./Reveal";
 const highlights = [
   { value: "24", label: "Hours" },
   { value: "02", label: "Per team" },
-  { value: "₹2L", label: "Prize pool" },
+  { value: "₹X", label: "Prize pool" },
 ];
 
 /* Title lockup: three tightly-set words (no spaces between them, by design).

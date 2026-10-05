@@ -19,28 +19,28 @@ const scheduleClasses = {
   letter: "inline-block",
   introAside: "grid grid-cols-[30px_1fr] gap-x-[17px] gap-y-2.5 pt-[26px] pb-2 [&>svg]:mt-0.5 [&>svg]:size-[30px] [&>svg]:text-[var(--blue-light)] [&>p]:m-0 [&>p]:max-w-[290px] [&>p]:text-[13px] [&>p]:leading-[1.8] [&>p]:text-[var(--muted)] min-[37.5625rem]:block min-[37.5625rem]:pt-0 min-[37.5625rem]:[&>svg]:mt-0 min-[37.5625rem]:[&>svg]:mb-3 min-[37.5625rem]:[&>p]:mb-[18px] min-[37.5625rem]:[&>p]:max-w-[250px] min-[56.3125rem]:[&>svg]:mb-5 min-[56.3125rem]:[&>svg]:size-10 min-[56.3125rem]:[&>p]:mb-9 min-[56.3125rem]:[&>p]:text-[15px] min-[68.8125rem]:[&>p]:text-[17px]",
   scrollCue: "col-start-2 mt-[5px] flex max-w-[290px] items-center justify-between gap-3.5 border-b border-[var(--line-strong)] py-3.5 font-mono text-[8px] tracking-[0.06em] text-[var(--blue-light)]! focus-visible:outline-2 focus-visible:outline-offset-[5px] focus-visible:outline-[var(--blue-light)]! [&>svg]:transition-transform [&>svg]:duration-300 hover:[&>svg]:translate-y-1 motion-reduce:[&>svg]:transition-none min-[37.5625rem]:mt-0 min-[37.5625rem]:max-w-none min-[37.5625rem]:text-[7px] min-[56.3125rem]:text-[9px]",
-  introRule: "flex flex-wrap items-center justify-between gap-3 border-y border-[var(--line)] py-[17px] font-mono text-[7px] tracking-[0.06em] text-[var(--muted)] [&>span:nth-child(2)]:hidden [&>span:nth-child(2)]:text-[var(--blue-light)] min-[37.5625rem]:flex-nowrap min-[37.5625rem]:gap-[18px] min-[37.5625rem]:py-[22px] min-[37.5625rem]:[&>span:nth-child(2)]:inline min-[56.3125rem]:text-[9px]",
+  introRule: "flex flex-wrap items-center justify-between gap-3 border-y border-[var(--line)] py-[17px] font-mono text-[7px] tracking-[0.06em] text-[var(--muted)] [&>span:nth-child(2)]:hidden [&>span:nth-child(2)]:text-[var(--blue-light)] min-[37.5625rem]:flex-nowrap min-[37.5625rem]:gap-[18px] min-[37.5625rem]:py-[22px] min-[37.5625rem]:[&>span:nth-child(2)]:inline min-[56.3125rem]:text-[13px]",
   mobileNav: "sticky top-[60px] z-20 mt-5 grid grid-cols-4 gap-2 bg-[#020817e8] py-[15px] font-mono backdrop-blur-[14px] min-[37.5625rem]:top-[65px] min-[37.5625rem]:gap-3 min-[56.3125rem]:hidden [&>a]:flex [&>a]:items-center [&>a]:gap-[5px] [&>a]:border-b [&>a]:border-[var(--line)] [&>a]:py-2.5 [&>a]:text-[9px] [&>a]:whitespace-nowrap [&>a]:text-[var(--muted)]! [&>a]:transition-[color,border-color] [&>a]:duration-[250ms] [&>a>span]:text-[7px] [&>a>span]:opacity-50 [&>a[aria-current]]:border-[var(--blue)] [&>a[aria-current]]:text-[var(--blue-light)]! [&>a:focus-visible]:outline-2 [&>a:focus-visible]:outline-offset-[5px] [&>a:focus-visible]:outline-[var(--blue-light)]! motion-reduce:[&>a]:transition-none min-[37.5625rem]:[&>a]:gap-[7px] min-[37.5625rem]:[&>a]:text-[10px]",
   journey: "relative block pt-7 min-[56.3125rem]:grid min-[56.3125rem]:grid-cols-[42%_minmax(0,1fr)] min-[56.3125rem]:items-start min-[56.3125rem]:gap-[45px] min-[56.3125rem]:pt-16 min-[68.8125rem]:grid-cols-[43%_minmax(0,1fr)] min-[68.8125rem]:gap-20",
   stickyStage: "group/stage sticky top-[100px] hidden h-[calc(100svh-150px)] min-h-[510px] max-h-[740px] flex-col min-[56.3125rem]:flex",
-  stageTop: "flex justify-between gap-4 font-mono text-[9px] tracking-[0.08em] text-[var(--muted)] [&>span:last-child]:text-[var(--blue-light)]",
+  stageTop: "flex justify-between gap-4 text-[11px] tracking-[0.08em] text-[var(--muted)] [&>span:last-child]:text-[var(--blue-light)]",
   sculpture: "relative min-h-[300px] flex-1 text-[var(--blue-light)] transition-colors duration-[800ms] group-data-[phase=2]/stage:text-[#c2bcd9] group-data-[phase=3]/stage:text-[#c2f5ff] motion-reduce:transition-none",
   sculptureGlow: "pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_at_50%_52%,#1abaff12,transparent_65%)]",
   mesh: "absolute inset-0 h-full w-full overflow-visible stroke-[0.8]",
   meshRim: "stroke-[1.4]",
   meshParticles: "fill-[var(--blue-light)] [filter:drop-shadow(0_0_5px_#1abaffcc)]",
   meshGuides: "fill-none stroke-[#9de4ff33] stroke-[0.6]",
-  sculptureNumber: "pointer-events-none absolute inset-0 flex flex-col items-center justify-center [&>span:first-child]:pr-[0.07em] [&>span:first-child]:font-[family-name:var(--font-heading)] [&>span:first-child]:text-[clamp(130px,15vw,210px)] [&>span:first-child]:leading-[0.95] [&>span:first-child]:font-medium [&>span:first-child]:tracking-[-0.095em] [&>span:first-child]:text-[#020817d9] [&>span:first-child]:[-webkit-text-stroke:1px_#9de4ff9e] [&>span:first-child]:[text-shadow:0_0_45px_#020817] [&>span:last-child]:mt-5 [&>span:last-child]:font-mono [&>span:last-child]:text-[8px] [&>span:last-child]:leading-normal [&>span:last-child]:tracking-[0.2em] [&>span:last-child]:text-[var(--blue-light)]",
+  sculptureNumber: "pointer-events-none absolute inset-0 flex flex-col items-center justify-center [&>span:first-child]:pr-[0.07em] [&>span:first-child]:font-[family-name:var(--font-heading)] [&>span:first-child]:text-[clamp(130px,15vw,210px)] [&>span:first-child]:leading-[0.95] [&>span:first-child]:font-medium [&>span:first-child]:tracking-[-0.095em] [&>span:first-child]:text-[#020817d9] [&>span:first-child]:[-webkit-text-stroke:1px_#1abaff] [&>span:first-child]:[text-shadow:0_0_45px_#020817] [&>span:last-child]:mt-5 [&>span:last-child]:font-mono [&>span:last-child]:text-[8px] [&>span:last-child]:leading-normal [&>span:last-child]:tracking-[0.2em] [&>span:last-child]:text-[var(--blue-light)]",
   sculptureAnnotation: "absolute font-mono text-[8px] tracking-[0.08em] text-[var(--muted)]",
   annotationTop: "top-[15%] left-[6%]",
   annotationBottom: "right-[4%] bottom-[16%]",
-  stageCaption: "mt-2.5 flex flex-wrap justify-between gap-2.5 border-b border-[var(--line)] pb-5 font-mono text-[8px] text-[var(--blue-light)] [&>span:last-child]:text-[var(--muted)] min-[68.8125rem]:text-[9px]",
-  chapterLinks: "mt-[22px] grid grid-cols-4 gap-[9px] font-mono min-[68.8125rem]:gap-[13px] [&>a]:relative [&>a]:flex [&>a]:flex-col [&>a]:gap-2 [&>a]:border-b [&>a]:border-transparent [&>a]:pb-2.5 [&>a]:text-[9px] [&>a]:text-[var(--muted)]! [&>a]:transition-[color,border-color] [&>a]:duration-[250ms] min-[68.8125rem]:[&>a]:text-[10px] [&>a>span]:text-[8px] [&>a>span]:opacity-55 [&>a>svg]:absolute [&>a>svg]:top-0 [&>a>svg]:right-[3px] [&>a>svg]:opacity-0 [&>a>svg]:transition-opacity [&>a>svg]:duration-[250ms] [&>a:hover]:border-[var(--blue)] [&>a:hover]:text-[var(--blue-light)]! [&>a[aria-current]]:border-[var(--blue)] [&>a[aria-current]]:text-[var(--blue-light)]! [&>a:hover>svg]:opacity-100 [&>a[aria-current]>svg]:opacity-100 [&>a[aria-current]>span]:opacity-100 [&>a:focus-visible]:outline-2 [&>a:focus-visible]:outline-offset-[5px] [&>a:focus-visible]:outline-[var(--blue-light)]! motion-reduce:[&>a]:transition-none",
+  stageCaption: "mt-2.5 flex flex-wrap justify-between gap-2.5 border-b border-[var(--line)] pb-5 text-[8px] text-[var(--blue-light)] [&>span:last-child]:text-[var(--muted)] min-[68.8125rem]:text-[12px]",
+  chapterLinks: "relative mt-[22px] grid grid-cols-4 gap-[9px] min-[68.8125rem]:gap-[13px] [&>a]:relative [&>a]:flex [&>a]:flex-col [&>a]:gap-2 [&>a]:border-b [&>a]:border-transparent [&>a]:pb-2.5 [&>a]:text-[9px] [&>a]:text-[var(--muted)]! [&>a]:transition-colors [&>a]:duration-[250ms] min-[68.8125rem]:[&>a]:text-[16px] [&>a>span]:text-[13px] [&>a>span]:opacity-55 [&>a>svg]:absolute [&>a>svg]:top-0 [&>a>svg]:right-[3px] [&>a>svg]:opacity-0 [&>a>svg]:transition-opacity [&>a>svg]:duration-[250ms] [&>a:hover]:text-[var(--blue-light)]! [&>a[aria-current]]:text-[var(--blue-light)]! [&>a:hover>svg]:opacity-100 [&>a[aria-current]>svg]:opacity-100 [&>a[aria-current]>span]:opacity-100 [&>a:focus-visible]:outline-2 [&>a:focus-visible]:outline-offset-[5px] [&>a:focus-visible]:outline-[var(--blue-light)]! motion-reduce:[&>a]:transition-none",
   stageNote: "mt-[23px] mb-0 font-mono text-[9px] leading-[1.8] text-[var(--muted)] opacity-70",
   chapterStream: "relative min-w-0",
   journeyTrack: "absolute top-[43px] bottom-[95px] left-0 w-px bg-[var(--line)] [&>span]:block [&>span]:h-full [&>span]:w-full [&>span]:origin-top [&>span]:bg-[var(--line-strong)] min-[56.3125rem]:top-8 min-[56.3125rem]:bottom-[65px] min-[56.3125rem]:[&>span]:bg-[linear-gradient(var(--blue),var(--blue-light))]",
   chapter: "relative min-h-0 scroll-mt-[150px]! pt-[45px] pb-[75px] pl-[23px] before:absolute before:top-[45px] before:left-[-5px] before:size-[11px] before:rounded-full before:border before:border-[var(--blue-light)] before:bg-[var(--ink)] before:shadow-[0_0_18px_#1abaff22] before:content-[''] min-[37.5625rem]:pb-[100px] min-[37.5625rem]:pl-8 min-[56.3125rem]:min-h-[85svh] min-[56.3125rem]:scroll-mt-[100px]! min-[56.3125rem]:pt-[38px] min-[56.3125rem]:pb-[110px] min-[56.3125rem]:pl-[27px] min-[56.3125rem]:first-of-type:min-h-[80svh] min-[56.3125rem]:before:top-[38px] min-[68.8125rem]:pl-9",
-  chapterMeta: "flex flex-col gap-[7px] font-mono text-[7px] leading-[1.7] tracking-[0.045em] text-[var(--muted)] uppercase [&>span:first-child]:text-[var(--blue-light)] [&_span_span]:mx-1 [&_span_span]:opacity-40 min-[37.5625rem]:gap-2.5 min-[37.5625rem]:text-[9px] min-[37.5625rem]:[&_span_span]:mx-[7px] min-[56.3125rem]:text-[8px]",
+  chapterMeta: "flex flex-col gap-[7px] text-[9px] leading-[1.7] tracking-[0.045em] text-[var(--muted)] uppercase [&>span:first-child]:text-[var(--blue-light)] [&_span_span]:mx-1 [&_span_span]:opacity-40 min-[37.5625rem]:gap-2.5 min-[37.5625rem]:text-[18px] min-[37.5625rem]:[&_span_span]:mx-[7px] min-[56.3125rem]:text-[10px]",
   chapterTitle: "mt-[23px] mb-[18px] overflow-clip pt-1.5 pb-2 font-[family-name:var(--font-heading)] text-[clamp(48px,12vw,72px)] leading-[1.03] font-medium tracking-[-0.075em] whitespace-nowrap min-[37.5625rem]:mt-7 min-[37.5625rem]:text-[clamp(58px,11vw,88px)] min-[56.3125rem]:text-[clamp(52px,6vw,72px)] min-[68.8125rem]:text-[clamp(54px,6.1vw,90px)]",
   chapterOutline: "text-transparent [-webkit-text-stroke:1px_#c4d7e4cc]",
   titleDot: "text-[var(--blue)] [-webkit-text-stroke:0]",
@@ -48,9 +48,9 @@ const scheduleClasses = {
   milestones: "m-0 list-none p-0",
   milestone: "relative p-0 before:absolute before:top-[26px] before:left-[-25px] before:size-[5px] before:rounded-full before:bg-[var(--blue)] before:shadow-[0_0_9px_#1abaff66] before:content-[''] min-[37.5625rem]:before:top-[30px] min-[37.5625rem]:before:left-[-34px] min-[56.3125rem]:before:top-[27px] min-[56.3125rem]:before:left-[-29px] min-[68.8125rem]:before:left-[-38px] data-[kind=break]:before:border data-[kind=break]:before:border-[#9cbad177] data-[kind=break]:before:bg-[var(--ink)] data-[kind=break]:before:shadow-none data-[kind=red]:before:top-16 data-[kind=black]:before:top-16 data-[kind=red]:before:bg-[#ff9caa] data-[kind=black]:before:bg-[#ff9caa] data-[kind=red]:before:shadow-[0_0_13px_#ff7b9944] data-[kind=black]:before:shadow-[0_0_13px_#ff7b9944] min-[37.5625rem]:data-[kind=red]:before:top-[72px] min-[37.5625rem]:data-[kind=black]:before:top-[72px] min-[56.3125rem]:data-[kind=red]:before:top-[61px] min-[56.3125rem]:data-[kind=black]:before:top-[61px] data-[kind=finish]:before:size-[7px] data-[kind=finish]:before:left-[-26px] data-[kind=finish]:before:bg-[var(--blue-light)] min-[37.5625rem]:data-[kind=finish]:before:left-[-35px] min-[56.3125rem]:data-[kind=finish]:before:left-[-30px] min-[68.8125rem]:data-[kind=finish]:before:left-[-39px]",
   event: "grid grid-cols-[1fr_18px] gap-x-3 gap-y-[5px] py-[19px] min-[37.5625rem]:gap-x-[15px] min-[37.5625rem]:py-[23px] min-[56.3125rem]:py-5 group-data-[kind=break]/point:py-[15px] group-data-[kind=finish]/point:mt-2.5 [&>svg]:col-start-2 [&>svg]:row-span-2 [&>svg]:row-start-1 [&>svg]:self-center [&>svg]:text-[var(--muted)] group-data-[kind=finish]/point:[&>svg]:text-[var(--blue-light)]",
-  eventTime: "col-start-1 block font-mono text-[10px] leading-[1.6] text-[var(--blue-light)] min-[37.5625rem]:text-[11px] min-[56.3125rem]:text-[10px] group-data-[kind=break]/point:text-[9px] group-data-[kind=break]/point:text-[#9cbad1b3]",
+  eventTime: "col-start-1 block text-[12px] leading-[1.6] text-[var(--blue-light)] min-[37.5625rem]:text-[13px] min-[56.3125rem]:text-[18px] group-data-[kind=break]/point:text-[11px] group-data-[kind=break]/point:text-[#9cbad1b3]",
   eventName: "col-start-1 block font-[family-name:var(--font-heading)] text-[18px] leading-[1.45] tracking-[-0.02em] min-[37.5625rem]:text-[20px] min-[56.3125rem]:text-[19px] group-data-[kind=break]/point:font-[family-name:var(--font-body)] group-data-[kind=break]/point:text-[12px] group-data-[kind=break]/point:font-normal group-data-[kind=break]/point:tracking-normal group-data-[kind=break]/point:text-[var(--muted)] group-data-[kind=finish]/point:text-[var(--blue-light)]",
-  dayChange: "mt-3 mb-1 flex items-center gap-2 border-t border-dashed border-[var(--line)] pt-3.5 font-mono text-[7px] tracking-[0.03em] text-[var(--blue-light)] uppercase min-[37.5625rem]:text-[8px]",
+  dayChange: "mt-3 mb-1 flex items-center gap-2 border-t border-dashed border-[var(--line)] pt-3.5 font-mono text-[9px] tracking-[0.03em] text-[var(--blue-light)] uppercase min-[37.5625rem]:text-[10px]",
   envelopeMoment: "group/envelope relative mt-1 mb-2.5 grid grid-cols-[83px_minmax(0,1fr)] items-center gap-[17px] pt-5 pb-[34px] after:absolute after:right-0 after:bottom-2.5 after:left-0 after:h-px after:bg-[linear-gradient(90deg,#ef6e8f66,transparent_85%)] after:content-[''] data-[black=true]:after:bg-[linear-gradient(90deg,#a0b1ca66,transparent_85%)] min-[37.5625rem]:grid-cols-[125px_minmax(0,1fr)] min-[37.5625rem]:gap-[25px] min-[37.5625rem]:pt-[26px] min-[56.3125rem]:grid-cols-[100px_minmax(0,1fr)] min-[56.3125rem]:gap-3.5 min-[68.8125rem]:grid-cols-[120px_minmax(0,1fr)] min-[68.8125rem]:gap-[22px]",
   envelopeCopy: "flex flex-col gap-[7px] min-[37.5625rem]:gap-[9px] [&>[data-event-time]]:text-[#ff9caa] group-data-[black=true]/envelope:[&>[data-event-time]]:text-[#c0cddd] [&>[data-event-name]]:text-[19px] [&>[data-event-name]]:leading-[1.3] min-[37.5625rem]:[&>[data-event-name]]:text-[25px] min-[56.3125rem]:[&>[data-event-name]]:text-[20px] min-[68.8125rem]:[&>[data-event-name]]:text-[23px]",
   envelopeEyebrow: "font-mono text-[6px] tracking-[0.08em] text-[#ff9caa] group-data-[black=true]/envelope:text-[#c0cddd] min-[37.5625rem]:text-[8px] min-[37.5625rem]:tracking-[0.12em] min-[56.3125rem]:text-[7px]",
@@ -69,7 +69,7 @@ const scheduleClasses = {
   envelopeCreases: "fill-none stroke-[var(--envelope-edge)] stroke-[0.5] opacity-45",
   envelopeSeal: "fill-[var(--envelope-dark)] stroke-[var(--envelope-edge)] stroke-[0.5]",
   envelopeMonogram: "fill-[var(--envelope-paper)] stroke-none font-mono text-[5px] leading-normal",
-  chapterEnd: "relative mt-[35px] pt-[17px] font-mono text-[6px] tracking-[0.02em] text-[var(--muted)] [&>span]:absolute [&>span]:inset-x-0 [&>span]:top-0 [&>span]:h-px [&>span]:bg-[var(--line-strong)] [&>p]:m-0 [&>p]:flex [&>p]:items-center [&>p]:justify-between [&>p]:gap-5 [&_svg]:shrink-0 [&_svg]:text-[var(--blue-light)] min-[37.5625rem]:text-[7px] min-[37.5625rem]:tracking-[0.06em]",
+  chapterEnd: "relative mt-[35px] pt-[17px] font-sans text-[6px] tracking-[0.02em] text-white [&>span]:absolute [&>span]:inset-x-0 [&>span]:top-0 [&>span]:h-px [&>span]:bg-[var(--line-strong)] [&>p]:m-0 [&>p]:flex [&>p]:items-center [&>p]:justify-between [&>p]:gap-5 [&_svg]:shrink-0 [&_svg]:text-[var(--blue-light)] min-[37.5625rem]:text-[10px] min-[37.5625rem]:tracking-[0.06em]",
   outro: "border-t border-[var(--line)] pt-10 pb-[15px] text-center min-[56.3125rem]:pt-[60px] [&>p]:my-[26px] [&>p]:font-[family-name:var(--font-heading)] [&>p]:text-[clamp(20px,5vw,30px)] [&>p]:leading-[1.25] [&>p]:font-medium [&>p]:tracking-[-0.06em] min-[37.5625rem]:[&>p]:text-[clamp(23px,4.4vw,58px)] [&>span:last-child]:font-mono [&>span:last-child]:text-[6px] [&>span:last-child]:leading-[1.8] [&>span:last-child]:tracking-[0.06em] [&>span:last-child]:text-[var(--muted)] min-[37.5625rem]:[&>span:last-child]:text-[8px] min-[37.5625rem]:[&>span:last-child]:leading-normal",
   outroLabel: "font-mono text-[8px] tracking-[0.1em] text-[var(--blue-light)] min-[37.5625rem]:text-[10px]",
   outroAccent: "text-[var(--blue-light)]",
@@ -224,9 +224,7 @@ function DesignContinuum() {
         <path d="M64 280h43M453 280h43M280 25v25M280 510v25" className={scheduleClasses.meshGuides} />
       </svg>
       <div className={scheduleClasses.sculptureNumber}><span>24</span><span>HOURS TO MAKE IT COUNT</span></div>
-      <span className={`${scheduleClasses.sculptureAnnotation} ${scheduleClasses.annotationTop}`}>IDEA / 00</span>
-      <span className={`${scheduleClasses.sculptureAnnotation} ${scheduleClasses.annotationBottom}`}>IMPACT / 24</span>
-    </div>
+      </div>
   );
 }
 
@@ -271,6 +269,41 @@ export default function Schedule() {
   const [active, setActive] = useState(0);
   const sectionRef = useRef<HTMLElement>(null);
   const activeRef = useRef(0);
+  const chapterLinksRef = useRef<HTMLElement>(null);
+  const activeLineRef = useRef<HTMLSpanElement>(null);
+
+  useLayoutEffect(() => {
+    const nav = chapterLinksRef.current;
+    const line = activeLineRef.current;
+    const link = nav?.querySelector<HTMLAnchorElement>(
+      `a[href="#schedule-chapter-${active}"]`,
+    );
+    if (!nav || !line || !link) return;
+
+    const navRect = nav.getBoundingClientRect();
+    const linkRect = link.getBoundingClientRect();
+    gsap.to(line, {
+      x: linkRect.left - navRect.left,
+      width: linkRect.width,
+      duration: 0.45,
+      ease: "power3.out",
+      overwrite: true,
+    });
+
+    const handleResize = () => {
+      const nextNavRect = nav.getBoundingClientRect();
+      const nextLinkRect = link.getBoundingClientRect();
+      gsap.set(line, {
+        x: nextLinkRect.left - nextNavRect.left,
+        width: nextLinkRect.width,
+      });
+    };
+    window.addEventListener("resize", handleResize);
+    return () => {
+      window.removeEventListener("resize", handleResize);
+      gsap.killTweensOf(line);
+    };
+  }, [active]);
 
   useLayoutEffect(() => {
     gsap.registerPlugin(ScrollTrigger);
@@ -378,7 +411,7 @@ export default function Schedule() {
     <section ref={sectionRef} id="schedule" aria-labelledby="schedule-title" className={scheduleClasses.section}>
       <div className={scheduleClasses.container}>
         <header>
-          <div className={scheduleClasses.kicker}><span>THE EVENT STRUCTURE</span><span>10 — 11 OCTOBER 2026 / IST</span></div>
+          {/* <div className={scheduleClasses.kicker}><span>THE EVENT STRUCTURE</span><span>10 — 11 OCTOBER 2026 / IST</span></div> */}
           <div className={scheduleClasses.introGrid}>
             <h2 id="schedule-title" className={scheduleClasses.heroTitle}>
               {heroLines.map((line, index) => (
@@ -403,10 +436,15 @@ export default function Schedule() {
             <div className={scheduleClasses.stageTop}><span>THE DESIGN CONTINUUM</span><span>0{active + 1} / 04</span></div>
             <DesignContinuum />
             <div className={scheduleClasses.stageCaption}><span>{phaseNotes[active]}</span><span>{phaseTimes[active]}</span></div>
-            <nav className={scheduleClasses.chapterLinks} aria-label="Jump to a schedule chapter">
+            <nav ref={chapterLinksRef} className={scheduleClasses.chapterLinks} aria-label="Jump to a schedule chapter">
+              <span
+                ref={activeLineRef}
+                aria-hidden="true"
+                className="pointer-events-none absolute bottom-0 left-0 h-px w-0 bg-[var(--blue)]"
+              />
               {chapters.map((chapter, index) => <a key={chapter.name} href={`#schedule-chapter-${index}`} aria-current={active === index ? "step" : undefined}><span>0{index + 1}</span>{chapter.name}<ArrowUpRight size={12} aria-hidden="true" /></a>)}
             </nav>
-            <p className={scheduleClasses.stageNote}>Scroll to follow the flow.<br />Every iteration moves the story forward.</p>
+           
           </aside>
 
           <div className={scheduleClasses.chapterStream}>
@@ -446,12 +484,9 @@ export default function Schedule() {
         </div>
 
         <div className={scheduleClasses.outro}>
-          <span className={scheduleClasses.outroLabel}>11 OCTOBER / 11:00 AM</span>
           <p data-float-heading><FloatLetters text="YOU CAME WITH AN IDEA." /><br /><span className={scheduleClasses.outroAccent}><FloatLetters text="LEAVE WITH A VISION." /></span></p>
-          <span>THE END OF THE SPRINT. THE START OF SOMETHING ELSE.</span>
         </div>
       </div>
     </section>
   );
 }
-
