@@ -4,7 +4,6 @@ import FAQ from "./components/FAQ";
 import Footer from "./components/Footer";
 import Hero from "./components/Hero";
 import Navbar from "./components/Navbar";
-import Partners from "./components/Partners";
 import Prizepool from "./components/Prizepool";
 import Schedule from "./components/Schedule";
 import LoadingScreen from "./components/LoadingScreen";
@@ -19,7 +18,7 @@ export default function Home() {
         <AboutEvent />
         <AboutOrganizers />
         <Prizepool />
-        <Partners />
+        {/* <Partners /> */}
         <Schedule />
         <FAQ />
       </main>
