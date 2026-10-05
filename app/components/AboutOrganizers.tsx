@@ -99,7 +99,7 @@ export default function AboutOrganizers() {
             <article key={organizer.name} data-organizer className={`min-w-0 ${index === 0 ? "pb-[35px] md:pr-9 md:pb-0 min-[68.8125rem]:pr-[60px]" : "border-t border-[var(--line)] pt-[30px] md:border-t-0 md:border-l md:pt-0 md:pl-9 min-[68.8125rem]:pl-[60px]"}`} aria-labelledby={`organizer-${index}`}>
               <div data-brand-part className="flex justify-between gap-3.5 font-mono text-[8px] tracking-[0.04em] text-[var(--muted)] uppercase max-[400px]:text-[7px]"><span className="text-[var(--blue-light)]">0{index + 1}</span><span>{organizer.focus}</span></div>
               <div data-brand-part className="relative flex min-h-[145px] items-center py-[30px] md:min-h-[175px]">
-                <Image data-brand-logo src={organizer.logo} width={organizer.width} height={organizer.height} alt={`${organizer.name} logo`} className={index === 0 ? "h-auto w-[140px] md:w-40" : "h-auto w-[285px] max-w-[90%] md:w-[310px]"} />
+                <Image data-brand-logo src={organizer.logo} width={organizer.width} height={organizer.height} alt={`${organizer.name} logo`} className={index === 0 ? "h-auto w-[140px] md:w-40" : "h-auto w-[285px] max-w-[90%] md:w-[410px]"} />
                 <span className="absolute top-1/2 right-0 font-mono text-lg text-[#9de4ff40]" aria-hidden="true">+</span>
               </div>
               <h3 data-brand-part id={`organizer-${index}`} aria-label={organizer.name} className="mt-1 mb-[22px] font-[family-name:var(--font-heading)] text-[32px] leading-[1.13] font-medium tracking-[-0.045em] md:mt-2 md:mb-[27px] md:text-[34px] min-[68.8125rem]:text-[39px]">
