@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useId, useRef, useState } from "react";
 import { UnfoldAccordion } from "./ui/unfold-accordion";
 import type { UnfoldAccordionItem } from "./ui/unfold-accordion";
 
@@ -75,11 +75,16 @@ const questions: UnfoldAccordionItem[] = [
   },
 ];
 
-export default function FAQ() {
-  const [showAllMobile, setShowAllMobile] = useState(false);
+const mobileTopics = [
+  { label: "The basics", indices: [0, 1, 2, 3] },
+  { label: "The sprint", indices: [4, 5, 6, 9] },
+  { label: "What's next", indices: [7, 8, 10, 11] },
+];
 
-  // Top 6 questions on mobile by default to prevent vertical congestion
-  const mobileQuestions = showAllMobile ? questions : questions.slice(0, 6);
+export default function FAQ() {
+  const [mobileTopic, setMobileTopic] = useState(0);
+  const topicRefs = useRef<(HTMLButtonElement | null)[]>([]);
+  const topicId = useId();
 
   return (
     <section
@@ -98,24 +103,52 @@ export default function FAQ() {
         </p>
       </div>
 
-      {/* Mobile view with gentle progressive disclosure */}
+      {/* Mobile-only topic navigation; desktop retains the full accordion. */}
       <div className="sm:hidden">
-        <UnfoldAccordion items={mobileQuestions} />
-        {questions.length > 6 && (
-          <div className="mt-4 text-center">
+        <div className="mb-[15px] flex justify-between gap-3 font-mono text-[8px] leading-[normal] tracking-[0.06em] text-[var(--muted)]"><span className="text-[var(--blue)]">BROWSE BY TOPIC</span><span>12 QUESTIONS / 3 TOPICS</span></div>
+        <div className="mb-[22px] grid grid-cols-3 gap-2.5" role="tablist" aria-label="FAQ topics">
+          {mobileTopics.map((topic, index) => (
             <button
+              key={topic.label}
+              ref={(element) => { topicRefs.current[index] = element; }}
               type="button"
-              onClick={() => setShowAllMobile((prev) => !prev)}
-              className="inline-flex items-center justify-center gap-2 rounded-full border border-cyan-400/30 bg-white/[0.04] px-5 py-2 text-xs font-extrabold uppercase tracking-wider text-cyan-300 backdrop-blur-sm transition-all hover:bg-cyan-950/40 hover:border-cyan-400/50 active:scale-95 shadow-[0_0_15px_rgba(26,186,255,0.15)] cursor-pointer"
+              role="tab"
+              id={`${topicId}-tab-${index}`}
+              aria-controls={`${topicId}-panel-${index}`}
+              aria-selected={mobileTopic === index}
+              tabIndex={mobileTopic === index ? 0 : -1}
+              className="group relative flex min-h-[60px] cursor-pointer flex-col items-start gap-2 border-b border-[var(--line)] bg-transparent pt-2.5 pb-[13px] text-left font-[family-name:var(--font-heading)] text-[12px] leading-[normal] font-semibold text-[var(--muted)] transition-colors duration-200 after:absolute after:inset-x-0 after:bottom-[-1px] after:h-0.5 after:origin-left after:scale-x-0 after:bg-[var(--blue)] after:transition-transform after:duration-[250ms] after:content-[''] aria-selected:text-[var(--blue-light)] aria-selected:after:scale-x-100 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[var(--blue)] motion-reduce:transition-none motion-reduce:after:transition-none"
+              onClick={() => setMobileTopic(index)}
+              onKeyDown={(event) => {
+                let next = index;
+                if (event.key === "ArrowRight") next = (index + 1) % mobileTopics.length;
+                else if (event.key === "ArrowLeft") next = (index + mobileTopics.length - 1) % mobileTopics.length;
+                else if (event.key === "Home") next = 0;
+                else if (event.key === "End") next = mobileTopics.length - 1;
+                else return;
+                event.preventDefault();
+                setMobileTopic(next);
+                topicRefs.current[next]?.focus();
+              }}
             >
-              {showAllMobile ? (
-                <>Show Fewer Questions ↑</>
-              ) : (
-                <>View all 12 questions (6 more) ↓</>
-              )}
+              <span className="font-mono text-[8px] leading-[normal] font-normal opacity-60 group-aria-selected:opacity-100" aria-hidden="true">0{index + 1}</span>
+              <span>{topic.label}</span>
             </button>
+          ))}
+        </div>
+        {mobileTopics.map((topic, index) => (
+          <div
+            key={topic.label}
+            id={`${topicId}-panel-${index}`}
+            role="tabpanel"
+            aria-labelledby={`${topicId}-tab-${index}`}
+            hidden={mobileTopic !== index}
+            tabIndex={0}
+            className="min-h-[216px] focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[var(--blue)] [&>div]:border-t-0"
+          >
+            <UnfoldAccordion items={topic.indices.map((questionIndex) => questions[questionIndex])} />
           </div>
-        )}
+        ))}
       </div>
 
       {/* Desktop view: 100% same as before */}

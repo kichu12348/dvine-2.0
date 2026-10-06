@@ -1,4 +1,11 @@
+"use client";
+
+import { useLayoutEffect, useRef } from "react";
+import gsap from "gsap";
+import { ScrollTrigger } from "gsap/ScrollTrigger";
 import AnatomyButton from "./ui/AnatomyButton";
+
+gsap.registerPlugin(ScrollTrigger);
 
 const footerNav = [
   { label: "About", href: "#about-event" },
@@ -59,6 +66,43 @@ function InstagramIcon({ className }: { className?: string }) {
 
 export default function Footer() {
   const year = new Date().getFullYear();
+  const wordmarkRef = useRef<HTMLParagraphElement>(null);
+
+  useLayoutEffect(() => {
+    const wordmark = wordmarkRef.current;
+    if (!wordmark) return;
+
+    const context = gsap.context(() => {
+      const reduceMotion = window.matchMedia(
+        "(prefers-reduced-motion: reduce)",
+      ).matches;
+
+      if (reduceMotion) {
+        gsap.set(wordmark, {
+          backgroundSize: "100% 100%",
+          webkitTextStrokeColor: "transparent",
+        });
+        return;
+      }
+
+      const fill = gsap.timeline({ paused: true });
+      fill.to(wordmark, {
+        backgroundSize: "100% 100%",
+        webkitTextStrokeColor: "transparent",
+        duration: 1.2,
+        ease: "power2.out",
+      });
+
+      ScrollTrigger.create({
+        trigger: wordmark,
+        start: "bottom bottom",
+        once: true,
+        onEnter: () => fill.play(),
+      });
+    }, wordmark);
+
+    return () => context.revert();
+  }, []);
 
   return (
     <footer
@@ -131,7 +175,8 @@ export default function Footer() {
       <div className="relative overflow-hidden px-6 pb-6 pt-0 sm:px-8 sm:pb-8 md:px-12">
         <p
           aria-hidden="true"
-          className="select-none whitespace-nowrap bg-[linear-gradient(90deg,#2D86CE_0%,#2D86CE_18%,#A3E0FC_23%,#fff_31%,#fff_100%)] bg-clip-text text-center font-[family-name:var(--font-owners)] text-[clamp(3.1rem,15.5vw,16rem)] font-black uppercase leading-[0.85] tracking-[-0.04em] text-transparent transition-transform duration-500 hover:scale-[1.015]"
+          ref={wordmarkRef}
+          className="footer-wordmark select-none whitespace-nowrap bg-[linear-gradient(90deg,#2D86CE_0%,#2D86CE_18%,#A3E0FC_23%,#fff_31%,#fff_100%)] bg-clip-text text-center font-[family-name:var(--font-owners)] text-[clamp(3.1rem,15.5vw,16rem)] font-black uppercase leading-[0.85] tracking-[-0.04em] text-transparent"
         >
           D&apos;vine <span className="font-[family-name:var(--font-heading)]">2.0</span>
         </p>

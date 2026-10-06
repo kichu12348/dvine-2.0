@@ -111,7 +111,7 @@ export default function Hero() {
           <AnatomyButton href="/register">REGISTER NOW</AnatomyButton>
           <a
             href="#about-event"
-            className="inline-flex items-center justify-center gap-2 rounded-full border border-white/15 bg-white/[0.04] px-6 py-3 text-xs sm:text-sm font-bold uppercase tracking-wider text-[#c2d7e9] backdrop-blur-sm transition-all duration-200 hover:bg-white/10 hover:border-cyan-400/40 hover:text-white active:scale-95"
+            className="inline-flex items-center justify-center gap-2 rounded-xl border border-white/15 bg-white/[0.04] px-6 py-3 text-xs sm:text-sm font-bold uppercase tracking-wider text-[#c2d7e9] backdrop-blur-sm transition-all duration-200 hover:bg-white/10 hover:border-cyan-400/40 hover:text-white active:scale-95"
           >
             Explore Event
             <svg

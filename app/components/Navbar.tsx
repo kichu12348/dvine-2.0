@@ -1,8 +1,10 @@
 "use client";
 
 import { useEffect, useRef, useState, type CSSProperties } from "react";
+import Image from "next/image";
 import Letter3DSwap from "./ui/Letter3DSwap";
 import AnatomyButton from "./ui/AnatomyButton";
+import ScrollProgress from "./ScrollProgress";
 
 /* Primary destinations — the big stacked list inside the overlay */
 const primaryLinks = [
@@ -129,7 +131,7 @@ export default function NavbarMenu() {
 
   return (
     <>
-      {/* Bare top bar: Menu (left) / wordmark (centre, open only) / Register (right) */}
+      {/* Bare top bar: Menu (left) / logo (centre, open only) / Register (right) */}
       <header className="fixed inset-x-0 top-0 z-50">
         {/* Soft top scrim — imperceptible over dark sections, keeps the bar legible over light bands */}
         <div
@@ -149,21 +151,22 @@ export default function NavbarMenu() {
             {menuOpen ? "Close" : "Menu"}
           </button>
 
-          {/* Wordmark takes centre stage only while the menu is open */}
+          {/* Logo takes centre stage only while the menu is open */}
           {menuOpen && (
             <a
               href="#hero"
               onClick={handleNavClick}
               aria-label="D'VINE 2.0 — back to the top"
-              className={`${menuClosing ? "menu-fade-out" : "menu-fade"} group absolute left-1/2 top-1/2 flex -translate-x-1/2 -translate-y-1/2 items-baseline gap-1`}
+              className={`${menuClosing ? "menu-fade-out" : "menu-fade"} group absolute left-1/2 top-1/2 flex -translate-x-1/2 -translate-y-1/2 items-center`}
               style={{ animationDelay: menuClosing ? "200ms" : "400ms" }}
             >
-              <span className="font-[family-name:var(--font-owners)] bg-[linear-gradient(100deg,#ffffff_5%,#A3E0FC_55%,#1abaff_100%)] bg-clip-text text-[1.15rem] font-black uppercase leading-none tracking-[-0.03em] text-transparent transition-[filter] duration-300 group-hover:drop-shadow-[0_0_16px_rgba(26,186,255,0.55)] sm:text-[1.3rem]">
-                D&apos;Vine
-              </span>
-              <span className="font-[family-name:var(--font-heading)] text-[0.7rem] font-black leading-none text-[var(--blue)] sm:text-[0.8rem]">
-                2.0
-              </span>
+              <Image
+                src="/dvine.svg"
+                alt="D'VINE 2.0"
+                width={831}
+                height={322}
+                className="h-7 w-auto transition-[filter] duration-300 group-hover:drop-shadow-[0_0_16px_rgba(26,186,255,0.55)] sm:h-8"
+              />
             </a>
           )}
 
@@ -174,7 +177,9 @@ export default function NavbarMenu() {
         </div>
       </header>
 
-      {/* Fullscreen takeover: low-opacity veil that circles out of the Menu button (origin vars set in openMenu) */}
+      <ScrollProgress menuOpen={menuOpen} />
+
+      {/* Fullscreen takeover: glass veil that circles out of the Menu button (origin vars set in openMenu) */}
       {menuOpen && (
         <div
           id="site-menu"

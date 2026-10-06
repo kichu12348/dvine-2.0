@@ -1,10 +1,23 @@
+"use client";
+
+import { useLayoutEffect, useRef } from "react";
+import { gsap } from "gsap";
+import { ScrollTrigger } from "gsap/ScrollTrigger";
 import DitherStage from "./DitherStage";
 import Reveal from "./Reveal";
 
 const highlights = [
   { value: "24", label: "Hours" },
   { value: "02", label: "Per team" },
-  { value: "₹2L", label: "Prize pool" },
+  { value: "₹X", label: "Prize pool" },
+];
+
+/* Title lockup: three tightly-set words (no spaces between them, by design).
+   Split into per-character spans so each letter can rise independently. */
+const titleWords = [
+  { text: "ABOUT", className: "block text-stroke-huge md:inline" },
+  { text: "the", className: "block text-[var(--text)] md:inline" },
+  { text: "EVENT", className: "block text-stroke-huge md:inline" },
 ];
 
 /** Hairline rule used to separate words in the subheadline. */
@@ -18,6 +31,55 @@ function Divider() {
 }
 
 export default function AboutEvent() {
+  const titleRef = useRef<HTMLHeadingElement>(null);
+
+  /* Scroll-scrubbed letter cascade — chars rise and fade in as the title
+     travels from 75% to 15% of the viewport, so the reveal plays through
+     screen center instead of finishing before the title is reached.
+     Under prefers-reduced-motion the tween is never created and the title
+     stays static. */
+  useLayoutEffect(() => {
+    gsap.registerPlugin(ScrollTrigger);
+    const title = titleRef.current;
+    if (!title) return;
+
+    const media = gsap.matchMedia();
+    media.add(
+      "(prefers-reduced-motion: no-preference)",
+      () => {
+        const chars = title.querySelectorAll<HTMLElement>("[data-title-char]");
+        gsap.fromTo(
+          chars,
+          { yPercent: 115, opacity: 0 },
+          {
+            yPercent: 0,
+            opacity: 1,
+            ease: "power2.out",
+            stagger: 0.035,
+            force3D: true,
+            willChange: "transform, opacity",
+            scrollTrigger: {
+              trigger: title,
+              start: "top 75%",
+              end: "top 15%",
+              scrub: 0.2,
+            },
+          },
+        );
+      },
+      title,
+    );
+
+    let cancelled = false;
+    document.fonts.ready.then(() => {
+      if (!cancelled) ScrollTrigger.refresh();
+    });
+    return () => {
+      cancelled = true;
+      media.revert();
+    };
+  }, []);
+
   return (
     <section
       id="about-event"
@@ -29,11 +91,23 @@ export default function AboutEvent() {
         <div className="relative mb-12 border-b border-[var(--line)] pb-8 transition-colors duration-300 hover:border-[var(--line-strong)] sm:mb-16">
           <h2
             id="about-event-title"
-            className="select-none font-[family-name:var(--font-heading)] text-[clamp(3.8rem,14vw,11rem)] font-black tracking-[-0.05em] leading-[0.88] text-center md:text-left"
+            ref={titleRef}
+            aria-label="ABOUT the EVENT"
+            className="select-none whitespace-nowrap font-[family-name:var(--font-heading)] text-[clamp(3.8rem,14vw,11rem)] font-black tracking-[-0.05em] leading-[0.88] text-center md:text-left"
           >
-            <span className="block text-stroke-huge md:inline">ABOUT</span>
-            <span className="block text-[var(--text)] md:inline">the</span>
-            <span className="block text-stroke-huge md:inline">EVENT</span>
+            {titleWords.map((word) => (
+              <span key={word.text} className={word.className}>
+                {Array.from(word.text).map((char, index) => (
+                  <span
+                    key={`${char}-${index}`}
+                    data-title-char
+                    className="inline-block"
+                  >
+                    {char}
+                  </span>
+                ))}
+              </span>
+            ))}
           </h2>
         </div>
 

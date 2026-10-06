@@ -8,11 +8,21 @@
  * quarter turn (staggered) so the second face swings into view, then snap back
  * to the front face so the effect can replay. Adaptations from upstream:
  * relative `cn` import, `inline-box` → `inline-block` (not a Tailwind
- * utility), typed children extraction, and a `prefers-reduced-motion` guard —
- * mirroring the global CSS override in `globals.css`.
+ * utility), typed children extraction, a `prefers-reduced-motion` guard —
+ * mirroring the global CSS override in `globals.css` — and a capability
+ * guard that skips the per-character 3D DOM entirely when there is no fine
+ * hover pointer (touch) or motion is reduced: the swap never plays there,
+ * yet mounting ~2 transformed spans per link is the biggest cost when the
+ * fullscreen menu opens on mobile.
  */
 
-import React, { ElementType, useCallback, useMemo, useState } from "react";
+import React, {
+  ElementType,
+  useCallback,
+  useEffect,
+  useMemo,
+  useState,
+} from "react";
 import {
   useAnimate,
   type AnimationOptions,
@@ -141,6 +151,27 @@ const Letter3DSwap = ({
   const [isAnimating, setIsAnimating] = useState(false);
   const [isHovering, setIsHovering] = useState(false);
   const [scope, animate] = useAnimate();
+  /* The 3D boxes only ever move on hover, so they are pointless on touch
+     devices — and expensive: every character is ~2 backface-hidden, 3D-transformed
+     spans plus a motion animation scope. Render plain text until a fine hover
+     pointer (and motion-friendly preference) is confirmed. SSR/tap on mobile
+     never pays that mount cost; desktop upgrades right after hydration, while
+     the menu is still closed. */
+  const [enhanced, setEnhanced] = useState(false);
+
+  useEffect(() => {
+    const hoverQuery = window.matchMedia("(hover: hover) and (pointer: fine)");
+    const motionQuery = window.matchMedia("(prefers-reduced-motion: reduce)");
+    const sync = () =>
+      setEnhanced(hoverQuery.matches && !motionQuery.matches);
+    sync();
+    hoverQuery.addEventListener("change", sync);
+    motionQuery.addEventListener("change", sync);
+    return () => {
+      hoverQuery.removeEventListener("change", sync);
+      motionQuery.removeEventListener("change", sync);
+    };
+  }, []);
 
   // Determine rotation transform based on direction
   const rotationTransform = (() => {
@@ -250,10 +281,20 @@ const Letter3DSwap = ({
   }, []);
 
   const ElementTag = as ?? "p";
+  const containerClassName = cn("flex flex-wrap relative", mainClassName);
+
+  /* Capability fallback: identical resting visuals, without the 3D DOM */
+  if (!enhanced) {
+    return (
+      <ElementTag className={containerClassName} {...props}>
+        {children}
+      </ElementTag>
+    );
+  }
 
   return (
     <ElementTag
-      className={cn("flex flex-wrap relative", mainClassName)}
+      className={containerClassName}
       onMouseEnter={handleHoverStart}
       onMouseLeave={handleHoverEnd}
       ref={scope}
