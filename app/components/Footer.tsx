@@ -11,7 +11,6 @@ const footerNav = [
   { label: "About", href: "#about-event" },
   { label: "Organizers", href: "#about-organizers" },
   { label: "Prizepool", href: "#prizepool" },
-  { label: "Partners", href: "#partners" },
   { label: "Schedule", href: "#schedule" },
   { label: "FAQ", href: "#faq" },
 ];
@@ -65,7 +64,6 @@ function InstagramIcon({ className }: { className?: string }) {
 }
 
 export default function Footer() {
-  const year = new Date().getFullYear();
   const wordmarkRef = useRef<HTMLParagraphElement>(null);
 
   useLayoutEffect(() => {

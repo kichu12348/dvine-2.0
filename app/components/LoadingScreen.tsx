@@ -5,11 +5,13 @@ import { gsap } from "gsap";
 import DvineLogoStroke from "./ui/dvine-logo-stroke";
 
 export interface LoadingScreenProps {
+  /** Callback fired when the curtain starts revealing the hero */
+  onReveal?: () => void;
   /** Callback fired when the transition to hero finishes */
   onComplete?: () => void;
 }
 
-export default function LoadingScreen({ onComplete }: LoadingScreenProps) {
+export default function LoadingScreen({ onReveal, onComplete }: LoadingScreenProps) {
   const containerRef = useRef<HTMLDivElement | null>(null);
   const zoomTargetRef = useRef<HTMLDivElement | null>(null);
   const blueFloodRef = useRef<HTMLDivElement | null>(null);
@@ -92,12 +94,13 @@ export default function LoadingScreen({ onComplete }: LoadingScreenProps) {
 
     // 4. Reveal the Hero: smooth cinematic fade-out of the blue curtain
     tl.to(containerRef.current, {
+      onStart: () => onReveal?.(),
       opacity: 0,
       scale: 1.04,
       duration: 0.65,
       ease: "power2.out",
     });
-  }, [finishLoading]);
+  }, [finishLoading, onReveal]);
 
   if (isComplete) {
     return null;

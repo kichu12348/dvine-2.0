@@ -11,7 +11,6 @@ const primaryLinks = [
   { label: "About", href: "#about-event" },
   { label: "Organizers", href: "#about-organizers" },
   { label: "Prizepool", href: "#prizepool" },
-  { label: "Partners", href: "#partners" },
   { label: "Schedule", href: "#schedule" },
   { label: "FAQ", href: "#faq" },
 ];

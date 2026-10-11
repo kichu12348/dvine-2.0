@@ -1,4 +1,4 @@
-export const BASE_URL = process.env.NEXT_PUBLIC_API_URL!;
+export const BASE_URL = process.env.NEXT_PUBLIC_WEB_BASE_URL!;
 
 export const API_ENDPOINTS = {
   // Seat Availability

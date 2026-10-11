@@ -1,0 +1,27 @@
+.background {
+  position: absolute;
+  z-index: -2;
+  inset: 0;
+  overflow: hidden;
+  pointer-events: none;
+  background:
+    radial-gradient(ellipse at 50% 45%, #087fff20, transparent 65%),
+    radial-gradient(ellipse at 20% 75%, #00baff0d, transparent 55%);
+}
+
+.shade {
+  position: absolute;
+  inset: 0;
+  background:
+    linear-gradient(180deg, var(--ink), transparent 18%, transparent 78%, var(--ink)),
+    radial-gradient(ellipse at center, #02081735 15%, transparent 65%, #02081790);
+}
+
+@media (max-width: 760px) {
+  .shade {
+    background:
+      linear-gradient(180deg, var(--ink), transparent 20%, transparent 75%, var(--ink)),
+      radial-gradient(ellipse at center, #02081735, transparent 75%);
+  }
+
+}
