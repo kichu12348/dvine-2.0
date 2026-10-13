@@ -120,7 +120,6 @@ export default function Footer() {
 
       {/* Editorial footer: identity header, statement, and navigation matrix */}
       <div className="mx-auto w-full max-w-[1240px] px-6 pb-10 pt-10 sm:px-8 md:px-12 md:pt-12">
-
         <div className="grid gap-7 py-9 md:grid-cols-[minmax(0,1fr)_auto] md:items-end md:gap-16 md:py-12">
           <p className="max-w-[48rem] font-[family-name:var(--font-heading)] text-[clamp(2.2rem,6vw,5.5rem)] font-medium leading-[0.94] tracking-[-0.07em] text-[var(--text)]">
             Make ideas
@@ -132,9 +131,7 @@ export default function Footer() {
             <p className="max-w-[15rem] text-center text-sm leading-5 text-[var(--muted)] md:text-right">
               A 24-hour designathon for ideas that deserve to be felt.
             </p>
-            <AnatomyButton href="#schedule">
-              Join us
-            </AnatomyButton>
+            <AnatomyButton href="#schedule">Join us</AnatomyButton>
           </div>
         </div>
 
@@ -142,26 +139,45 @@ export default function Footer() {
           <p className="text-[0.65rem] font-bold uppercase tracking-[0.28em] text-[var(--muted)]/50">
             Explore
           </p>
-          <nav aria-label="Footer navigation" className="grid grid-cols-2 gap-x-8 gap-y-3 sm:grid-cols-3">
+          <nav
+            aria-label="Footer navigation"
+            className="grid grid-cols-2 gap-x-8 gap-y-3 sm:grid-cols-3"
+          >
             {footerNav.map((item, index) => (
               <a
                 key={item.href}
                 href={item.href}
                 className="group flex items-center gap-3 text-sm text-[var(--muted)] transition-colors duration-300 hover:text-[var(--text)] focus-visible:text-[var(--text)]"
               >
-                <span className="font-mono text-[0.6rem] text-[var(--blue)]/70">0{index + 1}</span>
+                <span className="font-mono text-[0.6rem] text-[var(--blue)]/70">
+                  0{index + 1}
+                </span>
                 <span className="relative">
                   {item.label}
                   <span className="absolute -bottom-1 left-0 h-px w-0 bg-[var(--blue-light)] transition-all duration-300 group-hover:w-full group-focus-visible:w-full" />
                 </span>
-                <span className="-translate-x-1 opacity-0 transition-all duration-300 group-hover:translate-x-0 group-hover:opacity-100">↗</span>
+                <span className="-translate-x-1 opacity-0 transition-all duration-300 group-hover:translate-x-0 group-hover:opacity-100">
+                  ↗
+                </span>
               </a>
             ))}
           </nav>
           <div className="flex flex-col gap-3 text-sm text-[var(--muted)] sm:items-end">
-            <p className="text-[0.65rem] font-bold uppercase tracking-[0.28em] text-[var(--muted)]/50">Connect</p>
-            <a href="mailto:hello@dvine.in" className="transition-colors duration-300 hover:text-[var(--blue-light)]">hello@dvine.in</a>
-            <a href="https://instagram.com" target="_blank" rel="noopener noreferrer" className="group inline-flex items-center gap-2 transition-colors duration-300 hover:text-[var(--blue-light)]">
+            <p className="text-[0.65rem] font-bold uppercase tracking-[0.28em] text-[var(--muted)]/50">
+              Connect
+            </p>
+            <a
+              href="mailto:info@dvine.live"
+              className="transition-colors duration-300 hover:text-[var(--blue-light)]"
+            >
+              info@dvine.in
+            </a>
+            <a
+              href="https://instagram.com/dvine.cec"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="group inline-flex items-center gap-2 transition-colors duration-300 hover:text-[var(--blue-light)]"
+            >
               <InstagramIcon className="size-4 transition-transform duration-300 group-hover:rotate-12 group-hover:scale-110" />
               Instagram
             </a>
@@ -176,10 +192,10 @@ export default function Footer() {
           ref={wordmarkRef}
           className="footer-wordmark select-none whitespace-nowrap bg-[linear-gradient(90deg,#2D86CE_0%,#2D86CE_18%,#A3E0FC_23%,#fff_31%,#fff_100%)] bg-clip-text text-center font-[family-name:var(--font-owners)] text-[clamp(3.1rem,15.5vw,16rem)] font-black uppercase leading-[0.85] tracking-[-0.04em] text-transparent"
         >
-          D&apos;vine <span className="font-[family-name:var(--font-heading)]">2.0</span>
+          D&apos;vine{" "}
+          <span className="font-[family-name:var(--font-heading)]">2.0</span>
         </p>
       </div>
-
     </footer>
   );
 }
