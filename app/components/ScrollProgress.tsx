@@ -11,19 +11,34 @@ export default function ScrollProgress({ menuOpen = false }: { menuOpen?: boolea
     if (!indicator) return;
     let frame = 0;
     let previousPercent = -1;
+    let previousProgress = -1;
+    let previousHidden: boolean | undefined;
+    let layoutDirty = true;
+    let distance = 0;
+    const scroller = document.scrollingElement ?? document.documentElement;
 
     const update = () => {
       frame = 0;
-      const scroller = document.scrollingElement ?? document.documentElement;
-      const distance = scroller.scrollHeight - scroller.clientHeight;
+      if (layoutDirty) {
+        distance = scroller.scrollHeight - scroller.clientHeight;
+        layoutDirty = false;
+      }
+      const scrollTop = scroller.scrollTop;
       // Browsers can stop a fraction of a pixel short of the bottom.
-      const progress = distance <= 0 || scroller.scrollTop < 1 ? 0
-        : distance - scroller.scrollTop <= 1 ? 1
-        : Math.min(1, Math.max(0, scroller.scrollTop / distance));
+      const progress = distance <= 0 || scrollTop < 1 ? 0
+        : distance - scrollTop <= 1 ? 1
+        : Math.min(1, Math.max(0, scrollTop / distance));
       const percent = Math.round(progress * 100);
 
-      indicator.hidden = distance <= 0;
-      indicator.style.setProperty("--scroll-progress", String(progress));
+      const hidden = distance <= 0;
+      if (hidden !== previousHidden) {
+        indicator.hidden = hidden;
+        previousHidden = hidden;
+      }
+      if (progress !== previousProgress) {
+        indicator.style.setProperty("--scroll-progress", String(progress));
+        previousProgress = progress;
+      }
       if (percent !== previousPercent) {
         indicator.setAttribute("aria-valuenow", String(percent));
         indicator.setAttribute("aria-valuetext", `${percent}% of page explored`);
@@ -32,19 +47,23 @@ export default function ScrollProgress({ menuOpen = false }: { menuOpen?: boolea
       }
     };
     const requestUpdate = () => { if (!frame) frame = requestAnimationFrame(update); };
-    const observer = new ResizeObserver(requestUpdate);
+    const invalidateLayout = () => {
+      layoutDirty = true;
+      requestUpdate();
+    };
+    const observer = new ResizeObserver(invalidateLayout);
     observer.observe(document.body);
     window.addEventListener("scroll", requestUpdate, { passive: true });
-    window.addEventListener("resize", requestUpdate);
-    document.addEventListener("load", requestUpdate, true);
+    window.addEventListener("resize", invalidateLayout);
+    document.addEventListener("load", invalidateLayout, true);
     requestUpdate();
 
     return () => {
       cancelAnimationFrame(frame);
       observer.disconnect();
       window.removeEventListener("scroll", requestUpdate);
-      window.removeEventListener("resize", requestUpdate);
-      document.removeEventListener("load", requestUpdate, true);
+      window.removeEventListener("resize", invalidateLayout);
+      document.removeEventListener("load", invalidateLayout, true);
     };
   }, []);
 

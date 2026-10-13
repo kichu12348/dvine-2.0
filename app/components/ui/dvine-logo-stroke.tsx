@@ -83,20 +83,21 @@ export const DvineLogoStroke = ({
       return undefined;
     }
 
-    // Set initial dasharray & dashoffset based on real computed path length
-    strokePaths.forEach((path) => {
+    // Read every path length before GSAP writes styles, avoiding alternating
+    // geometry reads and writes during the first animation frame.
+    const strokeLengths = Array.from(strokePaths, (path) => {
       try {
-        const len = path.getTotalLength();
-        gsap.set(path, {
-          strokeDasharray: len + 1,
-          strokeDashoffset: len + 1,
-        });
+        return path.getTotalLength() + 1;
       } catch {
-        gsap.set(path, {
-          strokeDasharray: 1200,
-          strokeDashoffset: 1200,
-        });
+        return 1200;
       }
+    });
+
+    strokePaths.forEach((path, index) => {
+      gsap.set(path, {
+        strokeDasharray: strokeLengths[index],
+        strokeDashoffset: strokeLengths[index],
+      });
     });
 
     if (wipeRect) {

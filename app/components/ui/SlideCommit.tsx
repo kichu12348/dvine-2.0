@@ -183,8 +183,6 @@ export const SlideCommit: React.FC<SlideCommitProps> = ({
     const el = trackRef.current || rootRef.current;
     if (!el) return;
 
-    updateFromEl();
-
     let ro: ResizeObserver | null = null;
     if (typeof ResizeObserver !== "undefined") {
       ro = new ResizeObserver((entries) => {
@@ -196,9 +194,10 @@ export const SlideCommit: React.FC<SlideCommitProps> = ({
         }
       });
       ro.observe(el);
+    } else {
+      window.addEventListener("resize", updateFromEl);
     }
 
-    window.addEventListener("resize", updateFromEl);
     return () => {
       ro?.disconnect();
       window.removeEventListener("resize", updateFromEl);
@@ -210,10 +209,10 @@ export const SlideCommit: React.FC<SlideCommitProps> = ({
   const INNER = Math.max(GRIP, effectiveWidth - PAD * 2);
   const TRAVEL = Math.max(1, INNER - GRIP);
 
-  const innerRef = useRef(INNER);
-  innerRef.current = INNER;
   const travelRef = useRef(TRAVEL);
-  travelRef.current = TRAVEL;
+  useLayoutEffect(() => {
+    travelRef.current = TRAVEL;
+  }, [TRAVEL]);
 
   // Curved pill edges: radius is half the height
   const r = radius !== undefined ? clamp(radius, 0, height / 2) : height / 2;
@@ -240,21 +239,21 @@ export const SlideCommit: React.FC<SlideCommitProps> = ({
   const pulse = useMotionValue(1);
   const shake = useMotionValue(0);
 
-  const seen = useTransform(x, (v) => clamp(v, 0, travelRef.current));
+  const seen = useTransform(x, (v) => clamp(v, 0, TRAVEL));
   const edge = useTransform(
     [seen, anchor],
-    ([v, a]: number[]) => v + GRIP + clamp(a - v, 0, travelRef.current),
+    ([v, a]: number[]) => v + GRIP + clamp(a - v, 0, TRAVEL),
   );
 
   // Clip is rounded pill inset computed dynamically from latest measured inner width
   const clip = useTransform(
     edge,
     (R) =>
-      `inset(0 ${Math.max(0, innerRef.current - R)}px 0 0 round ${gripR}px)`,
+      `inset(0 ${Math.max(0, INNER - R)}px 0 0 round ${gripR}px)`,
   );
   const content = useTransform(
     [seen, edge],
-    ([v, R]: number[]) => `translateX(${(v + R) / 2 - innerRef.current / 2}px)`,
+    ([v, R]: number[]) => `translateX(${(v + R) / 2 - INNER / 2}px)`,
   );
 
   const swell = hot && !held && phase === "idle" && !reduce ? SWELL : 1;
@@ -460,7 +459,9 @@ export const SlideCommit: React.FC<SlideCommitProps> = ({
     if (x.get() >= travelRef.current * 0.85) commit(false);
     else if (g.moved) goHome(velocityOf(g.hist));
   };
-  live.current = { move, up };
+  useLayoutEffect(() => {
+    live.current = { move, up };
+  });
 
   const onKeyDown = (e: React.KeyboardEvent<HTMLDivElement>) => {
     if (disabled || phase === "pending" || phase === "done") return;

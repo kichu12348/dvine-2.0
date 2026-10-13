@@ -1,13 +1,6 @@
 import type { Metadata } from "next";
 import { Space_Grotesk, Inter } from "next/font/google";
-import localFont from "next/font/local";
 import "./globals.css";
-
-const owners = localFont({
-  src: "../public/assets/owners.ttf",
-  variable: "--font-owners",
-  display: "swap",
-});
 
 const spaceGrotesk = Space_Grotesk({
   subsets: ["latin"],

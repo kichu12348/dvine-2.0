@@ -3,8 +3,8 @@
 import { useId, useLayoutEffect, useRef, useState } from "react";
 import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
+import { scheduleScrollTriggerRefresh } from "../lib/refresh-scroll-triggers";
 import {
-  ArrowDown,
   ArrowDownRight,
   ArrowUpRight,
   Coffee,
@@ -483,6 +483,18 @@ export default function Schedule() {
     const articles = Array.from(
       root.querySelectorAll<HTMLElement>("[data-chapter]"),
     );
+    let chapterTops: number[] = [];
+    let chapterBoundary = window.innerHeight * 0.55;
+    const updateActiveChapter = (scrollTop: number) => {
+      let next = 0;
+      chapterTops.forEach((top, index) => {
+        if (top - scrollTop < chapterBoundary) next = index;
+      });
+      if (activeRef.current !== next) {
+        activeRef.current = next;
+        setActive(next);
+      }
+    };
 
     // Track the section in every motion mode. No tabs hide schedule content.
     const stateContext = gsap.context(() => {
@@ -490,17 +502,17 @@ export default function Schedule() {
         trigger: root.querySelector("[data-journey]"),
         start: "top 55%",
         end: "bottom 55%",
-        onUpdate: () => {
-          let next = 0;
-          articles.forEach((article, index) => {
-            if (article.getBoundingClientRect().top < window.innerHeight * 0.55)
-              next = index;
-          });
-          if (activeRef.current !== next) {
-            activeRef.current = next;
-            setActive(next);
-          }
+        // Chapter containers stay in normal flow. Measure their positions only
+        // when ScrollTrigger recalculates layout, not on every scroll frame.
+        onRefresh: (self) => {
+          const scrollTop = self.scroll();
+          chapterBoundary = window.innerHeight * 0.55;
+          chapterTops = articles.map(
+            (article) => article.getBoundingClientRect().top + scrollTop,
+          );
+          updateActiveChapter(scrollTop);
         },
+        onUpdate: (self) => updateActiveChapter(self.scroll()),
       });
     }, root);
 
@@ -708,7 +720,7 @@ export default function Schedule() {
     // Font loading and the site's intro can change initial measurements.
     let cancelled = false;
     document.fonts.ready.then(() => {
-      if (!cancelled) ScrollTrigger.refresh();
+      if (!cancelled) scheduleScrollTriggerRefresh();
     });
     return () => {
       cancelled = true;

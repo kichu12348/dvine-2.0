@@ -45,10 +45,10 @@ const fitScale = (w, h, iw, ih, contain) => {
   return ratio > 1 ? [1, 1 / ratio] : [ratio, 1];
 };
 
-const wanderAt = (t, w, h) => [
-  w * (0.5 + 0.33 * Math.sin(t * 0.53) + 0.08 * Math.sin(t * 1.31 + 0.6)),
-  h * (0.5 + 0.28 * Math.sin(t * 0.71 + 1.1) + 0.07 * Math.cos(t * 1.57))
-];
+const wanderAt = (t, w, h, point) => {
+  point[0] = w * (0.5 + 0.33 * Math.sin(t * 0.53) + 0.08 * Math.sin(t * 1.31 + 0.6));
+  point[1] = h * (0.5 + 0.28 * Math.sin(t * 0.71 + 1.1) + 0.07 * Math.cos(t * 1.57));
+};
 
 const measureEdge = (context, image) => {
   const size = 32;
@@ -426,11 +426,13 @@ const DitherVeil = ({
     // held back until the surrounding frame has finished animating.
     if (playIntro && !settingsRef.current?.playIntro) introResetRef.current = -1;
     wakeRef.current();
-  });
+  }, [fit, pattern, pixelSize, levels, palette, inkColor, paperColor, contrast, brightness, revealRadius, softness, linger,
+    rimColor, rim, reverse, wander, clickBurst, playIntro]);
 
   useEffect(() => {
     const container = containerRef.current;
     if (!container) return undefined;
+    const loadIntro = settingsRef.current?.playIntro ?? true;
 
     const reducedMotion = window.matchMedia?.('(prefers-reduced-motion: reduce)').matches;
     const renderer = new Renderer({ dpr: Math.min(window.devicePixelRatio || 1, 2), alpha: true, antialias: false });
@@ -516,6 +518,8 @@ const DitherVeil = ({
       new Program(gl, { vertex, fragment, uniforms, depthTest: false, depthWrite: false });
     const maskMesh = new Mesh(gl, { geometry, program: program(maskFragment, maskUniforms) });
     const viewMesh = new Mesh(gl, { geometry, program: program(viewFragment, viewUniforms) });
+    const maskRender = { scene: maskMesh, target: masks[1] };
+    const viewRender = { scene: viewMesh };
 
     const sampler = document.createElement('canvas');
     const samplerContext = sampler.getContext('2d', { willReadFrequently: true });
@@ -526,19 +530,29 @@ const DitherVeil = ({
     let diffusionBlocked = false;
     let width = 1;
     let height = 1;
-    let visible = true;
+    let visible = false;
     let raf = 0;
     let last = performance.now();
     let trailUntil = 0;
     let presence = 0;
     let drift = 0;
+    let appliedSettings = null;
+    let appliedWidth = 0;
+    let appliedHeight = 0;
+    let appliedImage = null;
+    let edgeMeasured = false;
+    let viewDrawn = false;
     const pointer = { x: 0, y: 0, inside: false, fresh: true, placed: false };
     const brush = { x: 0, y: 0, px: 0, py: 0 };
+    const wanderPoint = [0, 0];
     const bursts = [];
 
     const layout = () => {
-      width = Math.max(1, container.clientWidth);
-      height = Math.max(1, container.clientHeight);
+      const nextWidth = Math.max(1, container.clientWidth);
+      const nextHeight = Math.max(1, container.clientHeight);
+      if (nextWidth === width && nextHeight === height && canvas.width > 1) return;
+      width = nextWidth;
+      height = nextHeight;
       renderer.setSize(width, height);
       viewUniforms.uResolution.value = [canvas.width, canvas.height];
       maskUniforms.uSize.value = [width, height];
@@ -614,6 +628,7 @@ const DitherVeil = ({
 
     const frame = now => {
       raf = 0;
+      if (!visible || document.hidden) return;
       const s = settingsRef.current;
       if (!s) return;
       const dt = Math.min(0.05, Math.max(0, (now - last) / 1000));
@@ -624,10 +639,10 @@ const DitherVeil = ({
       let targetY = pointer.y;
       if (!pointer.inside && wanderOn) {
         drift = Math.min(1, drift + dt / 1.2);
-        const [wx, wy] = wanderAt(now / 1000, width, height);
+        wanderAt(now / 1000, width, height, wanderPoint);
         const k = drift * drift * (3 - 2 * drift);
-        targetX += (wx - targetX) * k;
-        targetY += (wy - targetY) * k;
+        targetX += (wanderPoint[0] - targetX) * k;
+        targetY += (wanderPoint[1] - targetY) * k;
       } else {
         drift = 0;
       }
@@ -664,61 +679,82 @@ const DitherVeil = ({
       const minFade = floatMask ? 0 : 1.5 / 255;
       const fade = s.linger > 0 ? dt / s.linger : 1;
       maskUniforms.tPrev.value = masks[0].texture;
-      maskUniforms.uFrom.value = [brush.px, brush.py];
-      maskUniforms.uTo.value = [brush.x, brush.y];
+      maskUniforms.uFrom.value[0] = brush.px;
+      maskUniforms.uFrom.value[1] = brush.py;
+      maskUniforms.uTo.value[0] = brush.x;
+      maskUniforms.uTo.value[1] = brush.y;
       maskUniforms.uRadius.value = s.revealRadius * (0.45 + 0.55 * presence);
       maskUniforms.uSoftness.value = s.softness;
       maskUniforms.uStrength.value = presence;
       maskUniforms.uFade.value = Math.max(fade, minFade);
       viewUniforms.uBurstWidth.value = Math.max(60, s.revealRadius * 0.9);
-      renderer.render({ scene: maskMesh, target: masks[1] });
+      maskRender.target = masks[1];
+      renderer.render(maskRender);
       masks.reverse();
       brush.px = brush.x;
       brush.py = brush.y;
 
       const cell = Math.max(1, Math.round(s.pixelSize * renderer.dpr));
-      if (image) {
-        viewUniforms.uCover.value = fitScale(
-          canvas.width,
-          canvas.height,
-          image.naturalWidth,
-          image.naturalHeight,
-          s.fit === 'contain'
-        );
-      }
-      let patternIndex = ORDERED[s.pattern] ?? 0;
-      if (KERNELS[s.pattern]) {
-        patternIndex = 0;
-        if (image && !diffusionBlocked) {
-          try {
-            updateDiffusion(cell, s);
-            patternIndex = 3;
-          } catch {
-            diffusionBlocked = true;
+      if (s !== appliedSettings || canvas.width !== appliedWidth || canvas.height !== appliedHeight || image !== appliedImage) {
+        // The source, grade, palette and grid are static between prop/size
+        // changes. Preserve their exact values without rebuilding each frame.
+        if (image) {
+          if (!edgeMeasured) {
+            edgeMeasured = true;
+            try {
+              if (samplerContext) {
+                const edge = measureEdge(samplerContext, image);
+                viewUniforms.uMatte.value = edge.matte;
+                viewUniforms.uKey.value = edge.plain ? 1 : 0;
+              }
+            } catch {}
+          }
+          viewUniforms.uCover.value = fitScale(
+            canvas.width,
+            canvas.height,
+            image.naturalWidth,
+            image.naturalHeight,
+            s.fit === 'contain'
+          );
+        }
+        let patternIndex = ORDERED[s.pattern] ?? 0;
+        if (KERNELS[s.pattern]) {
+          patternIndex = 0;
+          if (image && !diffusionBlocked) {
+            try {
+              updateDiffusion(cell, s);
+              patternIndex = 3;
+            } catch {
+              diffusionBlocked = true;
+            }
           }
         }
-      }
-      if (patternIndex === 1 && noiseTexture.width !== 64) {
-        noiseTexture.image = getBlueNoise();
-        noiseTexture.width = 64;
-        noiseTexture.height = 64;
-        noiseTexture.needsUpdate = true;
-      }
+        if (patternIndex === 1 && noiseTexture.width !== 64) {
+          noiseTexture.image = getBlueNoise();
+          noiseTexture.width = 64;
+          noiseTexture.height = 64;
+          noiseTexture.needsUpdate = true;
+        }
 
-      const texelsPerPixel = image ? (viewUniforms.uCover.value[0] * image.naturalWidth) / canvas.width : 1;
+        const texelsPerPixel = image ? (viewUniforms.uCover.value[0] * image.naturalWidth) / canvas.width : 1;
+        viewUniforms.uCell.value = cell;
+        viewUniforms.uLod.value = Math.log2(Math.max(cell * texelsPerPixel, 1));
+        viewUniforms.uPattern.value = patternIndex;
+        viewUniforms.uPalette.value = s.palette === 'rgb' ? 1 : 0;
+        viewUniforms.uLevels.value = Math.max(2, Math.round(s.levels));
+        viewUniforms.uInk.value = hexToRgb(s.inkColor);
+        viewUniforms.uPaper.value = hexToRgb(s.paperColor);
+        viewUniforms.uRimColor.value = hexToRgb(s.rimColor);
+        viewUniforms.uRim.value = Math.min(Math.max(s.rim, 0), 0.95);
+        viewUniforms.uContrast.value = s.contrast;
+        viewUniforms.uBrightness.value = s.brightness;
+        viewUniforms.uReverse.value = s.reverse ? 1 : 0;
+        appliedSettings = s;
+        appliedWidth = canvas.width;
+        appliedHeight = canvas.height;
+        appliedImage = image;
+      }
       viewUniforms.tMask.value = masks[0].texture;
-      viewUniforms.uCell.value = cell;
-      viewUniforms.uLod.value = Math.log2(Math.max(cell * texelsPerPixel, 1));
-      viewUniforms.uPattern.value = patternIndex;
-      viewUniforms.uPalette.value = s.palette === 'rgb' ? 1 : 0;
-      viewUniforms.uLevels.value = Math.max(2, Math.round(s.levels));
-      viewUniforms.uInk.value = hexToRgb(s.inkColor);
-      viewUniforms.uPaper.value = hexToRgb(s.paperColor);
-      viewUniforms.uRimColor.value = hexToRgb(s.rimColor);
-      viewUniforms.uRim.value = Math.min(Math.max(s.rim, 0), 0.95);
-      viewUniforms.uContrast.value = s.contrast;
-      viewUniforms.uBrightness.value = s.brightness;
-      viewUniforms.uReverse.value = s.reverse ? 1 : 0;
       if (image && s.playIntro && introResetRef.current < 0) {
         introStart = now;
         introResetRef.current = 0;
@@ -728,15 +764,20 @@ const DitherVeil = ({
           ? Math.min(1, (now - introStart) / INTRO_MS)
           : 0;
       viewUniforms.uIntro.value = 1 - Math.pow(1 - intro, 2);
-      renderer.render({ scene: viewMesh });
+      // At intro zero every fragment is transparent. Keep accumulating the
+      // same reveal mask, but avoid redrawing a transparent full-size image.
+      if (intro > 0 || viewDrawn) {
+        renderer.render(viewRender);
+        viewDrawn = intro > 0;
+      }
 
       const busy =
         pointer.inside || wanderOn || presence > 0.002 || bursts.length > 0 || now < trailUntil || (image && intro < 1);
-      if (busy && visible) raf = requestAnimationFrame(frame);
+      if (busy && visible && !document.hidden) raf = requestAnimationFrame(frame);
     };
 
     const wake = () => {
-      if (raf || !visible) return;
+      if (raf || !visible || document.hidden) return;
       last = performance.now();
       raf = requestAnimationFrame(frame);
     };
@@ -748,16 +789,9 @@ const DitherVeil = ({
     img.onload = () => {
       image = img;
       imageTexture.image = img;
-      try {
-        if (samplerContext) {
-          const edge = measureEdge(samplerContext, img);
-          viewUniforms.uMatte.value = edge.matte;
-          viewUniforms.uKey.value = edge.plain ? 1 : 0;
-        }
-      } catch {}
       introStart = performance.now();
       // Default to armed; if playIntro is false we hold at uIntro 0 until told otherwise.
-      introResetRef.current = playIntro ? 0 : -1;
+      introResetRef.current = loadIntro ? 0 : -1;
       wake();
     };
     img.src = src;
@@ -799,9 +833,21 @@ const DitherVeil = ({
     resizeObserver.observe(container);
     const intersectionObserver = new IntersectionObserver(([entry]) => {
       visible = entry.isIntersecting;
-      wake();
+      if (visible) wake();
+      else {
+        cancelAnimationFrame(raf);
+        raf = 0;
+      }
     });
     intersectionObserver.observe(container);
+
+    const onVisibilityChange = () => {
+      if (document.hidden) {
+        cancelAnimationFrame(raf);
+        raf = 0;
+      } else wake();
+    };
+    document.addEventListener('visibilitychange', onVisibilityChange);
 
     layout();
     wake();
@@ -811,6 +857,7 @@ const DitherVeil = ({
       wakeRef.current = () => {};
       resizeObserver.disconnect();
       intersectionObserver.disconnect();
+      document.removeEventListener('visibilitychange', onVisibilityChange);
       img.onload = null;
       container.removeEventListener('pointermove', onMove);
       container.removeEventListener('pointerenter', onMove);

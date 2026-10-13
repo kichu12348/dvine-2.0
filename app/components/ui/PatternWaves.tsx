@@ -4,7 +4,7 @@
 // https://github.com/DavidHDev/react-bits/tree/main/src/ts-default/Backgrounds/PatternWaves
 // License: ./PatternWaves.LICENSE.md (MIT + Commons Clause).
 // Local changes: responsive rendering budget, full pause, live motion preference,
-// suspension while the document is hidden, and graceful WebGL fallback.
+// visibility suspension, cached uniforms, and graceful WebGL fallback.
 
 import { useEffect, useMemo, useRef } from 'react';
 import type { CSSProperties } from 'react';
@@ -512,10 +512,6 @@ const PatternWaves = ({
   const settingsRef = useRef<Settings | null>(null);
   const wakeRef = useRef<(() => void) | null>(null);
 
-  const base = SURFACE_PRESETS[preset] || SURFACE_PRESETS.silk;
-  const pick = <K extends keyof PresetValues>(value: PresetValues[K] | undefined, key: K): PresetValues[K] =>
-    value === undefined || value === null ? base[key] : value;
-
   const colors = useMemo(
     () => ({
       color: parseColor(color, [1, 1, 1, 1]),
@@ -524,20 +520,21 @@ const PatternWaves = ({
     [color, backgroundColor]
   );
 
-  useEffect(() => {
-    settingsRef.current = {
+  const settings = useMemo<Settings>(() => {
+    const base = SURFACE_PRESETS[preset] || SURFACE_PRESETS.silk;
+    return {
       ...colors,
-      pattern: pick(pattern, 'pattern'),
-      wave: pick(wave, 'wave'),
-      spacing: pick(spacing, 'spacing'),
-      markSize: pick(markSize, 'markSize'),
-      depth: pick(depth, 'depth'),
-      light: pick(light, 'light'),
-      shine: pick(shine, 'shine'),
-      contrast: pick(contrast, 'contrast'),
-      speed: pick(speed, 'speed'),
-      scale: pick(scale, 'scale'),
-      direction: pick(direction, 'direction'),
+      pattern: pattern ?? base.pattern,
+      wave: wave ?? base.wave,
+      spacing: spacing ?? base.spacing,
+      markSize: markSize ?? base.markSize,
+      depth: depth ?? base.depth,
+      light: light ?? base.light,
+      shine: shine ?? base.shine,
+      contrast: contrast ?? base.contrast,
+      speed: speed ?? base.speed,
+      scale: scale ?? base.scale,
+      direction: direction ?? base.direction,
       opacity,
       fade,
       fadeSize,
@@ -548,8 +545,13 @@ const PatternWaves = ({
       intro,
       paused
     };
+  }, [preset, colors, pattern, wave, spacing, markSize, depth, light, shine, contrast, speed, scale, direction,
+    opacity, fade, fadeSize, characters, interactive, cursorSize, cursorStrength, intro, paused]);
+
+  useEffect(() => {
+    settingsRef.current = settings;
     wakeRef.current?.();
-  });
+  }, [settings]);
 
   useEffect(() => {
     const container = containerRef.current;
@@ -599,7 +601,7 @@ const PatternWaves = ({
         magFilter: gl.LINEAR
       });
 
-    let fieldTarget = fieldTargetFor(1, 1);
+    const fieldTarget = fieldTargetFor(1, 1);
     let ripple: RippleField | null = null;
 
     const atlasTexture = new Texture(gl, {
@@ -687,6 +689,9 @@ const PatternWaves = ({
         depthWrite: false
       })
     });
+    const fieldRender = { scene: fieldMesh, target: fieldTarget };
+    const markRender = { scene: markMesh };
+    const rippleRender = { scene: rippleMesh, target: fieldTarget, clear: false };
 
     if ([fieldMesh, rippleMesh, markMesh].some(mesh => !gl.getProgramParameter(mesh.program.program, gl.LINK_STATUS))) {
       canvas.remove();
@@ -697,8 +702,8 @@ const PatternWaves = ({
     const motionQuery = window.matchMedia('(prefers-reduced-motion: reduce)');
     let reducedMotion = motionQuery.matches;
 
-    let width = 1;
-    let height = 1;
+    let width = 0;
+    let height = 0;
     let raf = 0;
     let last = performance.now();
     let time = 0;
@@ -718,10 +723,15 @@ const PatternWaves = ({
       const h = clamp(Math.ceil(height / RIPPLE_CELL), 4, 512);
       if (ripple && ripple.width === w && ripple.height === h) return;
       if (ripple) {
-        dispose(ripple.read);
-        dispose(ripple.write);
+        ripple.width = w;
+        ripple.height = h;
+        ripple.read.setSize(w, h);
+        ripple.write.setSize(w, h);
+      } else {
+        ripple = { width: w, height: h, read: rippleTargetFor(w, h), write: rippleTargetFor(w, h) };
       }
-      ripple = { width: w, height: h, read: rippleTargetFor(w, h), write: rippleTargetFor(w, h) };
+      rippleUniforms.uTexel.value[0] = 1 / w;
+      rippleUniforms.uTexel.value[1] = 1 / h;
       rippleLive = false;
     };
 
@@ -746,11 +756,19 @@ const PatternWaves = ({
 
     const resize = () => {
       if (!alive) return;
-      width = Math.max(1, container.clientWidth);
-      height = Math.max(1, container.clientHeight);
-      renderer.dpr = Math.min(window.devicePixelRatio || 1, width < 760 ? 1.25 : 1.5, Math.sqrt(PIXEL_BUDGET / (width * height)));
+      const nextWidth = Math.max(1, container.clientWidth);
+      const nextHeight = Math.max(1, container.clientHeight);
+      const dpr = Math.min(window.devicePixelRatio || 1, nextWidth < 760 ? 1.25 : 1.5, Math.sqrt(PIXEL_BUDGET / (nextWidth * nextHeight)));
+      // ResizeObserver also delivers an initial notification after resize().
+      // Reassigning an unchanged canvas size discards its drawing buffer.
+      if (width === nextWidth && height === nextHeight && renderer.dpr === dpr) return;
+      width = nextWidth;
+      height = nextHeight;
+      renderer.dpr = dpr;
       renderer.setSize(width, height);
-      buildRipple();
+      if (ripple) buildRipple();
+      rippleUniforms.uSize.value[0] = width;
+      rippleUniforms.uSize.value[1] = height;
       dirty = true;
       start();
     };
@@ -761,16 +779,17 @@ const PatternWaves = ({
       const moved = Math.hypot(pointer.x - pointer.lastX, pointer.y - pointer.lastY);
       let impulse = (pointer.inside ? Math.min(moved / 14, 1) * 0.35 * strength : 0) + pointer.burst * strength;
       pointer.burst = 0;
-      rippleUniforms.uTexel.value = [1 / field.width, 1 / field.height];
-      rippleUniforms.uSize.value = [width, height];
-      rippleUniforms.uFrom.value = [pointer.lastX, height - pointer.lastY];
-      rippleUniforms.uTo.value = [pointer.x, height - pointer.y];
+      rippleUniforms.uFrom.value[0] = pointer.lastX;
+      rippleUniforms.uFrom.value[1] = height - pointer.lastY;
+      rippleUniforms.uTo.value[0] = pointer.x;
+      rippleUniforms.uTo.value[1] = height - pointer.y;
       rippleUniforms.uRadius.value = clamp(s.cursorSize, 8, 400);
       while (rippleClock >= 1) {
         rippleClock -= 1;
         rippleUniforms.tState.value = field.read.texture;
         rippleUniforms.uImpulse.value = impulse;
-        renderer.render({ scene: rippleMesh, target: field.write, clear: false });
+        rippleRender.target = field.write;
+        renderer.render(rippleRender);
         const next = field.read;
         field.read = field.write;
         field.write = next;
@@ -778,6 +797,62 @@ const PatternWaves = ({
       }
       pointer.lastX = pointer.x;
       pointer.lastY = pointer.y;
+    };
+
+    // Layout, colors and lighting stay fixed between prop/size changes. Keep
+    // their math and vector allocations out of the animation's hot path.
+    const updateUniforms = (s: Settings) => {
+      const patternIndex = PATTERNS[s.pattern] ?? 0;
+      if (patternIndex === 4) refreshAtlas(s);
+
+      const canvasW = gl.canvas.width;
+      const canvasH = gl.canvas.height;
+      const dpr = canvasW / width;
+      const pitchY = Math.max(4, Math.round(clamp(s.spacing, 4, 120) * dpr));
+      const pitchX = patternIndex === 3 ? Math.max(2, Math.round(pitchY / 4)) : pitchY;
+      const cols = Math.min(4096, Math.ceil(canvasW / pitchX) + 1);
+      const rows = Math.min(4096, Math.ceil(canvasH / pitchY) + 2);
+      const origin = [Math.floor((canvasW - cols * pitchX) / 2), Math.floor((canvasH - rows * pitchY) / 2)];
+      fieldTarget.setSize(cols, rows);
+      const heading = (s.direction * Math.PI) / 180;
+      const lightAngle = ((s.direction + 180 + clamp(s.light, -90, 90)) * Math.PI) / 180;
+      const background = s.background;
+      const ink = background[3] > 0.02 ? luminance(s.color) < luminance(background) : luminance(s.color) < 0.5;
+
+      fieldUniforms.uSize.value[0] = width;
+      fieldUniforms.uSize.value[1] = height;
+      fieldUniforms.uDpr.value = dpr;
+      fieldUniforms.uOrigin.value = origin;
+      fieldUniforms.uPitch.value = [pitchX, pitchY];
+      fieldUniforms.uWave.value = WAVES[s.wave] ?? 0;
+      fieldUniforms.uUnit.value = WAVE_UNIT * clamp(s.scale, 0.2, 5);
+      fieldUniforms.uHeading.value[0] = Math.cos(heading);
+      fieldUniforms.uHeading.value[1] = Math.sin(heading);
+      fieldUniforms.uDepth.value = clamp(s.depth, 0, 1.5);
+      fieldUniforms.uLight.value[0] = Math.cos(lightAngle) * 0.78;
+      fieldUniforms.uLight.value[1] = Math.sin(lightAngle) * 0.78;
+      fieldUniforms.uLight.value[2] = 0.62;
+      fieldUniforms.uShine.value = clamp(s.shine, 0, 2);
+      fieldUniforms.uContrast.value = clamp(s.contrast, 0.3, 3);
+      fieldUniforms.uInk.value = ink ? 1 : 0;
+      fieldUniforms.uOpacity.value = clamp(s.opacity, 0, 1);
+      fieldUniforms.uFade.value = FADES[s.fade] ?? 0;
+      fieldUniforms.uFadeSize.value = clamp(s.fadeSize, 0.05, 1);
+
+      markUniforms.uOrigin.value = origin;
+      markUniforms.uPitch.value = fieldUniforms.uPitch.value;
+      markUniforms.uGrid.value[0] = cols;
+      markUniforms.uGrid.value[1] = rows;
+      markUniforms.uPattern.value = patternIndex;
+      markUniforms.uMarkSize.value = clamp(s.markSize, 0.05, 1);
+      markUniforms.uStroke.value = patternIndex === 3 ? 0.9 * dpr : Math.max(1.1 * dpr, pitchY * 0.08);
+      const tint = ink ? 0 : 1;
+      const blend = ink ? 0.35 : 0.55;
+      for (let channel = 0; channel < 3; channel++) {
+        markUniforms.uColor.value[channel] = s.color[channel];
+        markUniforms.uAccent.value[channel] = s.color[channel] + (tint - s.color[channel]) * blend;
+      }
+      markUniforms.uBackground.value = background;
     };
 
     const frame = (now: number) => {
@@ -816,61 +891,14 @@ const PatternWaves = ({
         rippleLive = false;
       }
 
-      const patternIndex = PATTERNS[s.pattern] ?? 0;
-      if (patternIndex === 4) refreshAtlas(s);
-
-      const canvasW = gl.canvas.width;
-      const canvasH = gl.canvas.height;
-      const dpr = canvasW / width;
-      const pitchY = Math.max(4, Math.round(clamp(s.spacing, 4, 120) * dpr));
-      const pitchX = patternIndex === 3 ? Math.max(2, Math.round(pitchY / 4)) : pitchY;
-      const cols = Math.min(4096, Math.ceil(canvasW / pitchX) + 1);
-      const rows = Math.min(4096, Math.ceil(canvasH / pitchY) + 2);
-      const origin = [Math.floor((canvasW - cols * pitchX) / 2), Math.floor((canvasH - rows * pitchY) / 2)];
-      if (fieldTarget.width !== cols || fieldTarget.height !== rows) {
-        dispose(fieldTarget);
-        fieldTarget = fieldTargetFor(cols, rows);
-        markUniforms.tField.value = fieldTarget.texture;
-      }
-      const heading = (s.direction * Math.PI) / 180;
-      const lightAngle = ((s.direction + 180 + clamp(s.light, -90, 90)) * Math.PI) / 180;
-      const background = s.background;
-      const ink = background[3] > 0.02 ? luminance(s.color) < luminance(background) : luminance(s.color) < 0.5;
-
-      fieldUniforms.uSize.value = [width, height];
-      fieldUniforms.uDpr.value = dpr;
-      fieldUniforms.uOrigin.value = origin;
-      fieldUniforms.uPitch.value = [pitchX, pitchY];
-      fieldUniforms.uWave.value = WAVES[s.wave] ?? 0;
+      if (dirty) updateUniforms(s);
       fieldUniforms.uTime.value = time;
-      fieldUniforms.uUnit.value = WAVE_UNIT * clamp(s.scale, 0.2, 5);
-      fieldUniforms.uHeading.value = [Math.cos(heading), Math.sin(heading)];
       fieldUniforms.uAmp.value = amp;
-      fieldUniforms.uDepth.value = clamp(s.depth, 0, 1.5);
-      fieldUniforms.uLight.value = [Math.cos(lightAngle) * 0.78, Math.sin(lightAngle) * 0.78, 0.62];
-      fieldUniforms.uShine.value = clamp(s.shine, 0, 2);
-      fieldUniforms.uContrast.value = clamp(s.contrast, 0.3, 3);
-      fieldUniforms.uInk.value = ink ? 1 : 0;
-      fieldUniforms.uOpacity.value = clamp(s.opacity, 0, 1);
-      fieldUniforms.uFade.value = FADES[s.fade] ?? 0;
-      fieldUniforms.uFadeSize.value = clamp(s.fadeSize, 0.05, 1);
       fieldUniforms.uAppear.value = appear;
       fieldUniforms.tRipple.value = ripple && rippleLive ? ripple.read.texture : blank;
       fieldUniforms.uRipple.value = rippleLive ? 0.32 : 0;
-      renderer.render({ scene: fieldMesh, target: fieldTarget });
-
-      markUniforms.uOrigin.value = origin;
-      markUniforms.uPitch.value = [pitchX, pitchY];
-      markUniforms.uGrid.value = [cols, rows];
-      markUniforms.uPattern.value = patternIndex;
-      markUniforms.uMarkSize.value = clamp(s.markSize, 0.05, 1);
-      markUniforms.uStroke.value = patternIndex === 3 ? 0.9 * dpr : Math.max(1.1 * dpr, pitchY * 0.08);
-      const tint = ink ? 0 : 1;
-      const blend = ink ? 0.35 : 0.55;
-      markUniforms.uColor.value = s.color.slice(0, 3);
-      markUniforms.uAccent.value = s.color.slice(0, 3).map(channel => channel + (tint - channel) * blend);
-      markUniforms.uBackground.value = background;
-      renderer.render({ scene: markMesh });
+      renderer.render(fieldRender);
+      renderer.render(markRender);
       dirty = false;
 
       if (visible && (moving || introClock < 1 || rippleActive || dirty)) raf = requestAnimationFrame(frame);
@@ -896,7 +924,10 @@ const PatternWaves = ({
       pointer.y = spot.y;
       if (spot.inside !== pointer.inside) pointer.placed = false;
       pointer.inside = spot.inside;
-      if (spot.inside) start();
+      if (spot.inside) {
+        if (!ripple) buildRipple();
+        start();
+      }
     };
 
     const onPointerDown = (e: PointerEvent) => {
@@ -910,6 +941,7 @@ const PatternWaves = ({
         pointer.lastY = spot.y;
       }
       pointer.burst = 1.2;
+      if (!ripple) buildRipple();
       start();
     };
 

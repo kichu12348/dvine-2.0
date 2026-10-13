@@ -3,6 +3,7 @@
 import { useLayoutEffect, useRef } from "react";
 import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
+import { scheduleScrollTriggerRefresh } from "../lib/refresh-scroll-triggers";
 import DitherStage from "./DitherStage";
 import Reveal from "./Reveal";
 
@@ -72,7 +73,7 @@ export default function AboutEvent() {
 
     let cancelled = false;
     document.fonts.ready.then(() => {
-      if (!cancelled) ScrollTrigger.refresh();
+      if (!cancelled) scheduleScrollTriggerRefresh();
     });
     return () => {
       cancelled = true;

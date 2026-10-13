@@ -4,6 +4,7 @@ import { useLayoutEffect, useRef } from "react";
 import Image from "next/image";
 import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
+import { scheduleScrollTriggerRefresh } from "../lib/refresh-scroll-triggers";
 
 const headingLineClass = "mb-[-0.06em] block overflow-clip pt-[0.05em] pb-[0.1em] [&>span]:block";
 
@@ -118,7 +119,7 @@ export default function AboutOrganizers() {
       });
     }, root);
     let cancelled = false;
-    document.fonts.ready.then(() => { if (!cancelled) ScrollTrigger.refresh(); });
+    document.fonts.ready.then(() => { if (!cancelled) scheduleScrollTriggerRefresh(); });
     return () => { cancelled = true; media.revert(); };
   }, []);
 

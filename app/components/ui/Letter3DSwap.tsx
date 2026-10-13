@@ -21,6 +21,7 @@ import React, {
   useCallback,
   useEffect,
   useMemo,
+  useRef,
   useState,
 } from "react";
 import {
@@ -148,8 +149,8 @@ const Letter3DSwap = ({
   rotateDirection = "right",
   ...props
 }: Letter3DSwapProps) => {
-  const [isAnimating, setIsAnimating] = useState(false);
-  const [isHovering, setIsHovering] = useState(false);
+  const isAnimating = useRef(false);
+  const isHovering = useRef(false);
   const [scope, animate] = useAnimate();
   /* The 3D boxes only ever move on hover, so they are pointless on touch
      devices — and expensive: every character is ~2 backface-hidden, 3D-transformed
@@ -232,10 +233,10 @@ const Letter3DSwap = ({
   const handleHoverStart = useCallback(async () => {
     // Respect the OS-level reduced-motion preference for this JS-driven animation
     if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
-    if (isAnimating || isHovering) return;
+    if (isAnimating.current || isHovering.current) return;
 
-    setIsHovering(true);
-    setIsAnimating(true);
+    isHovering.current = true;
+    isAnimating.current = true;
 
     const totalChars = characters.reduce(
       (sum: number, word: WordObject) => sum + word.characters.length,
@@ -264,10 +265,8 @@ const Letter3DSwap = ({
       { duration: 0 },
     );
 
-    setIsAnimating(false);
+    isAnimating.current = false;
   }, [
-    isAnimating,
-    isHovering,
     characters,
     transition,
     getStaggerDelay,
@@ -277,7 +276,7 @@ const Letter3DSwap = ({
 
   // Handle hover end
   const handleHoverEnd = useCallback(() => {
-    setIsHovering(false);
+    isHovering.current = false;
   }, []);
 
   const ElementTag = as ?? "p";

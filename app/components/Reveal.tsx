@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef } from "react";
 
 type RevealProps = {
   /** Stagger offset in ms. */
@@ -16,8 +16,6 @@ type RevealProps = {
  */
 export default function Reveal({ delay = 0, className = "", children }: RevealProps) {
   const ref = useRef<HTMLDivElement>(null);
-  const [armed, setArmed] = useState(false);
-  const [shown, setShown] = useState(false);
 
   useEffect(() => {
     const el = ref.current;
@@ -25,28 +23,36 @@ export default function Reveal({ delay = 0, className = "", children }: RevealPr
 
     if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return undefined;
 
-    setArmed(true);
+    // Animation classes do not affect content, so avoid rerendering the entire
+    // revealed subtree just to arm and play its existing CSS transition.
+    el.classList.add("is-armed");
+    let frame = 0;
 
     const observer = new IntersectionObserver(
       ([entry]) => {
         if (!entry.isIntersecting) return;
         observer.disconnect();
         // Let the hidden state paint before transitioning in.
-        requestAnimationFrame(() => setShown(true));
+        frame = requestAnimationFrame(() => {
+          el.classList.remove("is-armed");
+          el.classList.add("is-shown");
+        });
       },
       { threshold: 0.15, rootMargin: "0px 0px -8% 0px" }
     );
 
     observer.observe(el);
-    return () => observer.disconnect();
+    return () => {
+      observer.disconnect();
+      cancelAnimationFrame(frame);
+      el.classList.remove("is-armed", "is-shown");
+    };
   }, []);
 
   return (
     <div
       ref={ref}
-      className={`curtain ${armed && !shown ? "is-armed" : ""} ${
-        shown ? "is-shown" : ""
-      } ${className}`}
+      className={`curtain ${className}`}
       style={{ transitionDelay: `${delay}ms` }}
     >
       <div className="curtain-inner">{children}</div>

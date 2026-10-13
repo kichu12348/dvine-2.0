@@ -21,34 +21,101 @@ function getCountdown(now: number) {
   };
 }
 
-export default function Prizepool() {
-  const rootRef = useRef<HTMLElement>(null);
+function PrizeCountdown({ onReveal }: { onReveal: (revealed: boolean) => void }) {
+  const timerRef = useRef<HTMLDivElement>(null);
   // A stable server placeholder avoids mismatched clock values during hydration.
   const [countdown, setCountdown] = useState<ReturnType<
     typeof getCountdown
   > | null>(null);
-  const revealed = countdown?.seconds === 0;
-
   useEffect(() => {
-    let timer: number;
+    let timer: number | undefined;
+    let deadlineTimer: number | undefined;
+    let inRange = true;
     const update = () => {
+      window.clearTimeout(timer);
       const next = getCountdown(Date.now());
-      setCountdown(next);
-      if (next.seconds > 0)
+      setCountdown((previous) => previous?.seconds === next.seconds ? previous : next);
+      if (next.seconds === 0) onReveal(true);
+      if (next.seconds > 0 && inRange && document.visibilityState === "visible")
         timer = window.setTimeout(update, 1000 - (Date.now() % 1000));
     };
-    const resume = () => {
-      if (document.visibilityState !== "visible") return;
-      window.clearTimeout(timer);
-      update();
+    const scheduleReveal = () => {
+      window.clearTimeout(deadlineTimer);
+      const remaining = REVEAL_AT - Date.now();
+      if (remaining <= 0) {
+        update();
+        return;
+      }
+      // Keep the announcement deadline independent of offscreen ticking.
+      // Long delays are capped at the browser's signed 32-bit timer limit.
+      deadlineTimer = window.setTimeout(scheduleReveal, Math.min(remaining, 2_147_483_647));
     };
-    timer = window.setTimeout(update, 0);
+    const resume = () => {
+      window.clearTimeout(timer);
+      if (document.visibilityState === "visible") {
+        scheduleReveal();
+        if (inRange) update();
+      }
+    };
+    // Refresh before the timer can enter the viewport, then avoid ticking the
+    // offscreen section or the whole prize-pool content every second.
+    const observer = new IntersectionObserver(([entry]) => {
+      inRange = entry.isIntersecting;
+      window.clearTimeout(timer);
+      if (inRange && document.visibilityState === "visible") update();
+    }, { rootMargin: "300px 0px" });
+    if (timerRef.current) observer.observe(timerRef.current);
+    // Populate the same clock values after hydration even when the section is
+    // initially offscreen; subsequent ticks resume just before it is visible.
+    const initialTimer = window.setTimeout(update, 0);
+    scheduleReveal();
     document.addEventListener("visibilitychange", resume);
     return () => {
       window.clearTimeout(timer);
+      window.clearTimeout(initialTimer);
+      window.clearTimeout(deadlineTimer);
+      observer.disconnect();
       document.removeEventListener("visibilitychange", resume);
     };
-  }, []);
+  }, [onReveal]);
+
+  return (
+    <div
+      ref={timerRef}
+      role="timer"
+      aria-label="Time until the prize pool announcement on 1 November 2026 at midnight India Standard Time"
+      aria-live="off"
+      className="grid grid-cols-4 gap-2 sm:gap-6"
+    >
+      {units.map((unit, index) => (
+        <div key={unit} className="relative min-w-0 text-center">
+          {index > 0 && (
+            <span
+              aria-hidden="true"
+              className="absolute top-0 left-0 flex h-[clamp(44px,10.6vw,146px)] items-center -translate-x-[calc(50%+4px)] font-mono text-[clamp(20px,4vw,48px)] leading-none text-[#9de4ff45] sm:-translate-x-[calc(50%+12px)]"
+            >
+              :
+            </span>
+          )}
+          <span
+            className={`block font-[family-name:var(--font-heading)] text-[clamp(44px,10.6vw,146px)] leading-none font-medium tracking-[-0.055em] tabular-nums ${index === 3 ? "text-[var(--blue-light)]" : "text-[var(--text)]"}`}
+          >
+            {countdown
+              ? String(countdown.values[index]).padStart(2, "0")
+              : "––"}
+          </span>
+          <span className="mt-3 block font-mono text-[7px] tracking-[0.14em] text-[var(--muted)] uppercase sm:mt-5 sm:text-[9px]">
+            {unit}
+          </span>
+        </div>
+      ))}
+    </div>
+  );
+}
+
+export default function Prizepool() {
+  const rootRef = useRef<HTMLElement>(null);
+  const [revealed, setRevealed] = useState(false);
 
   useLayoutEffect(() => {
     gsap.registerPlugin(ScrollTrigger);
@@ -133,35 +200,7 @@ export default function Prizepool() {
             </span>
             <span>01 NOV / 00:00 IST</span>
           </div>
-          <div
-            role="timer"
-            aria-label="Time until the prize pool announcement on 1 November 2026 at midnight India Standard Time"
-            aria-live="off"
-            className="grid grid-cols-4 gap-2 sm:gap-6"
-          >
-            {units.map((unit, index) => (
-              <div key={unit} className="relative min-w-0 text-center">
-                {index > 0 && (
-                  <span
-                    aria-hidden="true"
-                    className="absolute top-0 left-0 flex h-[clamp(44px,10.6vw,146px)] items-center -translate-x-[calc(50%+4px)] font-mono text-[clamp(20px,4vw,48px)] leading-none text-[#9de4ff45] sm:-translate-x-[calc(50%+12px)]"
-                  >
-                    :
-                  </span>
-                )}
-                <span
-                  className={`block font-[family-name:var(--font-heading)] text-[clamp(44px,10.6vw,146px)] leading-none font-medium tracking-[-0.055em] tabular-nums ${index === 3 ? "text-[var(--blue-light)]" : "text-[var(--text)]"}`}
-                >
-                  {countdown
-                    ? String(countdown.values[index]).padStart(2, "0")
-                    : "––"}
-                </span>
-                <span className="mt-3 block font-mono text-[7px] tracking-[0.14em] text-[var(--muted)] uppercase sm:mt-5 sm:text-[9px]">
-                  {unit}
-                </span>
-              </div>
-            ))}
-          </div>
+          <PrizeCountdown onReveal={setRevealed} />
         </div>
 
         <div
