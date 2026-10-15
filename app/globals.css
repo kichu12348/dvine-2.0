@@ -502,12 +502,6 @@ section[id] {
   border: 1px solid var(--blue);
 }
 
-.anatomy-btn.anatomy-btn-navbar,
-.anatomy-btn.anatomy-btn-navbar:hover {
-  border: 0;
-  border-radius: 4px;
-}
-
 /* The default CTA is intentionally background-free: the label carries the
    visual weight through the same blue gradient used by the site wordmark. */
 .anatomy-btn:not(.anatomy-btn-navbar) .title {
@@ -810,91 +804,92 @@ section[id] {
   white-space: nowrap;
 }
 
-/* --- Navbar CTA: a white underline expands upward into the button background;
-   the label flips to ink as the fill rises. --- */
-.anatomy-btn-navbar {
+/* Compact navbar CTA uses the same flat cyan finish as the hero button. */
+.anatomy-btn.anatomy-btn-navbar {
   display: inline-flex;
   height: auto;
-  min-height: 0;
-  padding: 8px 10px;
-  border: 0;
-  border-radius: 0;
-  background: transparent;
+  min-height: 36px;
+  flex-shrink: 0;
+  gap: 8px;
+  padding: 0 12px;
+  border: 1px solid #b5e9ff;
+  border-radius: 6px;
+  background: #b5e9ff;
   box-shadow: none;
-  color: transparent;
+  color: #06243a;
   transform: none;
-  isolation: isolate;
-  overflow: hidden;
   touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
+  transition:
+    background 180ms ease,
+    border-color 180ms ease;
 }
 
-/* One element does both jobs: white underline first, then full background. */
-.anatomy-btn-navbar::before {
+/* Keep the tap area generous without adding visual bulk to the header. */
+.anatomy-btn-navbar::after {
   content: "";
   position: absolute;
-  inset: auto 0 0 0;
-  height: 2px;
-  width: 0;
-  z-index: -1;
-  background: var(--text);
-  transition:
-    width 200ms cubic-bezier(0.16, 1, 0.3, 1),
-    height 380ms 200ms cubic-bezier(0.16, 1, 0.3, 1),
-    opacity 220ms ease;
+  inset: -5px 0;
 }
 
 .anatomy-btn-navbar .navbar-cta-label {
-  position: relative;
-  z-index: 1;
-  background-image: linear-gradient(
-    100deg,
-    var(--blue) 0%,
-    var(--blue-light) 55%,
-    #38bdf8 100%
-  );
-  -webkit-background-clip: text;
-  background-clip: text;
-  -webkit-text-fill-color: transparent;
-  color: transparent;
-  font-size: 1rem;
-  font-weight: 800;
+  color: inherit;
+  font-size: 12px;
+  font-weight: 600;
   letter-spacing: 0.01em;
   line-height: 1;
+  white-space: nowrap;
+}
+
+.anatomy-btn-navbar .navbar-cta-icon {
+  display: grid;
+  place-items: center;
+  width: 15px;
+  height: 15px;
+  flex-shrink: 0;
+  color: inherit;
+}
+
+.navbar-cta-icon > svg {
+  transition: transform 180ms ease;
 }
 
 @media (hover: hover) and (pointer: fine) {
-  /* Let the underline appear before the fill rises from the same edge. */
-  .anatomy-btn-navbar:hover::before {
-    width: 100%;
-    height: 100%;
-    opacity: 1;
+  .anatomy-btn-navbar:hover {
+    border-color: #e1f6ff;
+    background: #e1f6ff;
   }
 
-  /* The gradient label flips to ink once the fill reaches it. */
-  .anatomy-btn-navbar:hover .navbar-cta-label {
-    background-image: none;
-    -webkit-text-fill-color: var(--ink);
-    color: var(--ink);
+  .anatomy-btn-navbar:hover .navbar-cta-icon > svg {
+    transform: translate(1px, -1px);
   }
 }
 
-/* On exit, fade the completed fill away instead of replaying the reveal in
-   reverse. The dimensions reset invisibly for the next hover. */
-.anatomy-btn-navbar:not(:hover)::before {
-  opacity: 0;
-  transition:
-    opacity 220ms ease,
-    width 0ms 220ms,
-    height 0ms 220ms;
+.anatomy-btn-navbar:focus-visible {
+  outline: 2px solid #e2f6ff;
+  outline-offset: 4px;
+}
+
+.anatomy-btn-navbar:active {
+  background: #9ddfff;
 }
 
 @media (max-width: 420px) {
-  .anatomy-btn-navbar {
-    padding-inline: 7px;
+  .anatomy-btn.anatomy-btn-navbar {
+    min-height: 34px;
+    padding-inline: 11px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .anatomy-btn.anatomy-btn-navbar,
+  .navbar-cta-icon > svg {
+    transition: none;
   }
 
-  .anatomy-btn-navbar::after {
-    left: 7px;
-    right: 7px;
+  .anatomy-btn-navbar:hover,
+  .anatomy-btn-navbar:active,
+  .anatomy-btn-navbar:hover .navbar-cta-icon > svg {
+    transform: none;
   }
 }

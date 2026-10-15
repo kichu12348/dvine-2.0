@@ -11,7 +11,7 @@ type AnatomyButtonProps = {
    */
   icon?: ReactNode;
   /**
-   * `navbar` = text-only geometric CTA for the fixed top bar. `default` =
+   * `navbar` = compact CTA with an inline arrow for the fixed top bar. `default` =
    * the reference's surrounding annotations.
    */
   variant?: "default" | "navbar";
@@ -45,7 +45,10 @@ export default function AnatomyButton({
       className={`anatomy-btn${navbar ? " anatomy-btn-navbar" : ""} ${className}`.trim()}
     >
       {navbar ? (
-        <span className="navbar-cta-label">{children}</span>
+        <>
+          <span className="navbar-cta-label">{children}</span>
+          <span className="navbar-cta-icon" aria-hidden="true">{icon}</span>
+        </>
       ) : (
         <>
           <span className="title">{children}</span>

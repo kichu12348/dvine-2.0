@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState, type CSSProperties } from "react";
 import Image from "next/image";
+import { ArrowUpRight } from "lucide-react";
 import Letter3DSwap from "./ui/Letter3DSwap";
 import AnatomyButton from "./ui/AnatomyButton";
 import ScrollProgress from "./ScrollProgress";
@@ -130,7 +131,7 @@ export default function NavbarMenu() {
 
   return (
     <>
-      {/* Bare top bar: Menu (left) / logo (centre, open only) / Register (right) */}
+      {/* Menu (left) / logo (centre, open only) / Register (right) */}
       <header className="fixed inset-x-0 top-0 z-50">
         {/* Soft top scrim — imperceptible over dark sections, keeps the bar legible over light bands */}
         <div
@@ -156,7 +157,7 @@ export default function NavbarMenu() {
               href="#hero"
               onClick={handleNavClick}
               aria-label="D'VINE 2.0 — back to the top"
-              className={`${menuClosing ? "menu-fade-out" : "menu-fade"} group absolute left-1/2 top-1/2 flex -translate-x-1/2 -translate-y-1/2 items-center`}
+              className={`${menuClosing ? "menu-fade-out" : "menu-fade"} group flex min-h-11 shrink-0 items-center sm:absolute sm:left-1/2 sm:top-1/2 sm:-translate-x-1/2 sm:-translate-y-1/2`}
               style={{ animationDelay: menuClosing ? "200ms" : "400ms" }}
             >
               <Image
@@ -169,8 +170,7 @@ export default function NavbarMenu() {
             </a>
           )}
 
-          {/* Anatomy CTA — blue-gradient button with hover measurement callouts */}
-          <AnatomyButton href="/register" variant="navbar">
+          <AnatomyButton href="/register" variant="navbar" icon={<ArrowUpRight size={15} strokeWidth={1.8} />}>
             Register
           </AnatomyButton>
         </div>
