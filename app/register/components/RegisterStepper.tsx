@@ -8,7 +8,7 @@ export interface RegisterStepperProps {
   onStepClick: (stepId: number) => void;
 }
 
-const labels = ["Team", "College", "Review", "Pass"];
+const labels = ["Details", "College", "Review", "Pass"];
 
 export function RegisterStepper({ currentStep, steps, onStepClick }: RegisterStepperProps) {
   return (

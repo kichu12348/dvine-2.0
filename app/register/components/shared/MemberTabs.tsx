@@ -50,8 +50,8 @@ export function MemberTabs({ scope, activeMember, onSelect, formData, errors, fi
 export function focusMemberField(container: HTMLElement | null, errorsOnly = false) {
   window.requestAnimationFrame(() => {
     const selector = errorsOnly
-      ? '#team-name[aria-invalid="true"], [role="tabpanel"]:not([hidden]) [aria-invalid="true"]'
-      : '[role="tabpanel"]:not([hidden]) input:not([type="radio"]), [role="tabpanel"]:not([hidden]) select';
+      ? '#team-name[aria-invalid="true"], [data-member-panel]:not([hidden]) [aria-invalid="true"]'
+      : '[data-member-panel]:not([hidden]) input:not([type="radio"]), [data-member-panel]:not([hidden]) select';
     container?.querySelector<HTMLElement>(selector)?.focus();
   });
 }

@@ -303,6 +303,107 @@
   color: #657c90;
 }
 
+.registrationChoice {
+  margin: 0;
+  padding: 0;
+  border: 0;
+  margin-bottom: 27px;
+}
+
+.registrationOptions {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.registrationOption {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 16px 18px;
+  border: 1px solid #34424e;
+  border-radius: 9px;
+  background: #0c1219;
+  cursor: pointer;
+  transition: border-color 150ms, background 150ms;
+}
+
+.registrationOption:hover {
+  border-color: #536c80;
+  background: #111b25;
+}
+
+.registrationOption:has(input:checked) {
+  border-color: #81badc;
+  background: #172a38;
+}
+
+.registrationOption:has(input:focus-visible) {
+  outline: 2px solid var(--r-accent);
+  outline-offset: 4px;
+}
+
+.registrationOption input[type="radio"] {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  opacity: 0;
+  cursor: pointer;
+}
+
+.registrationOption > svg {
+  flex-shrink: 0;
+  color: #738d9f;
+  transition: color 150ms;
+}
+
+.registrationOption:has(input:checked) > svg {
+  color: #a6dfff;
+}
+
+.registrationOption > span {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  min-width: 0;
+  flex: 1;
+}
+
+.registrationOption > span > strong {
+  font-size: 14px;
+  font-weight: 500;
+  color: #d0dfe9;
+}
+
+.registrationOption:has(input:checked) > span > strong {
+  color: #eaf6ff;
+}
+
+.registrationOption > span > small {
+  font-size: 11px;
+  color: #7f95a6;
+}
+
+.registrationOption:has(input:checked) > span > small {
+  color: #9dbcce;
+}
+
+.registrationOption > b {
+  flex-shrink: 0;
+  font-family: var(--font-heading), sans-serif;
+  font-size: 16px;
+  font-weight: 500;
+  color: #8faabd;
+  letter-spacing: -.02em;
+}
+
+.registrationOption:has(input:checked) > b {
+  color: #a6dfff;
+}
+
 .teamField {
   margin-bottom: 27px;
 }
@@ -1283,6 +1384,9 @@
   }
   .formSurface {
     border-radius: 10px;
+  }
+  .registrationOptions {
+    grid-template-columns: 1fr;
   }
   .stepper {
     padding-inline: 16px;

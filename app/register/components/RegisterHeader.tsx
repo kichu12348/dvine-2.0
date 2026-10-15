@@ -15,7 +15,7 @@ export function RegisterHeader({ seatStatus, isLoading }: RegisterHeaderProps) {
       <div className={styles.headerInner}>
         <div className={styles.brand}>
           <Link href="/" aria-label="D'VINE home"><Image src="/dvine.svg" alt="D'VINE 2.0" width={831} height={322} className={styles.logo} /></Link>
-          <span className={styles.brandLabel}>Team registration</span>
+          <span className={styles.brandLabel}>Registration</span>
         </div>
         <div className={styles.headerActions}>
           <div className={styles.availability} role="status">

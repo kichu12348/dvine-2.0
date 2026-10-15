@@ -15,6 +15,7 @@ export const INITIAL_MEMBER: MemberData = {
 };
 
 export const INITIAL_DATA: TeamRegistrationData = {
+  registrationType: "solo",
   teamName: "",
   member1: { ...INITIAL_MEMBER },
   member2: { ...INITIAL_MEMBER },
@@ -22,7 +23,7 @@ export const INITIAL_DATA: TeamRegistrationData = {
 };
 
 export const STEPS: RegistrationStep[] = [
-  { id: 1, label: "Team & Members", shortLabel: "Team" },
+  { id: 1, label: "Your Details", shortLabel: "Details" },
   { id: 2, label: "Academic Details", shortLabel: "College" },
   { id: 3, label: "Review & Summary", shortLabel: "Review" },
   { id: 4, label: "Confirmation", shortLabel: "Receipt" },

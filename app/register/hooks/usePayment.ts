@@ -8,7 +8,7 @@ import {
   checkEmailVerified,
 } from "../services/registrationApi";
 import { PaymentLifecycleStatus } from "../../components/register/PaymentStatus";
-import { RegisterRequest } from "../types";
+import { buildRegisterPayload } from "../utils/registration";
 import { cleanPhoneNumber } from "../utils/validation";
 import { ApiError } from "../utils/apiErrors";
 import { loadRazorpayScript } from "../utils/loadRazorpay";
@@ -75,7 +75,7 @@ export function usePaymentSimulation(onPaymentInitiated?: () => void) {
         otpState.verifiedEmail.toLowerCase() !== leaderEmail
       ) {
         throw new Error(
-          "Please verify Team Leader's email via OTP before proceeding to payment.",
+          "Please verify your registration email via OTP before proceeding to payment.",
         );
       }
 
@@ -87,19 +87,7 @@ export function usePaymentSimulation(onPaymentInitiated?: () => void) {
       }
 
       // 1. Submit Registration to backend
-      const registerPayload: RegisterRequest = {
-        teamName: formData.teamName.trim(),
-        member1: {
-          ...formData.member1,
-          phone: cleanPhoneNumber(formData.member1.phone),
-          email: leaderEmail,
-        },
-        member2: {
-          ...formData.member2,
-          phone: cleanPhoneNumber(formData.member2.phone),
-          email: formData.member2.email.trim().toLowerCase(),
-        },
-      };
+      const registerPayload = buildRegisterPayload(formData);
 
       let regResult;
       try {
@@ -140,7 +128,7 @@ export function usePaymentSimulation(onPaymentInitiated?: () => void) {
           amount: regResult.amount * 100, // In paise (e.g. 60000)
           currency: (regResult.currency as any) || "INR",
           name: "DVINE",
-          description: `Registration for team: ${formData.teamName}`,
+          description: `${formData.registrationType === "solo" ? "Solo registration" : "Team registration"}: ${formData.teamName}`,
           prefill: {
             name: `${formData.member1.firstName} ${formData.member1.lastName}`.trim(),
             email: formData.member1.email.trim(),

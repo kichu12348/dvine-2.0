@@ -23,6 +23,7 @@ export function useRegisterForm() {
     setErrors: store.setErrors,
     updateMember: store.updateMember,
     updateField: store.updateField,
+    setRegistrationType: store.setRegistrationType,
 
     // Autocomplete for Colleges
     activeCollegeTarget: store.activeCollegeTarget,

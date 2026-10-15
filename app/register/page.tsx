@@ -9,6 +9,7 @@ import { useRegisterForm } from "./hooks/useRegisterForm";
 import { usePaymentSimulation } from "./hooks/usePayment";
 import { STEPS } from "./constants";
 import type { MemberKey } from "./types";
+import { getRegistrationAmount } from "./utils/registration";
 import {
   RegisterHeader,
   RegisterStepper,
@@ -31,6 +32,7 @@ export default function RegisterPage() {
     setErrors,
     updateMember,
     updateField,
+    setRegistrationType,
     activeCollegeTarget,
     setActiveCollegeTarget,
     collegeSuggestions,
@@ -62,6 +64,7 @@ export default function RegisterPage() {
     formData.member1.email.trim().toLowerCase();
 
   const isSoldOut = Boolean(seatStatus && seatStatus.available === 0);
+  const registrationAmount = getRegistrationAmount(formData);
 
   const onSlidePayment = async () => {
     try {
@@ -87,7 +90,7 @@ export default function RegisterPage() {
         <RegisterHeader seatStatus={seatStatus} isLoading={isSeatsLoading} />
 
         <main className={styles.shell}>
-          <RegistrationIntro amount={paymentState.amount} />
+          <RegistrationIntro amount={registrationAmount} isSolo={formData.registrationType === "solo"} />
           <div className={styles.formSurface}>
             <RegisterStepper
               currentStep={currentStep}
@@ -105,6 +108,7 @@ export default function RegisterPage() {
                   onNext={handleNext}
                   isSoldOut={isSoldOut}
                   initialMember={editingMember}
+                  onRegistrationTypeChange={setRegistrationType}
                 />
               )}
 
@@ -132,7 +136,7 @@ export default function RegisterPage() {
                   onUpdateField={updateField}
                   onSlidePayment={onSlidePayment}
                   onSetTermsError={handleSetTermsError}
-                  amount={paymentState.amount}
+                  amount={registrationAmount}
                   isLeaderEmailVerified={isLeaderEmailVerified}
                   otpState={otpState}
                   onSendOtp={sendOtp}
@@ -151,7 +155,7 @@ export default function RegisterPage() {
                   onSetPaymentStatus={setPaymentStatus}
                   onRetryPayment={retryPayment}
                   onChangePaymentMethod={() => goToStep(3)}
-                  amount={paymentState.amount}
+                  amount={paymentState.orderId ? paymentState.amount : registrationAmount}
                   errorMessage={paymentState.errorMessage}
                   isPolling={paymentState.isPolling}
                 />

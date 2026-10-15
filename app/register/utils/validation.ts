@@ -27,7 +27,7 @@ export function isValidIndianPhone(phone: string): boolean {
 }
 
 /**
- * Validates Step 1: Team Name and basic personal contact details of both members.
+ * Validates the entry name and the selected participant contact details.
  * Pure function adhering to the Single Responsibility Principle.
  */
 export function validateStep1(
@@ -39,9 +39,9 @@ export function validateStep1(
   // Team Name
   const trimmedTeam = formData.teamName.trim();
   if (!trimmedTeam) {
-    errors.teamName = "Team name is required";
+    errors.teamName = formData.registrationType === "solo" ? "Entry name is required" : "Team name is required";
   } else if (trimmedTeam.length > 80) {
-    errors.teamName = "Team name cannot exceed 80 characters";
+    errors.teamName = "Entry name cannot exceed 80 characters";
   }
 
   // Member 1 (Leader)
@@ -78,7 +78,9 @@ export function validateStep1(
     errors["member1.phone"] = "Enter a valid 10-digit phone number (starts with 6-9)";
   }
 
-  // Member 2 (Teammate)
+  if (formData.registrationType === "solo") return errors;
+
+  // Member 2 is required only for a two-person team.
   const fn2 = formData.member2.firstName.trim();
   if (!fn2) {
     errors["member2.firstName"] = "First name is required";
@@ -120,7 +122,7 @@ export function validateStep1(
 }
 
 /**
- * Validates Step 2: Academic & College credentials of both members.
+ * Validates academic details for the selected participants.
  * Pure function adhering to the Single Responsibility Principle.
  */
 export function validateStep2(formData: TeamRegistrationData): FormErrors {
@@ -144,6 +146,8 @@ export function validateStep2(formData: TeamRegistrationData): FormErrors {
   } else if (dept1.length > 100) {
     errors["member1.department"] = "Department cannot exceed 100 characters";
   }
+
+  if (formData.registrationType === "solo") return errors;
 
   // Member 2
   const col2 = formData.member2.collegeName.trim();

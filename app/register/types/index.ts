@@ -11,6 +11,7 @@ export interface MemberData {
 }
 
 export interface TeamRegistrationData {
+  registrationType: "solo" | "team";
   teamName: string;
   member1: MemberData;
   member2: MemberData;
@@ -55,7 +56,7 @@ export interface VerifyOtpRequest {
 export interface RegisterRequest {
   teamName: string;
   member1: MemberData;
-  member2: MemberData;
+  member2: MemberData | null;
 }
 
 export interface RegisterSuccessResponse {

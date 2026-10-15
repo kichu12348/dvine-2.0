@@ -156,7 +156,7 @@ const chapters: Chapter[] = [
     title: "Meet your blank canvas.",
     description:
       "Find your team. Settle in. Get ready to turn a fresh brief into something worth feeling.",
-    date: "01 November 2026",
+    date: "31 October 2026",
     hours: "PRE-SPRINT / 9–11 AM",
     from: 0,
     to: 0,
@@ -171,7 +171,7 @@ const chapters: Chapter[] = [
     title: "Make the first move.",
     description:
       "Unpack the problem. Connect the dots. Give your ideas an interface, one intentional decision at a time.",
-    date: "01 November 2026",
+    date: "31 October 2026",
     hours: "HOUR 00–11 / THE BUILD",
     from: 0,
     to: 11,
@@ -195,7 +195,7 @@ const chapters: Chapter[] = [
     title: "The plot gets a twist.",
     description:
       "The Black Envelope enters the story. Revisit your decisions and find the next version of your idea.",
-    date: "01–02 November 2026",
+    date: "31 October–01 November 2026",
     hours: "HOUR 11–17.5 / THE SHIFT",
     from: 11,
     to: 17.5,
@@ -206,7 +206,7 @@ const chapters: Chapter[] = [
         time: "1:00–1:30 AM",
         title: "Refreshment break",
         kind: "break",
-        date: "02 November · After midnight",
+        date: "01 November · After midnight",
       },
       { time: "1:30–4:00 AM", title: "UI/UX redesign" },
       { time: "4:00–4:30 AM", title: "Refreshment break", kind: "break" },
@@ -218,7 +218,7 @@ const chapters: Chapter[] = [
     title: "Make every pixel count.",
     description:
       "Refine the details. Put the experience to the test. Then let your design do the talking.",
-    date: "02 November 2026",
+    date: "01 November 2026",
     hours: "HOUR 17.5–24 / THE FINISH",
     from: 17.5,
     to: 24,
@@ -738,7 +738,7 @@ export default function Schedule() {
     >
       <div className={scheduleClasses.container}>
         <header>
-          {/* <div className={scheduleClasses.kicker}><span>THE EVENT STRUCTURE</span><span>01 — 02 NOVEMBER 2026 / IST</span></div> */}
+          {/* <div className={scheduleClasses.kicker}><span>THE EVENT STRUCTURE</span><span>31 OCT — 01 NOV 2026 / IST</span></div> */}
           <div className={scheduleClasses.introGrid}>
             <h2 id="schedule-title" className={scheduleClasses.heroTitle}>
               {heroLines.map((line, index) => (

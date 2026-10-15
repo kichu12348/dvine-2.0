@@ -9,7 +9,8 @@ import {
   SeatStatusResponse,
   TeamRegistrationData,
 } from "../types";
-import { COMMON_COLLEGES, INITIAL_DATA } from "../constants";
+import { COMMON_COLLEGES, INITIAL_DATA, PRICING_CONFIG } from "../constants";
+import { getRegistrationAmount } from "../utils/registration";
 import { validateStep1, validateStep2 } from "../utils/validation";
 import { registrationApi, checkEmailVerified } from "../services/registrationApi";
 import { PaymentLifecycleStatus } from "../../components/register/PaymentStatus";
@@ -29,6 +30,7 @@ interface RegistrationStore {
   collegeSuggestions: string[];
   setErrors: (errors: FormErrors | ((prev: FormErrors) => FormErrors)) => void;
   updateField: (field: "teamName" | "confirmAccuracy", value: string | boolean) => void;
+  setRegistrationType: (type: TeamRegistrationData["registrationType"]) => void;
   updateMember: (memberKey: MemberKey, field: keyof MemberData, value: string) => void;
   setActiveCollegeTarget: (target: MemberKey | null) => void;
   handleCollegeInputChange: (memberKey: MemberKey, val: string) => void;
@@ -95,6 +97,19 @@ export const useRegistrationStore = create<RegistrationStore>((set, get) => ({
   errors: {},
   activeCollegeTarget: null,
   collegeSuggestions: [],
+
+  setRegistrationType: (registrationType) => {
+    set((state) => {
+      const formData = { ...state.formData, registrationType };
+      return {
+        formData,
+        errors: {},
+        activeCollegeTarget: null,
+        collegeSuggestions: [],
+        paymentState: { ...state.paymentState, amount: getRegistrationAmount(formData) },
+      };
+    });
+  },
 
   setErrors: (errorsOrUpdater) => {
     set((state) => ({
@@ -377,7 +392,7 @@ export const useRegistrationStore = create<RegistrationStore>((set, get) => ({
     teamId: null,
     orderId: null,
     keyId: null,
-    amount: 600,
+    amount: PRICING_CONFIG.feePerMember,
     currency: "INR",
     lockExpiresAt: null,
     txId: "tx_pending",
