@@ -41,8 +41,8 @@ export const YEAR_OPTIONS = [
 ] as const;
 
 export const PRICING_CONFIG = {
-  feePerMember: 300,
-  totalAmount: 600,
+  feePerMember: 349,
+  totalAmount: 698,
   currencySymbol: "₹",
   currencyCode: "INR",
 } as const;
