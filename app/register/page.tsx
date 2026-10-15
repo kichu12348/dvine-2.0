@@ -1,11 +1,15 @@
 "use client";
 
-import { AnimatePresence } from "framer-motion";
+import { AnimatePresence, MotionConfig } from "framer-motion";
+import { useState } from "react";
+import { ShieldCheck } from "lucide-react";
+import { RegistrationIntro } from "./components/RegistrationIntro";
+import styles from "./register.module.css";
 import { useRegisterForm } from "./hooks/useRegisterForm";
 import { usePaymentSimulation } from "./hooks/usePayment";
 import { STEPS } from "./constants";
+import type { MemberKey } from "./types";
 import {
-  BackgroundGradients,
   RegisterHeader,
   RegisterStepper,
   Step1TeamDetails,
@@ -18,6 +22,7 @@ import {
 export type { MemberData, TeamRegistrationData } from "./types";
 
 export default function RegisterPage() {
+  const [editingMember, setEditingMember] = useState<MemberKey>("member1");
   const {
     currentStep,
     setCurrentStep,
@@ -54,7 +59,7 @@ export default function RegisterPage() {
   const isLeaderEmailVerified =
     Boolean(otpState.verifiedEmail) &&
     otpState.verifiedEmail?.toLowerCase() ===
-      formData.member1.email.trim().toLowerCase();
+    formData.member1.email.trim().toLowerCase();
 
   const isSoldOut = Boolean(seatStatus && seatStatus.available === 0);
 
@@ -77,84 +82,85 @@ export default function RegisterPage() {
   };
 
   return (
-    <div className="min-h-[100dvh] bg-[#020817] text-[#FAFAFA] antialiased selection:bg-cyan-500/30 selection:text-white flex flex-col justify-between overflow-x-hidden w-full max-w-full">
-      {/* Background Decorative Gradients & Radial Grid */}
-      <BackgroundGradients />
+    <MotionConfig reducedMotion="user">
+      <div className={styles.page}>
+        <RegisterHeader seatStatus={seatStatus} isLoading={isSeatsLoading} />
 
-      {/* Top Header / Navigation Bar with Live Seat Indicator */}
-      <RegisterHeader seatStatus={seatStatus} isLoading={isSeatsLoading} />
-
-      {/* Main Registration Experience */}
-      <main className="relative z-10 flex-1 max-w-5xl w-full mx-auto px-3.5 sm:px-6 lg:px-8 py-6 sm:py-12">
-        {/* Stepper Progress Bar */}
-        <RegisterStepper
-          currentStep={currentStep}
-          steps={STEPS}
-          onStepClick={goToStep}
-        />
-
-        {/* Step Transition Views */}
-        <AnimatePresence mode="wait">
-          {currentStep === 1 && (
-            <Step1TeamDetails
-              formData={formData}
-              errors={errors}
-              onUpdateField={updateField}
-              onUpdateMember={updateMember}
-              onNext={handleNext}
-              isSoldOut={isSoldOut}
+        <main className={styles.shell}>
+          <RegistrationIntro amount={paymentState.amount} />
+          <div className={styles.formSurface}>
+            <RegisterStepper
+              currentStep={currentStep}
+              steps={STEPS}
+              onStepClick={(step) => { setEditingMember("member1"); goToStep(step); }}
             />
-          )}
 
-          {currentStep === 2 && (
-            <Step2AcademicDetails
-              formData={formData}
-              errors={errors}
-              activeCollegeTarget={activeCollegeTarget}
-              collegeSuggestions={collegeSuggestions}
-              onCollegeChange={handleCollegeInputChange}
-              onCollegeSelect={selectCollegeSuggestion}
-              onCollegeFocus={setActiveCollegeTarget}
-              onUpdateMember={updateMember}
-              onPrev={handlePrev}
-              onNext={handleNext}
-            />
-          )}
+            <AnimatePresence mode="wait">
+              {currentStep === 1 && (
+                <Step1TeamDetails
+                  formData={formData}
+                  errors={errors}
+                  onUpdateField={updateField}
+                  onUpdateMember={updateMember}
+                  onNext={handleNext}
+                  isSoldOut={isSoldOut}
+                  initialMember={editingMember}
+                />
+              )}
 
-          {currentStep === 3 && (
-            <Step3ReviewSummary
-              formData={formData}
-              errors={errors}
-              onEditStep={goToStep}
-              onUpdateField={updateField}
-              onSlidePayment={onSlidePayment}
-              onSetTermsError={handleSetTermsError}
-              amount={paymentState.amount}
-              isLeaderEmailVerified={isLeaderEmailVerified}
-              otpState={otpState}
-              onSendOtp={sendOtp}
-              onVerifyOtp={verifyOtp}
-              onVerificationExpired={() =>
-                recheckVerification(formData.member1.email)
-              }
-            />
-          )}
+              {currentStep === 2 && (
+                <Step2AcademicDetails
+                  formData={formData}
+                  errors={errors}
+                  activeCollegeTarget={activeCollegeTarget}
+                  collegeSuggestions={collegeSuggestions}
+                  onCollegeChange={handleCollegeInputChange}
+                  onCollegeSelect={selectCollegeSuggestion}
+                  onCollegeFocus={setActiveCollegeTarget}
+                  onUpdateMember={updateMember}
+                  onPrev={handlePrev}
+                  onNext={handleNext}
+                  initialMember={editingMember}
+                />
+              )}
 
-          {currentStep === 4 && (
-            <Step4Confirmation
-              formData={formData}
-              paymentStatus={paymentStatus}
-              txId={txId}
-              onSetPaymentStatus={setPaymentStatus}
-              onRetryPayment={retryPayment}
-              onChangePaymentMethod={() => goToStep(3)}
-              amount={paymentState.amount}
-              errorMessage={paymentState.errorMessage}
-              isPolling={paymentState.isPolling}
-            />
-          )}
-        </AnimatePresence>
-      </main>
-    </div>
+              {currentStep === 3 && (
+                <Step3ReviewSummary
+                  formData={formData}
+                  errors={errors}
+                  onEditStep={(step, member = "member1") => { setEditingMember(member); goToStep(step); }}
+                  onUpdateField={updateField}
+                  onSlidePayment={onSlidePayment}
+                  onSetTermsError={handleSetTermsError}
+                  amount={paymentState.amount}
+                  isLeaderEmailVerified={isLeaderEmailVerified}
+                  otpState={otpState}
+                  onSendOtp={sendOtp}
+                  onVerifyOtp={verifyOtp}
+                  onVerificationExpired={() =>
+                    recheckVerification(formData.member1.email)
+                  }
+                />
+              )}
+
+              {currentStep === 4 && (
+                <Step4Confirmation
+                  formData={formData}
+                  paymentStatus={paymentStatus}
+                  txId={txId}
+                  onSetPaymentStatus={setPaymentStatus}
+                  onRetryPayment={retryPayment}
+                  onChangePaymentMethod={() => goToStep(3)}
+                  amount={paymentState.amount}
+                  errorMessage={paymentState.errorMessage}
+                  isPolling={paymentState.isPolling}
+                />
+              )}
+            </AnimatePresence>
+          </div>
+          <div className={styles.footer}><span>D&apos;VINE 2.0 · A space for good ideas.</span><span><ShieldCheck size={13} aria-hidden="true" /> Secured by Razorpay</span></div>
+        </main>
+      </div>
+    </MotionConfig>
   );
 }

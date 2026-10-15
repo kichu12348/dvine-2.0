@@ -1,185 +1,48 @@
-import React from "react";
-import { Mail, Phone } from "lucide-react";
-import { cn } from "../../../lib/utils";
+import type { ReactNode } from "react";
 import { FormErrors, MemberData, MemberKey } from "../../types";
 import { GENDER_OPTIONS } from "../../constants";
+import { FormField } from "./FormField";
+import styles from "../../register.module.css";
 
 export interface MemberBasicFieldsProps {
   memberKey: MemberKey;
   title: string;
-  icon?: React.ReactNode;
+  icon?: ReactNode;
   memberData: MemberData;
   errors: FormErrors;
   emailSubtitle?: string;
   onUpdate: (memberKey: MemberKey, field: keyof MemberData, value: string) => void;
 }
 
-export const MemberBasicFields: React.FC<MemberBasicFieldsProps> = ({
-  memberKey,
-  title,
-  icon,
-  memberData,
-  errors,
-  emailSubtitle = "Receipt sent here",
-  onUpdate,
-}) => {
-  const firstNameError = errors[`${memberKey}.firstName`];
-  const lastNameError = errors[`${memberKey}.lastName`];
-  const genderError = errors[`${memberKey}.gender`];
-  const emailError = errors[`${memberKey}.email`];
-  const phoneError = errors[`${memberKey}.phone`];
-
+export function MemberBasicFields({ memberKey, title, memberData, errors, emailSubtitle, onUpdate }: MemberBasicFieldsProps) {
+  const genderError = errors[memberKey + ".gender"];
   return (
-    <div>
-      <div className="flex items-center justify-between mb-4 border-b border-white/[0.06] pb-2.5">
-        <div className="flex items-center gap-2">
-          {icon}
-          <h3 className="text-sm sm:text-base font-semibold text-white tracking-tight">
-            {title}
-          </h3>
-        </div>
-      </div>
-
-      <div className="space-y-4">
-        {/* Name */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
-          <div>
-            <label className="block text-xs font-mono uppercase tracking-wider text-neutral-400 mb-1.5">
-              First Name <span className="text-rose-400">*</span>
-            </label>
-            <input
-              type="text"
-              placeholder={memberKey === "member1" ? "e.g. Alex" : "e.g. Jordan"}
-              value={memberData.firstName}
-              onChange={(e) => onUpdate(memberKey, "firstName", e.target.value)}
-              className={cn(
-                "w-full px-3.5 py-2.5 rounded-xl bg-white/[0.03] border text-sm text-white placeholder-neutral-600 focus:outline-none focus:ring-1 transition-all",
-                firstNameError
-                  ? "border-rose-500/80 focus:ring-rose-400 focus:border-rose-400"
-                  : "border-white/10 hover:border-white/20 focus:ring-cyan-400 focus:border-cyan-400",
-              )}
-            />
-            {firstNameError && (
-              <p className="text-[11px] text-rose-400 mt-1">{firstNameError}</p>
-            )}
-          </div>
-
-          <div>
-            <label className="block text-xs font-mono uppercase tracking-wider text-neutral-400 mb-1.5">
-              Last Name <span className="text-rose-400">*</span>
-            </label>
-            <input
-              type="text"
-              placeholder={memberKey === "member1" ? "e.g. Rivera" : "e.g. Lee"}
-              value={memberData.lastName}
-              onChange={(e) => onUpdate(memberKey, "lastName", e.target.value)}
-              className={cn(
-                "w-full px-3.5 py-2.5 rounded-xl bg-white/[0.03] border text-sm text-white placeholder-neutral-600 focus:outline-none focus:ring-1 transition-all",
-                lastNameError
-                  ? "border-rose-500/80 focus:ring-rose-400 focus:border-rose-400"
-                  : "border-white/10 hover:border-white/20 focus:ring-cyan-400 focus:border-cyan-400",
-              )}
-            />
-            {lastNameError && (
-              <p className="text-[11px] text-rose-400 mt-1">{lastNameError}</p>
-            )}
-          </div>
-        </div>
-
-        {/* Gender */}
-        <div>
-          <label className="block text-xs font-mono uppercase tracking-wider text-neutral-400 mb-2">
-            Gender <span className="text-rose-400">*</span>
-          </label>
-          <div className="grid grid-cols-2 gap-2">
-            {GENDER_OPTIONS.map((opt) => (
-              <button
-                key={opt}
-                type="button"
-                onClick={() => onUpdate(memberKey, "gender", opt)}
-                className={cn(
-                  "px-2.5 sm:px-3 py-2 rounded-xl text-[11px] sm:text-xs font-medium border text-center transition-all cursor-pointer truncate",
-                  memberData.gender === opt
-                    ? "bg-white text-black border-white font-semibold shadow-[0_2px_12px_rgba(255,255,255,0.2)]"
-                    : "bg-white/[0.03] border-white/10 text-neutral-400 hover:text-white hover:border-white/20",
-                )}
-              >
-                {opt}
-              </button>
+    <section aria-label={title + " contact details"}>
+      <div className={styles.fields}>
+        <FormField id={memberKey + "-firstName"} label="First name" placeholder="First name" autoComplete={"section-" + memberKey + " given-name"}
+          value={memberData.firstName} error={errors[memberKey + ".firstName"]} onChange={(e) => onUpdate(memberKey, "firstName", e.target.value)} />
+        <FormField id={memberKey + "-lastName"} label="Last name" placeholder="Last name" autoComplete={"section-" + memberKey + " family-name"}
+          value={memberData.lastName} error={errors[memberKey + ".lastName"]} onChange={(e) => onUpdate(memberKey, "lastName", e.target.value)} />
+        <FormField id={memberKey + "-email"} label="Email address" type="email" placeholder="you@example.com"
+          autoComplete={"section-" + memberKey + " email"} value={memberData.email} error={errors[memberKey + ".email"]}
+          onChange={(e) => onUpdate(memberKey, "email", e.target.value)} hint={emailSubtitle} />
+        <FormField id={memberKey + "-phone"} label="Phone number" type="tel" inputMode="tel" placeholder="98765 43210" prefix="+91"
+          autoComplete={"section-" + memberKey + " tel-national"} value={memberData.phone} error={errors[memberKey + ".phone"]}
+          onChange={(e) => onUpdate(memberKey, "phone", e.target.value)} />
+        <fieldset className={styles.choiceGroup} aria-describedby={genderError ? memberKey + "-gender-error" : undefined}>
+          <legend className={styles.fieldLabel}>Gender <span className={styles.required}>*</span></legend>
+          <div className={styles.choices}>
+            {GENDER_OPTIONS.map((option) => (
+              <label key={option} className={styles.choice}>
+                <input type="radio" name={memberKey + "-gender"} value={option} checked={memberData.gender === option}
+                  aria-required="true" aria-invalid={Boolean(genderError)} onChange={() => onUpdate(memberKey, "gender", option)} />
+                <span className={styles.radioDot} aria-hidden="true" />{option}
+              </label>
             ))}
           </div>
-          {genderError && (
-            <p className="text-[11px] text-rose-400 mt-1">{genderError}</p>
-          )}
-        </div>
-
-        {/* Email & Phone */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
-          <div>
-            <div className="flex items-center justify-between mb-1.5">
-              <label className="text-xs font-mono uppercase tracking-wider text-neutral-400">
-                Email <span className="text-rose-400">*</span>
-              </label>
-              <span className="text-[10px] text-neutral-500">
-                {emailSubtitle}
-              </span>
-            </div>
-
-            <div className="relative">
-              <Mail className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-neutral-500" />
-              <input
-                type="email"
-                placeholder={
-                  memberKey === "member1"
-                    ? "leader@example.com"
-                    : "member2@example.com"
-                }
-                value={memberData.email}
-                onChange={(e) => onUpdate(memberKey, "email", e.target.value)}
-                className={cn(
-                  "w-full pl-10 pr-3.5 py-2.5 rounded-xl border text-sm transition-all placeholder-neutral-600 focus:outline-none focus:ring-1",
-                  emailError
-                    ? "bg-white/[0.03] border-rose-500/80 focus:ring-rose-400 focus:border-rose-400 text-white"
-                    : "bg-white/[0.03] border-white/10 hover:border-white/20 focus:ring-cyan-400 focus:border-cyan-400 text-white",
-                )}
-              />
-            </div>
-
-            {emailError && (
-              <p className="text-[11px] text-rose-400 mt-1">{emailError}</p>
-            )}
-          </div>
-
-          <div>
-            <label className="block text-xs font-mono uppercase tracking-wider text-neutral-400 mb-1.5">
-              Phone Number <span className="text-rose-400">*</span>
-            </label>
-            <div className="relative flex">
-              <div className="inline-flex items-center px-3 rounded-l-xl border border-r-0 border-white/10 bg-white/[0.05] text-xs font-mono text-neutral-400 select-none">
-                +91
-              </div>
-              <div className="relative flex-1">
-                <Phone className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-neutral-500" />
-                <input
-                  type="tel"
-                  placeholder="98765 43210"
-                  value={memberData.phone}
-                  onChange={(e) => onUpdate(memberKey, "phone", e.target.value)}
-                  className={cn(
-                    "w-full pl-9 pr-3.5 py-2.5 rounded-r-xl bg-white/[0.03] border text-sm text-white placeholder-neutral-600 focus:outline-none focus:ring-1 transition-all",
-                    phoneError
-                      ? "border-rose-500/80 focus:ring-rose-400 focus:border-rose-400"
-                      : "border-white/10 hover:border-white/20 focus:ring-cyan-400 focus:border-cyan-400",
-                  )}
-                />
-              </div>
-            </div>
-            {phoneError && (
-              <p className="text-[11px] text-rose-400 mt-1">{phoneError}</p>
-            )}
-          </div>
-        </div>
+          {genderError && <p id={memberKey + "-gender-error"} className={styles.error} role="alert">{genderError}</p>}
+        </fieldset>
       </div>
-    </div>
+    </section>
   );
-};
+}
