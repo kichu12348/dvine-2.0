@@ -11,6 +11,7 @@ export const VERIFIED_WINDOW_SECONDS = 5 * 60;
 
 export interface LeaderEmailOtpAreaProps {
   email: string;
+  isSolo?: boolean;
   isVerified: boolean;
   otpState: OtpState;
   onSendOtp: (email: string) => Promise<boolean>;
@@ -23,6 +24,7 @@ export interface LeaderEmailOtpAreaProps {
 
 export const LeaderEmailOtpArea: React.FC<LeaderEmailOtpAreaProps> = ({
   email,
+  isSolo = false,
   isVerified,
   otpState,
   onSendOtp,
@@ -88,7 +90,7 @@ export const LeaderEmailOtpArea: React.FC<LeaderEmailOtpAreaProps> = ({
 
   return (
     <div className={cn(styles.verification, className)}>
-      <div className={styles.verificationHeader}>Verify your leader&apos;s email</div>
+      <div className={styles.verificationHeader}>{isSolo ? "Verify your email" : "Verify your leader's email"}</div>
       <p className={styles.verificationEmail}>{email}</p>
       {!otpState.otpSent ? (
         <button type="button" onClick={() => onSendOtp(email)} disabled={otpState.isSending} className={styles.primaryButton}>

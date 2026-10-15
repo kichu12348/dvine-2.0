@@ -9,7 +9,7 @@ import Reveal from "./Reveal";
 
 const highlights = [
   { value: "24", label: "Hours" },
-  { value: "02", label: "Per team" },
+  { value: "1–2", label: "Participants per entry" },
   { value: "₹X", label: "Prize pool" },
 ];
 
@@ -164,7 +164,7 @@ export default function AboutEvent() {
                     <span className="font-semibold text-[var(--text)]">
                       24-hour UI/UX design sprint
                     </span>
-                    . Teams are given a blank slate and a ticking clock — identify
+                    . Participants are given a blank slate and a ticking clock — identify
                     real friction, discard the safe solution, and build something
                     people can feel.
                   </dd>

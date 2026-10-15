@@ -38,7 +38,7 @@ export function MemberTabs({ scope, activeMember, onSelect, formData, errors, fi
             className={[styles.memberTab, activeMember === member ? styles.selectedMember : "", hasError ? styles.memberTabError : ""].join(" ")}
           >
             <span className={styles.tabAvatar} aria-hidden="true">{hasError ? <CircleAlert size={15} /> : complete ? <Check size={15} /> : "0" + (index + 1)}</span>
-            <span className={styles.tabLabel}>{index === 0 ? "Team leader" : "Teammate"}<small>{hasError ? "Needs attention" : filled + " of " + fields.length + " fields filled"}</small></span>
+            <span className={styles.tabLabel}>{index === 0 ? "Team leader" : "Teammate"}<small>{hasError ? "Needs attention" : filled + "/" + fields.length + " completed"}</small></span>
             {activeMember === member && <span className={styles.tabIndicator} aria-hidden="true" />}
           </button>
         );

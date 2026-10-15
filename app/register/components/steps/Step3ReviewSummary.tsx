@@ -9,6 +9,7 @@ import { FormErrors, MemberKey, OtpState, TeamRegistrationData } from "../../typ
 import { MemberReviewCard } from "../shared/MemberReviewCard";
 import { LeaderEmailOtpArea } from "../shared/LeaderEmailOtpArea";
 import { loadRazorpayScript } from "../../utils/loadRazorpay";
+import { getMemberKeys, getRegistrationAmount } from "../../utils/registration";
 import styles from "../../register.module.css";
 
 export interface Step3ReviewSummaryProps {
@@ -27,8 +28,10 @@ export interface Step3ReviewSummaryProps {
 }
 
 export function Step3ReviewSummary({ formData, errors, onEditStep, onUpdateField, onSlidePayment, onSetTermsError,
-  amount = 600, isLeaderEmailVerified, otpState, onSendOtp, onVerifyOtp, onVerificationExpired }: Step3ReviewSummaryProps) {
-  const perHead = Math.round(amount / 2);
+  amount = getRegistrationAmount(formData), isLeaderEmailVerified, otpState, onSendOtp, onVerifyOtp, onVerificationExpired }: Step3ReviewSummaryProps) {
+  const isSolo = formData.registrationType === "solo";
+  const memberCount = getMemberKeys(formData).length;
+  const perHead = Math.round(amount / memberCount);
   const isSlideEnabled = formData.confirmAccuracy && isLeaderEmailVerified;
 
   React.useEffect(() => {
@@ -40,31 +43,31 @@ export function Step3ReviewSummary({ formData, errors, onEditStep, onUpdateField
       transition={motionTransitions.springGentle} className={styles.stepContent}>
       <div className={styles.sectionHeading}>
         <div><h2>Looks good? Make it official.</h2>
-        <p>Review your details and verify the leader&apos;s email to pay.</p></div>
+        <p>Review your details and verify {isSolo ? "your" : "the leader's"} email to pay.</p></div>
         <span className={styles.stepCounter}>03 <span>/ 04</span></span>
       </div>
       <div className={styles.reviewTeam}>
-        <div><small>YOUR TEAM</small><h3>{formData.teamName || "D'VINE 2.0 Team"}</h3></div>
-        <button type="button" onClick={() => onEditStep(1)} className={styles.editButton}><Pencil size={11} aria-hidden="true" /> Edit team</button>
+        <div><small>TEAM NAME</small><h3>{formData.teamName || "D'VINE 2.0 Team"}</h3></div>
+        <button type="button" onClick={() => onEditStep(1)} className={styles.editButton}><Pencil size={11} aria-hidden="true" /> Edit team name</button>
       </div>
-      <div className={styles.memberGrid}>
-        <MemberReviewCard title="Team leader" icon={<Crown size={15} />} memberData={formData.member1} onEdit={() => onEditStep(1, "member1")} />
-        <MemberReviewCard title="Teammate" icon={<UserCheck size={15} />} memberData={formData.member2} onEdit={() => onEditStep(1, "member2")} />
+      <div className={[styles.memberGrid, isSolo ? styles.singleMember : ""].join(" ")}>
+        <MemberReviewCard title={isSolo ? "Participant" : "Team leader"} icon={<Crown size={15} />} memberData={formData.member1} onEdit={() => onEditStep(1, "member1")} />
+        {!isSolo && <MemberReviewCard title="Teammate" icon={<UserCheck size={15} />} memberData={formData.member2} onEdit={() => onEditStep(1, "member2")} />}
       </div>
       <div className={styles.checkout}>
         <div>
-          <h3>Your team pass</h3>
-          <div className={styles.priceRow}><span>Team leader</span><span>₹{perHead}.00</span></div>
-          <div className={styles.priceRow}><span>Teammate</span><span>₹{perHead}.00</span></div>
+          <h3>{isSolo ? "Your solo pass" : "Your team pass"}</h3>
+          <div className={styles.priceRow}><span>{isSolo ? "Participant" : "Team leader"}</span><span>₹{perHead}.00</span></div>
+          {!isSolo && <div className={styles.priceRow}><span>Teammate</span><span>₹{perHead}.00</span></div>}
           <div className={styles.priceTotal}><span>Total payable</span><strong>₹{amount}</strong></div>
           <p className={styles.fieldHint}>INR · Includes GST</p>
         </div>
         <div className={styles.checkoutAction}>
-          <LeaderEmailOtpArea email={formData.member1.email} isVerified={isLeaderEmailVerified} otpState={otpState}
+          <LeaderEmailOtpArea email={formData.member1.email} isSolo={isSolo} isVerified={isLeaderEmailVerified} otpState={otpState}
             onSendOtp={onSendOtp} onVerifyOtp={onVerifyOtp} onEditEmail={() => onEditStep(1)} onExpire={onVerificationExpired} />
           <label className={styles.consent}>
             <input type="checkbox" checked={formData.confirmAccuracy} onChange={(e) => onUpdateField("confirmAccuracy", e.target.checked)} />
-            <span>I confirm that the team and member details above are accurate to the best of my knowledge.</span>
+            <span>I confirm that the registration details above are accurate to the best of my knowledge.</span>
           </label>
           {errors.terms && <p className={styles.error} role="alert">{errors.terms}</p>}
           <SlideCommit
@@ -73,14 +76,14 @@ export function Step3ReviewSummary({ formData, errors, onEditStep, onUpdateField
             trackColor="#172c40" handleColor="#9ee4ff" successColor="#0284c7" dangerColor="#f43f5e"
             disabled={!isSlideEnabled}
             disabledReason={!formData.confirmAccuracy ? "Please confirm that the information above is accurate."
-              : !isLeaderEmailVerified ? "Please verify the leader's email before proceeding." : undefined}
+              : !isLeaderEmailVerified ? "Please verify your registration email before proceeding." : undefined}
             onConfirm={onSlidePayment}
             onError={(reason) => {
               const errorMsg = reason instanceof Error ? reason.message : typeof reason === "string" ? reason : "";
               if (!formData.confirmAccuracy) {
                 onSetTermsError("Please confirm that the information above is accurate.");
               } else if (!isLeaderEmailVerified) {
-                onSetTermsError("Please verify the leader's email before proceeding.");
+                onSetTermsError("Please verify your registration email before proceeding.");
               } else if (errorMsg) {
                 onSetTermsError(errorMsg);
               } else {
@@ -95,7 +98,7 @@ export function Step3ReviewSummary({ formData, errors, onEditStep, onUpdateField
       </div>
       <div className={styles.actions}>
         <button type="button" onClick={() => onEditStep(2)} className={styles.secondaryButton}><ArrowLeft size={14} aria-hidden="true" /> Academic details</button>
-        <span className={styles.actionNote}>₹{amount} for both members</span>
+        <span className={styles.actionNote}>₹{amount} for {memberCount} {memberCount === 1 ? "participant" : "participants"}</span>
       </div>
     </motion.div>
   );

@@ -15,6 +15,7 @@ import { motionTransitions } from "../../../lib/motion-tokens";
 import { PaymentLifecycleStatus } from "../../../components/register/PaymentStatus";
 import { TeamRegistrationData } from "../../types";
 import styles from "../../register.module.css";
+import { getRegistrationAmount } from "../../utils/registration";
 
 export interface Step4ConfirmationProps {
   formData: TeamRegistrationData;
@@ -34,10 +35,11 @@ export function Step4Confirmation({
   txId,
   onRetryPayment,
   onChangePaymentMethod,
-  amount = 698,
+  amount = getRegistrationAmount(formData),
   errorMessage,
   isPolling,
 }: Step4ConfirmationProps) {
+  const isSolo = formData.registrationType === "solo";
   if (paymentStatus === "processing" || paymentStatus === "verifying") {
     return (
       <motion.div
@@ -129,7 +131,7 @@ export function Step4Confirmation({
         </div>
         <h2>You&apos;re on the list.</h2>
         <p>
-          Your team is officially registered for D&apos;VINE 2.0.
+          You&apos;re officially registered for D&apos;VINE 2.0.
           <br />
           We can&apos;t wait to see what you create.
         </p>
@@ -137,9 +139,9 @@ export function Step4Confirmation({
       <div className={styles.confirmationEmail}>
         <Mail size={17} aria-hidden="true" />
         <div>
-          Confirmation emails with your event tickets will be sent to:
+          {isSolo ? "Your confirmation and event ticket will be sent to:" : "Confirmation emails with your event tickets will be sent to:"}
           <strong>{formData.member1.email}</strong>
-          {formData.member2.email && <strong>{formData.member2.email}</strong>}
+          {!isSolo && formData.member2.email && <strong>{formData.member2.email}</strong>}
           <p className={styles.fieldHint}>
             Check your inbox and spam folder in the next few minutes.
           </p>
@@ -147,7 +149,7 @@ export function Step4Confirmation({
       </div>
       <div className={styles.receipt}>
         <div className={styles.receiptHeader}>
-          <span>D&apos;VINE 2.0 / TEAM PASS</span>
+          <span>D&apos;VINE 2.0 / {isSolo ? "SOLO PASS" : "TEAM PASS"}</span>
           <strong>₹{amount}.00 paid</strong>
         </div>
         <dl className={styles.reviewDetails}>
@@ -160,19 +162,19 @@ export function Step4Confirmation({
             <dd>{formData.member1.collegeName || "Registered Institution"}</dd>
           </div>
           <div>
-            <dt>Team leader</dt>
+            <dt>{isSolo ? "Participant" : "Team leader"}</dt>
             <dd>
               {formData.member1.firstName} {formData.member1.lastName}
             </dd>
           </div>
-          <div>
+          {!isSolo && <div>
             <dt>Teammate</dt>
             <dd>
               {formData.member2.firstName
                 ? formData.member2.firstName + " " + formData.member2.lastName
                 : "—"}
             </dd>
-          </div>
+          </div>}
           {txId && (
             <div className={styles.fullWidth}>
               <dt>Transaction reference</dt>

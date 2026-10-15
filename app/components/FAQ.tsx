@@ -25,7 +25,7 @@ const questions: UnfoldAccordionItem[] = [
   {
     id: "team-size",
     title: "What is the maximum team size?",
-    content: "The maximum team size is 2 members.",
+    content: "Register solo or with one teammate. Each entry can have 1–2 participants.",
   },
   {
     id: "duration",

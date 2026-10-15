@@ -27,7 +27,7 @@ export function isValidIndianPhone(phone: string): boolean {
 }
 
 /**
- * Validates the entry name and the selected participant contact details.
+ * Validates the required team name and the selected participant contact details.
  * Pure function adhering to the Single Responsibility Principle.
  */
 export function validateStep1(
@@ -39,9 +39,9 @@ export function validateStep1(
   // Team Name
   const trimmedTeam = formData.teamName.trim();
   if (!trimmedTeam) {
-    errors.teamName = formData.registrationType === "solo" ? "Entry name is required" : "Team name is required";
+    errors.teamName = "Team name is required";
   } else if (trimmedTeam.length > 80) {
-    errors.teamName = "Entry name cannot exceed 80 characters";
+    errors.teamName = "Team name cannot exceed 80 characters";
   }
 
   // Member 1 (Leader)

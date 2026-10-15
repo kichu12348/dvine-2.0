@@ -64,7 +64,8 @@ export function Step1TeamDetails({ formData, errors, onUpdateField, onUpdateMemb
         </div>
       </fieldset>
       <div className={styles.teamField}>
-        <FormField id="team-name" label={isSolo ? "Entry name" : "Team name"} placeholder={isSolo ? "Your name or a creative alias" : "What should we call your team?"} value={formData.teamName} disabled={isSoldOut}
+        <FormField id="team-name" label="Team name" placeholder="What should we call your team?" value={formData.teamName} disabled={isSoldOut}
+          hint={isSolo ? "A team name is required for solo registrations too." : undefined}
           onChange={(e) => onUpdateField("teamName", e.target.value)} error={errors.teamName} />
       </div>
       {!isSolo && <MemberTabs scope="basic" activeMember={activeMember} onSelect={setActiveMember} formData={formData} errors={errors}

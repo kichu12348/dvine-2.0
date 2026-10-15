@@ -63,12 +63,12 @@ export interface MemberData {
 export interface RegisterRequest {
   teamName: string;
   member1: MemberData; // Lead (email must match verified OTP)
-  member2: MemberData;
+  member2: MemberData | null; // null for solo; full details for a team of two
 }
 
 export interface RegisterSuccessResponse {
   teamId: string;
-  amount: number; // 600
+  amount: number; // Server-calculated total for the selected participant count
   currency: string; // "INR"
   orderId: string; // Razorpay order ID (e.g. "order_xyz123")
   keyId: string; // Razorpay public key ID
@@ -172,7 +172,7 @@ The lead member must verify their email before form submission.
 
 ### Step 3: Registration Form & Validations
 
-Once Member 1's email is verified, display the full registration form.
+Accept solo entries or teams of two. For a solo registration, collect only Member 1's details and send `member2: null` to the existing endpoint. For a team of two, collect both members' complete details. A team name is required for both options, including solo registrations. Verify Member 1's email before payment.
 
 #### Client-side Validations
 
@@ -180,7 +180,7 @@ Once Member 1's email is verified, display the full registration form.
 | ----------------------- | ----------------------------------------------------------------------- |
 | `teamName`              | Required, trimmed, max 80 chars                                         |
 | `member1.email`         | Read-only, locked to verified email                                     |
-| `member2.email`         | Valid email, **must be different** from `member1.email`                 |
+| `member2.email`         | Required only for a two-person team; valid and different from `member1.email` |
 | `phone`                 | Indian 10-digit format: `^[6-9]\d{9}$` (strip leading `+91` or spaces)  |
 | `firstName`, `lastName` | Required, trimmed, max 100 chars                                        |
 | `collegeName`           | Required, trimmed, max 150 chars                                        |
@@ -192,6 +192,8 @@ Once Member 1's email is verified, display the full registration form.
 
 - **Endpoint:** `POST /register`
 - **Body:** See `RegisterRequest` in definitions above.
+- Solo example: `{ teamName: "Your team name", member1: { /* full details */ }, member2: null }`.
+- Preview pricing follows the per-person frontend configuration. Razorpay checkout must use the amount returned by the server.
 - **Handling Responses:**
   - **`201 Created`**: Returns `{ teamId, amount, currency, orderId, keyId, lockExpiresAt }`.
     - Immediately proceed to **Step 4 (Launch Razorpay)**.

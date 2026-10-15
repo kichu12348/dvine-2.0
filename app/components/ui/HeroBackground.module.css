@@ -19,6 +19,7 @@
 }
 
 @media (max-width: 760px) {
+  .background { opacity: 0.18; }
   .shade {
     background:
       linear-gradient(180deg, var(--ink), transparent 20%, transparent 75%, var(--ink)),

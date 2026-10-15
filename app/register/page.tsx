@@ -74,7 +74,7 @@ export default function RegisterPage() {
         ...prev,
         terms:
           err?.message ||
-          "Please verify your details and ensure lead email is verified.",
+          "Please check your details and verify your registration email.",
       }));
       throw err;
     }

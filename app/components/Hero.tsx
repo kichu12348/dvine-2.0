@@ -119,15 +119,15 @@ export default function Hero({ ready = true }: { ready?: boolean }) {
             </span>
           </h1>
           <p className={styles.description}>
-            Many designers. One challenge. Turn your boldest ideas into
+            Solo or with a teammate. Turn your boldest ideas into
             experiences people love.
           </p>
           <div className={styles.actions}>
             <Link href="/register" className={styles.register}>
-              Register your team <ArrowUpRight size={18} aria-hidden="true" />
+              Register now <ArrowUpRight size={18} aria-hidden="true" />
             </Link>
             <a href="#about-event" className={styles.explore}>
-              Explore the event <ArrowDown size={16} aria-hidden="true" />
+              Explore event <ArrowDown size={16} aria-hidden="true" />
             </a>
           </div>
         </div>

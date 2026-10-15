@@ -132,18 +132,18 @@
   .eventFacts { gap: 12px; }
 }
 @media (max-width: 850px) {
-  .hero { padding: 104px 36px 24px; gap: 22px; }
-  .heroMain { grid-template-columns: 1fr; min-height: auto; }
-  .content { text-align: center; display: flex; flex-direction: column; align-items: center; padding-bottom: 0; }
+  .hero { padding: 96px 32px 28px; gap: 0; }
+  .heroMain { grid-template-columns: 1fr; min-height: auto; flex: 0 0 auto; gap: 24px; }
+  .content { text-align: center; display: flex; flex-direction: column; align-items: center; padding: 0; min-width: 0; }
   .eyebrow { font-size: 8px; }
-  .brandMark { width: 320px; margin: 22px 0 25px; }
+  .brandMark { width: 320px; margin: 0 0 28px; }
   .title { font-size: clamp(58px, 8.5vw, 76px); }
   .description { max-width: 370px; font-size: 13px; margin-top: 32px; }
   .actions { justify-content: center; margin-top: 25px; gap: 25px; }
   .date { margin-top: 22px; }
-  .art { width: min(100%, 540px); height: 455px; margin: 5px auto 0; }
-  .sculpture { left: 4%; width: 91%; top: -4%; }
-  .orbit { inset: -12% 0 0; width: 100%; height: 116%; }
+  .art { width: min(80vw, 460px); height: auto; aspect-ratio: 1.08; margin: 0 auto; }
+  .sculpture { left: 5%; width: 90%; top: 0; }
+  .orbit { inset: 0; width: 100%; height: 100%; }
   .toolPosition { width: 69px; height: 75px; }
   .figmaTile { top: 7%; left: 13%; }
   .frameTile { top: 1%; right: 21%; }
@@ -158,39 +158,39 @@
   .eventFacts { width: 100%; justify-content: center; gap: 20px; }
   .scrollLink { display: none; }
 }
-@media (max-width: 500px) {
-  .hero { padding: 98px 22px 22px; gap: 16px; }
+@media (max-width: 600px) {
+  .hero { padding: 84px 20px 20px; }
+  .heroMain { gap: 12px; }
   .grid { background-size: 51px 51px; }
   .eyebrow { font-size: 7px; letter-spacing: .12em; gap: 8px; }
-  .brandMark { width: 248px; margin: 21px 0 23px; }
-  .title { font-size: clamp(46px, 11.7vw, 59px); }
+  .brandMark { width: clamp(220px, 66vw, 280px); margin: 0 0 22px; }
+  .title { font-size: clamp(44px, 12vw, 60px); }
   .selection { margin-top: 7px; }
   .handles i { width: 6px; height: 6px; }
   .handles i:nth-child(1) { top: -3px; left: -3px; }
   .handles i:nth-child(2) { top: -3px; right: -3px; }
   .handles i:nth-child(3) { bottom: -3px; right: -3px; }
   .handles i:nth-child(4) { bottom: -3px; left: -3px; }
-  .collaborator { right: -28px; font-size: 7px; }
+  .collaborator { right: -18px; font-size: 8px; }
   .collaborator svg { width: 17px; height: 17px; }
   .collaborator > span { margin-top: 12px; padding: 5px 6px; }
-  .description { max-width: 300px; margin-top: 28px; font-size: 12px; line-height: 1.8; }
-  .actions { width: 100%; gap: 18px; margin-top: 22px; }
-  .register, .explore { font-size: 10px; min-height: 44px; gap: 8px; }
-  .register { padding-inline: 15px; }
+  .description { width: 100%; max-width: 36ch; margin-top: 22px; font-size: 13px; line-height: 1.65; text-wrap: balance; }
+  .actions { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); width: min(100%, 360px); gap: 12px; margin-top: 18px; }
+  .register, .explore { font-size: 12px; min-height: 48px; gap: 8px; padding-inline: 12px; white-space: nowrap; }
+  .explore { border: 1px solid #9cdbff30; border-radius: 6px; background: #09172b80; }
   .date { font-size: 7px; margin-top: 18px; }
-  .art { height: 340px; margin-top: 5px; }
-  .sculpture { top: -1%; left: 0; width: 100%; }
-  .toolPosition { width: 52px; height: 57px; }
-  .toolCard { gap: 5px; border-radius: 13px; }
-  .toolCard svg { width: 23px; height: 23px; }
-  .toolCard > span { font-size: 5px; }
-  .figmaTile { top: 10%; left: 7%; }
-  .frameTile { top: 0; right: 20%; }
-  .penTile { top: 27%; right: -1%; }
-  .layersTile { bottom: 20%; right: -1%; }
-  .componentTile { bottom: 4%; left: 13%; }
-  .sparkTile { top: 44%; left: -1%; }
-  .designNote { left: 10%; top: 32%; padding: 7px 8px; font-size: 5px; gap: 5px; }
+  .art { width: min(88%, 320px); height: auto; aspect-ratio: 1.15; margin: 0 auto; }
+  .sculpture { top: 0; left: 5%; width: 90%; }
+  .toolPosition { width: 46px; height: 51px; }
+  .toolCard { gap: 0; border-radius: 13px; }
+  .toolCard svg { width: 24px; height: 24px; }
+  .toolCard > span { display: none; }
+  .figmaTile { top: 12%; left: 2%; }
+  .frameTile { top: 0; right: 13%; }
+  .penTile { top: 33%; right: -2%; }
+  .layersTile { bottom: 12%; right: -1%; }
+  .componentTile { bottom: 0; left: 8%; }
+  .sparkTile, .designNote, .artLabel { display: none; }
   .noteCross { font-size: 10px; margin-left: 7px; }
   .noteDot { width: 3px; height: 3px; }
   .artLabel { font-size: 5px; bottom: 3%; right: 0; }
@@ -202,13 +202,19 @@
 }
 @media (max-width: 360px) {
   .hero { padding-inline: 18px; }
-  .title { font-size: 43px; }
-  .description { max-width: 270px; }
-  .actions { gap: 14px; }
-  .register, .explore { font-size: 9px; }
-  .register { padding-inline: 12px; }
-  .art { height: 290px; }
-  .toolPosition { width: 46px; height: 51px; }
+  .title { font-size: 42px; }
+  .actions { gap: 10px; }
+  .register, .explore { font-size: 11px; padding-inline: 9px; }
+  .toolPosition { width: 41px; height: 46px; }
+}
+@media (max-width: 600px) and (max-height: 740px) {
+  .hero { padding-top: 76px; padding-bottom: 16px; }
+  .heroMain { gap: 8px; }
+  .brandMark { width: 216px; margin-bottom: 20px; }
+  .title { font-size: clamp(40px, 11.5vw, 48px); }
+  .description { margin-top: 18px; font-size: 12px; }
+  .actions { margin-top: 18px; }
+  .art { width: min(80%, 270px); }
 }
 @media (max-height: 750px) and (min-width: 851px) {
   .hero { padding-top: 88px; gap: 18px; }

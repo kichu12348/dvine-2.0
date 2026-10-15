@@ -155,13 +155,13 @@ const chapters: Chapter[] = [
     eyebrow: "Before the first pixel",
     title: "Meet your blank canvas.",
     description:
-      "Find your team. Settle in. Get ready to turn a fresh brief into something worth feeling.",
+      "Check in, solo or with a teammate. Settle in and get ready to turn a fresh brief into something worth feeling.",
     date: "31 October 2026",
     hours: "PRE-SPRINT / 9–11 AM",
     from: 0,
     to: 0,
     checkpoints: [
-      { time: "9:00–10:00 AM", title: "Registration & team confirmation" },
+      { time: "9:00–10:00 AM", title: "Registration & check-in" },
       { time: "10:00–11:00 AM", title: "Inauguration & briefing" },
     ],
   },
