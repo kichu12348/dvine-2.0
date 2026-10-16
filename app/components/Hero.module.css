@@ -57,7 +57,14 @@
 .collaborator { position: absolute; top: calc(100% - 6px); right: -48px; display: flex; align-items: flex-start; gap: 0; color: #9ce3ff; font-family: var(--font-body), sans-serif; font-size: 10px; letter-spacing: 0; line-height: 1; transform: rotate(2deg); }
 .collaborator svg { flex-shrink: 0; transform: rotate(-12deg); filter: drop-shadow(0 3px 6px #0007); }
 .collaborator > span { margin-top: 19px; margin-left: -5px; padding: 7px 10px; border-radius: 3px; background: #b6eaff; color: #03223a; white-space: nowrap; }
-.description { max-width: 360px; margin-top: 33px; color: #a7bed2; font-size: 14px; line-height: 1.8; }
+.description {
+  max-width: min(430px, calc(100vw - 32px));
+  margin-inline: auto;
+  white-space: nowrap;
+  font-size: 14px;
+  line-height: 1.8;
+  text-align: center;
+}
 .actions { display: flex; align-items: center; flex-wrap: wrap; gap: 26px; margin-top: 28px; }
 .register, .explore { display: inline-flex; align-items: center; justify-content: center; gap: 13px; min-height: 48px; font-size: 12px; font-weight: 600; transition: background 180ms, color 180ms, box-shadow 180ms; }
 .register { padding: 0 20px; border: 1px solid #b5e9ff; border-radius: 6px; background: #b5e9ff; color: #06243a; }
