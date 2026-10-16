@@ -20,9 +20,9 @@ export const metadata: Metadata = {
   title: "D'VINE 2.0",
   description: "D'VINE is a UI/UX hackathon for ideas that deserve to be felt.",
   icons: {
-    icon: "/assets/dvine_favicon.ico",
-    shortcut: "/assets/dvine_favicon.ico",
-    apple: "/assets/dvine_favicon.ico",
+    icon: { url: "/assets/D.png", type: "image/png", sizes: "649x649" },
+    shortcut: { url: "/assets/D.png", type: "image/png" },
+    apple: { url: "/assets/D.png", type: "image/png", sizes: "649x649" },
   },
 };
 

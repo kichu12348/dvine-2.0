@@ -193,10 +193,11 @@ export default function Footer() {
         <p
           aria-hidden="true"
           ref={wordmarkRef}
-          className="footer-wordmark select-none whitespace-nowrap bg-[linear-gradient(90deg,#2D86CE_0%,#2D86CE_18%,#A3E0FC_23%,#fff_31%,#fff_100%)] bg-clip-text text-center font-[family-name:var(--font-owners)] text-[clamp(3.1rem,15.5vw,16rem)] font-black uppercase leading-[0.85] tracking-[-0.04em] text-transparent"
+          className="footer-wordmark select-none whitespace-nowrap text-center font-[family-name:var(--font-owners)] text-[clamp(3.1rem,15.5vw,16rem)] font-black uppercase leading-[0.85] tracking-[-0.04em] text-transparent"
         >
-          D&apos;vine{" "}
-          <span className="font-[family-name:var(--font-heading)]">2.0</span>
+          <span className="footer-wordmark-part bg-[linear-gradient(90deg,#00DAFD,#1B51DD_209.5%)]">D</span>
+          <span className="footer-wordmark-part bg-[linear-gradient(90deg,#B3E5FC,#ECF7FD)]">&apos;vine</span>{" "}
+          <span className="footer-wordmark-part bg-[linear-gradient(#fff,#fff)] font-[family-name:var(--font-heading)]">2.0</span>
         </p>
       </div>
     </footer>

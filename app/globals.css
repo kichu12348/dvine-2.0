@@ -383,6 +383,13 @@ section[id] {
   background-repeat: no-repeat;
 }
 
+.footer-wordmark-part {
+  -webkit-background-clip: text;
+  background-clip: text;
+  background-size: inherit;
+  background-repeat: no-repeat;
+}
+
 @keyframes marquee-scroll {
   from {
     transform: translateX(0);

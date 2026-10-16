@@ -15,37 +15,37 @@ const LOGO_PATHS = [
   {
     id: "D",
     d: "M169.201 128.087V241.575L136.645 265.878H7.10736V103.784H136.645L169.201 128.087ZM104.318 209.248V168.668H71.9907V209.248H104.318Z",
-    stroke: "#2D86CE",
-    fill: "#2D86CE",
+    stroke: "url(#paint0_linear_logo)",
+    fill: "url(#paint0_linear_logo)",
   },
   {
     id: "Apostrophe",
     d: "M216.264 103.784C214.888 109.134 213.131 114.942 210.991 121.209C208.851 127.476 206.482 133.742 203.883 140.009C201.438 146.123 198.992 151.931 196.547 157.433H181.644C182.714 153.154 183.784 148.568 184.854 143.677C186.077 138.786 187.147 133.895 188.064 129.004C189.134 123.96 190.051 119.069 190.815 114.331C191.732 109.593 192.496 105.236 193.108 101.262H214.659L216.264 103.784Z",
-    stroke: "#A3E0FC",
+    stroke: "url(#paint1_linear_logo)",
     fill: "url(#paint1_linear_logo)",
   },
   {
     id: "V",
     d: "M390.923 120.521V224.609L342.318 266.337H277.434L228.829 224.609V161.102V152.848V144.824V104.243H277.434H293.483V193.429L309.761 207.414L326.039 193.429V104.243H342.318H390.923V112.497V120.521Z",
-    stroke: "#A3E0FC",
+    stroke: "url(#paint1_linear_logo)",
     fill: "url(#paint1_linear_logo)",
   },
   {
     id: "I",
     d: "M472.179 103.326V265.419H407.296V103.326H472.179Z",
-    stroke: "#B8E5FC",
+    stroke: "url(#paint1_linear_logo)",
     fill: "url(#paint1_linear_logo)",
   },
   {
     id: "N",
     d: "M654.662 265.19H589.778L557.451 211.312V265.19H492.568V103.097H557.451L589.778 157.204V103.097H654.662V111.35V265.19Z",
-    stroke: "#CDEBFC",
+    stroke: "url(#paint1_linear_logo)",
     fill: "url(#paint1_linear_logo)",
   },
   {
     id: "E",
     d: "M821.083 209.707V266.337H675.267V104.243H821.083V160.873H740.151V169.126H780.731V201.453H740.151V209.707H821.083Z",
-    stroke: "#E0F4FD",
+    stroke: "url(#paint1_linear_logo)",
     fill: "url(#paint1_linear_logo)",
   },
   {
@@ -152,6 +152,18 @@ export const DvineLogoStroke = ({
       role="img"
     >
       <defs>
+        <linearGradient
+          id="paint0_linear_logo"
+          x1="0"
+          y1="207.461"
+          x2="831"
+          y2="207.461"
+          gradientUnits="userSpaceOnUse"
+        >
+          <stop stopColor="#00DAFD" />
+          <stop offset="0.408654" stopColor="#1B51DD" />
+        </linearGradient>
+
         <linearGradient
           id="paint1_linear_logo"
           x1="0"
