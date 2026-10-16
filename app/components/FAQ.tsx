@@ -3,6 +3,7 @@
 import { useId, useRef, useState } from "react";
 import { UnfoldAccordion } from "./ui/unfold-accordion";
 import type { UnfoldAccordionItem } from "./ui/unfold-accordion";
+import { PRIZEPOOL_REVEAL_DATE } from "../lib/event-config";
 
 const questions: UnfoldAccordionItem[] = [
   {
@@ -47,7 +48,7 @@ const questions: UnfoldAccordionItem[] = [
   {
     id: "prizes",
     title: "What are the prizes?",
-    content: "D'VINE 2.0 features prizes worth ₹2 Lakhs.",
+    content: `The prize pool will be revealed on ${PRIZEPOOL_REVEAL_DATE}. Check back for the announcement.`,
   },
   {
     id: "judging",

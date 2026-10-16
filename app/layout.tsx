@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Space_Grotesk, Inter } from "next/font/google";
 import "./globals.css";
+import { RegistrationProvider } from "./components/RegistrationAccess";
 
 const spaceGrotesk = Space_Grotesk({
   subsets: ["latin"],
@@ -35,7 +36,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
         Scoping it here silences that one known false positive without hiding
         real mismatches anywhere else in the tree.
       */}
-      <body suppressHydrationWarning>{children}</body>
+      <body suppressHydrationWarning><RegistrationProvider>{children}</RegistrationProvider></body>
     </html>
   );
 }

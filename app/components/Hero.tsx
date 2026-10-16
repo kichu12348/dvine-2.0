@@ -2,10 +2,8 @@
 
 import { useRef, useSyncExternalStore, type CSSProperties } from "react";
 import Image from "next/image";
-import Link from "next/link";
 import {
   ArrowDown,
-  ArrowUpRight,
   Component,
   Frame,
   Layers3,
@@ -16,6 +14,7 @@ import {
 import { useInView } from "motion/react";
 import HeroBackground from "./ui/HeroBackground";
 import styles from "./Hero.module.css";
+import { RegistrationButton, RegistrationIcon } from "./RegistrationAccess";
 
 const motionPreference = "(prefers-reduced-motion: reduce)";
 
@@ -123,9 +122,9 @@ export default function Hero({ ready = true }: { ready?: boolean }) {
             experiences people love.
           </p>
           <div className={styles.actions}>
-            <Link href="/register" className={styles.register}>
-              Register now <ArrowUpRight size={18} aria-hidden="true" />
-            </Link>
+            <RegistrationButton className={styles.register}>
+              Register now <RegistrationIcon />
+            </RegistrationButton>
             <a href="#about-event" className={styles.explore}>
               Explore event <ArrowDown size={16} aria-hidden="true" />
             </a>

@@ -2,7 +2,7 @@
 
 import { useEffect, useRef, useState, type CSSProperties } from "react";
 import Image from "next/image";
-import { ArrowUpRight } from "lucide-react";
+import { RegistrationIcon } from "./RegistrationAccess";
 import Letter3DSwap from "./ui/Letter3DSwap";
 import AnatomyButton from "./ui/AnatomyButton";
 import ScrollProgress from "./ScrollProgress";
@@ -170,7 +170,7 @@ export default function NavbarMenu() {
             </a>
           )}
 
-          <AnatomyButton href="/register" variant="navbar" icon={<ArrowUpRight size={15} strokeWidth={1.8} />}>
+          <AnatomyButton href="/register" variant="navbar" icon={<RegistrationIcon size={15} />}>
             Register
           </AnatomyButton>
         </div>

@@ -3,9 +3,11 @@
 import { useEffect, useLayoutEffect, useRef, useState } from "react";
 import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
-import { ArrowUpRight, LockKeyhole } from "lucide-react";
+import { LockKeyhole } from "lucide-react";
+import { RegistrationButton, RegistrationIcon } from "./RegistrationAccess";
+import { PRIZEPOOL_REVEAL_AT, PRIZEPOOL_REVEAL_DATE, PRIZEPOOL_REVEAL_FULL_DATE, PRIZEPOOL_REVEAL_SHORT_DATE, PRIZEPOOL_REVEAL_TIME } from "../lib/event-config";
 
-const REVEAL_AT = Date.parse("2026-11-01T00:00:00+05:30");
+const REVEAL_AT = PRIZEPOOL_REVEAL_AT;
 const units = ["Days", "Hours", "Minutes", "Seconds"] as const;
 
 function getCountdown(now: number) {
@@ -83,7 +85,7 @@ function PrizeCountdown({ onReveal }: { onReveal: (revealed: boolean) => void })
     <div
       ref={timerRef}
       role="timer"
-      aria-label="Time until the prize pool announcement on 1 November 2026 at midnight India Standard Time"
+      aria-label={`Time until the prize pool announcement on ${PRIZEPOOL_REVEAL_FULL_DATE} at ${PRIZEPOOL_REVEAL_TIME} India Standard Time`}
       aria-live="off"
       className="grid grid-cols-4 gap-2 sm:gap-6"
     >
@@ -181,7 +183,7 @@ export default function Prizepool() {
             <p className="m-0 text-[13px] leading-[1.85] text-[var(--muted)] sm:text-[15px]">
               {revealed
                 ? "Watch this space for the prize pool announcement."
-                : "Big ideas deserve something worth chasing. The prize pool drops on 1 November. Until then, let the anticipation build."}
+                : `Big ideas deserve something worth chasing. The prize pool drops on ${PRIZEPOOL_REVEAL_DATE}. Until then, let the anticipation build.`}
             </p>
           </div>
         </div>
@@ -198,7 +200,7 @@ export default function Prizepool() {
               />
               {revealed ? "COUNTDOWN COMPLETE" : "THE REVEAL DROPS IN"}
             </span>
-            <span>01 NOV / 00:00 IST</span>
+            <span>{PRIZEPOOL_REVEAL_SHORT_DATE} / {PRIZEPOOL_REVEAL_TIME} IST</span>
           </div>
           <PrizeCountdown onReveal={setRevealed} />
         </div>
@@ -208,18 +210,16 @@ export default function Prizepool() {
           className="flex flex-wrap items-center justify-between gap-4 pt-6 font-mono text-[8px] text-[var(--muted)] sm:pt-7 sm:text-[10px]"
         >
           <span>24 HOURS OF DESIGN. A REWARD WORTH THE WAIT.</span>
-          <a
-            href="/register"
+          <RegistrationButton
             className="group inline-flex items-center gap-2 py-1 text-[var(--blue-light)]! focus-visible:outline-offset-4"
           >
             BE THERE FOR THE REVEAL
-            <ArrowUpRight
+            <RegistrationIcon
               size={13}
               strokeWidth={1.4}
               className="transition-transform duration-200 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 motion-reduce:transition-none"
-              aria-hidden="true"
             />
-          </a>
+          </RegistrationButton>
         </div>
         <p role="status" className="sr-only">
           {revealed

@@ -10,6 +10,8 @@ import { usePaymentSimulation } from "./hooks/usePayment";
 import { STEPS } from "./constants";
 import type { MemberKey } from "./types";
 import { getRegistrationAmount } from "./utils/registration";
+import { REGISTRATION_IS_OPEN } from "../lib/event-config";
+import { RegistrationClosed } from "../components/RegistrationAccess";
 import {
   RegisterHeader,
   RegisterStepper,
@@ -23,6 +25,10 @@ import {
 export type { MemberData, TeamRegistrationData } from "./types";
 
 export default function RegisterPage() {
+  return REGISTRATION_IS_OPEN ? <RegistrationForm /> : <RegistrationClosed />;
+}
+
+function RegistrationForm() {
   const [editingMember, setEditingMember] = useState<MemberKey>("member1");
   const {
     currentStep,

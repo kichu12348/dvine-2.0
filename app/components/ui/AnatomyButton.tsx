@@ -1,7 +1,8 @@
 import type { ReactNode } from "react";
+import { RegistrationButton } from "../RegistrationAccess";
 
 type AnatomyButtonProps = {
-  /** Destination — both main CTAs are plain links. */
+  /** Link destination; /register follows registration availability. */
   href: string;
   /** Button label, kept from the original CTA. */
   children: ReactNode;
@@ -11,7 +12,7 @@ type AnatomyButtonProps = {
    */
   icon?: ReactNode;
   /**
-   * `navbar` = compact CTA with an inline arrow for the fixed top bar. `default` =
+   * `navbar` = compact CTA with an inline icon for the fixed top bar. `default` =
    * the reference's surrounding annotations.
    */
   variant?: "default" | "navbar";
@@ -37,14 +38,8 @@ export default function AnatomyButton({
 }: AnatomyButtonProps) {
   const navbar = variant === "navbar";
 
-  return (
-    <a
-      href={href}
-      target={target}
-      rel={rel}
-      className={`anatomy-btn${navbar ? " anatomy-btn-navbar" : ""} ${className}`.trim()}
-    >
-      {navbar ? (
+  const buttonClassName = `anatomy-btn${navbar ? " anatomy-btn-navbar" : ""} ${className}`.trim();
+  const content = navbar ? (
         <>
           <span className="navbar-cta-label">{children}</span>
           <span className="navbar-cta-icon" aria-hidden="true">{icon}</span>
@@ -73,7 +68,11 @@ export default function AnatomyButton({
             <span className="border-text">Border Radius</span>
           </div>
         </>
-      )}
-    </a>
-  );
+      );
+
+  if (href === "/register") {
+    return <RegistrationButton className={buttonClassName} target={target} rel={rel}>{content}</RegistrationButton>;
+  }
+
+  return <a href={href} target={target} rel={rel} className={buttonClassName}>{content}</a>;
 }
