@@ -58,10 +58,10 @@
 .collaborator svg { flex-shrink: 0; transform: rotate(-12deg); filter: drop-shadow(0 3px 6px #0007); }
 .collaborator > span { margin-top: 19px; margin-left: -5px; padding: 7px 10px; border-radius: 3px; background: #b6eaff; color: #03223a; white-space: nowrap; }
 .description {
-  max-width: min(430px, calc(100vw - 32px));
+  width: 100%;
   margin-inline: auto;
   white-space: nowrap;
-  font-size: 14px;
+  font-size: clamp(11px, 3.6vw, 16px);
   line-height: 1.8;
   text-align: center;
 }
