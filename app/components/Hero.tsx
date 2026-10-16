@@ -119,7 +119,7 @@ export default function Hero({ ready = true }: { ready?: boolean }) {
             </span>
           </h1>
           <p className={styles.description}>
-            Solo or with a teammate. Turn your boldest ideas into
+            Turn your boldest ideas into
             experiences people love.
           </p>
           <div className={styles.actions}>
