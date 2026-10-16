@@ -2,6 +2,8 @@ import { API_ENDPOINTS } from "../constants/apiEndpoints";
 import {
   CancelRequest,
   CancelResponse,
+  IsEmailVerifiedResponse,
+  PaymentDetailsResponse,
   PaymentVerifyRequest,
   PaymentVerifyResponse,
   RegisterRequest,
@@ -11,6 +13,7 @@ import {
   TeamStatusResponse,
   TicketDetailsResponse,
   VerifyOtpRequest,
+  VerifyOtpResponse,
 } from "../types";
 import { ApiError, getFriendlyErrorMessage } from "../utils/apiErrors";
 
@@ -48,7 +51,7 @@ export const registrationApi = {
    * Checks whether an email is currently verified (5-minute window after OTP).
    * GET /register/is-email-verified?email=...
    */
-  async isEmailVerified(email: string): Promise<{ verified: boolean }> {
+  async isEmailVerified(email: string): Promise<IsEmailVerifiedResponse> {
     const res = await fetch(
       API_ENDPOINTS.isEmailVerified(email.trim().toLowerCase()),
       {
@@ -57,7 +60,7 @@ export const registrationApi = {
         cache: "no-store",
       },
     );
-    return parseResponse<{ verified: boolean }>(res);
+    return parseResponse<IsEmailVerifiedResponse>(res);
   },
 
   /**
@@ -77,6 +80,27 @@ export const registrationApi = {
       throw new ApiError(
         0,
         "Unable to check seat availability. Please check your network connection."
+      );
+    }
+  },
+
+  /**
+   * Fetches the current event pricing details.
+   * GET /payment/details
+   */
+  async getPaymentDetails(): Promise<PaymentDetailsResponse> {
+    try {
+      const res = await fetch(API_ENDPOINTS.paymentDetails, {
+        method: "GET",
+        headers: { Accept: "application/json" },
+        cache: "no-store",
+      });
+      return await parseResponse<PaymentDetailsResponse>(res);
+    } catch (err: any) {
+      if (err instanceof ApiError) throw err;
+      throw new ApiError(
+        0,
+        "Unable to fetch pricing details. Please check your network connection."
       );
     }
   },

@@ -40,6 +40,7 @@ export interface SeatStatusResponse {
   registered: number;
   locked: number;
   available: number;
+  discountSlotsRemaining: number;
 }
 
 // --- OTP Flow ---
@@ -52,11 +53,19 @@ export interface VerifyOtpRequest {
   code: string; // Exactly 6 digits
 }
 
+export interface VerifyOtpResponse {
+  ok: true;
+}
+
+export interface IsEmailVerifiedResponse {
+  verified: boolean;
+}
+
 // --- Registration ---
 export interface RegisterRequest {
-  teamName: string;
+  teamName?: string;
   member1: MemberData;
-  member2: MemberData | null;
+  member2?: MemberData;
 }
 
 export interface RegisterSuccessResponse {
@@ -66,13 +75,20 @@ export interface RegisterSuccessResponse {
   orderId: string; // Razorpay order ID (e.g. "order_xyz123")
   keyId: string; // Razorpay public key ID
   lockExpiresAt: number; // Unix timestamp in seconds
+  discountApplied: number;
+}
+
+// --- Pricing ---
+export interface PaymentDetailsResponse {
+  price: number;
+  currency: string;
 }
 
 // --- Paid Team & Ticket Details ---
 export interface PaidTeamMember {
   id?: string;
   slot: number;
-  role?: "lead" | "member" | string;
+  role?: "lead" | "member" | "teammate" | string;
   firstName: string;
   lastName: string;
   gender?: string;
@@ -81,27 +97,31 @@ export interface PaidTeamMember {
   collegeName?: string;
   yearOfStudy?: string;
   department?: string;
+  discountInr?: number;
   ticketHash: string;
-  checkedInAt?: string | null;
+  checkedInAt?: number | string | null;
 }
 
 export interface PaidTeamDetails {
   id: string;
-  teamName: string;
+  teamName: string | null;
   status: "paid" | string;
   amountInr?: number;
-  paidAt: number;
+  paidAt: number | null;
   members: PaidTeamMember[];
+  txId?: string;
 }
+
+export type PaidTeamData = PaidTeamDetails;
 
 export interface TicketDetailsResponse {
   ticketHash: string;
   status: "valid" | "checked_in" | string;
   checkedIn: boolean;
-  checkedInAt: string | null;
+  checkedInAt: number | string | null;
   member: {
     slot: number;
-    role: "lead" | "member" | string;
+    role: "lead" | "member" | "teammate" | string;
     firstName: string;
     lastName: string;
     gender: string;
@@ -110,11 +130,13 @@ export interface TicketDetailsResponse {
     collegeName: string;
     yearOfStudy: string;
     department: string;
+    discountInr?: number;
   };
   team: {
     id: string;
-    teamName: string;
-    paidAt: number;
+    teamName: string | null;
+    amountInr?: number;
+    paidAt?: number | null;
   };
   event: {
     name: string;
@@ -163,6 +185,7 @@ export interface OtpState {
 }
 
 export interface PaymentState {
+  status: "idle" | "processing" | "verifying" | "success" | "failed";
   teamId: string | null;
   orderId: string | null;
   keyId: string | null;
@@ -173,4 +196,5 @@ export interface PaymentState {
   errorMessage: string | null;
   isPolling: boolean;
   paidTeam: PaidTeamDetails | null;
+  discountApplied: number;
 }

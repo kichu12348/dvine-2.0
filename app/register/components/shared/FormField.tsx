@@ -1,4 +1,5 @@
 import type { InputHTMLAttributes, ReactNode } from "react";
+import { Label } from "../../../components/ui/label";
 import styles from "../../register.module.css";
 
 interface FormFieldProps extends InputHTMLAttributes<HTMLInputElement> {
@@ -8,16 +9,21 @@ interface FormFieldProps extends InputHTMLAttributes<HTMLInputElement> {
   hint?: string;
   icon?: ReactNode;
   prefix?: string;
+  optional?: boolean;
 }
 
-export function FormField({ id, label, error, hint, icon, prefix, className, ...inputProps }: FormFieldProps) {
+export function FormField({ id, label, error, hint, icon, prefix, optional, className, ...inputProps }: FormFieldProps) {
   return (
     <div className={className}>
-      <label htmlFor={id} className={styles.fieldLabel}><span>{label} <span className={styles.required}>*</span></span></label>
+      <Label htmlFor={id} className={styles.fieldLabel}>
+        <span>
+          {label} {optional ? <span className={styles.optional || styles.required}>(optional)</span> : <span className={styles.required}>*</span>}
+        </span>
+      </Label>
       <div className={prefix ? styles.phoneWrap : styles.inputWrap}>
         {prefix && <span className={styles.phonePrefix}>{prefix}</span>}
         {icon && <span className={styles.inputIcon} aria-hidden="true">{icon}</span>}
-        <input {...inputProps} id={id} aria-required="true" aria-invalid={Boolean(error)}
+        <input {...inputProps} id={id} aria-required={!optional} aria-invalid={Boolean(error)}
           aria-describedby={[error ? id + "-error" : "", hint ? id + "-hint" : ""].filter(Boolean).join(" ") || undefined}
           className={[styles.input, icon ? styles.inputWithIcon : ""].join(" ")} />
       </div>

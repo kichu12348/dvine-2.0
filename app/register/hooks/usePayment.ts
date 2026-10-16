@@ -10,7 +10,11 @@ import {
 import { PaymentLifecycleStatus } from "../../components/register/PaymentStatus";
 import { buildRegisterPayload } from "../utils/registration";
 import { cleanPhoneNumber } from "../utils/validation";
-import { ApiError } from "../utils/apiErrors";
+import {
+  ApiError,
+  getFriendlyErrorMessage,
+  ERROR_MESSAGES,
+} from "../utils/apiErrors";
 import { loadRazorpayScript } from "../utils/loadRazorpay";
 
 const VERIFICATION_EXPIRED_MSG =
@@ -25,7 +29,11 @@ const VERIFICATION_EXPIRED_MSG =
  */
 async function recoverFromError(
   message: string,
-  opts: { teamId?: string | null; forceInvalidate?: boolean } = {},
+  opts: {
+    teamId?: string | null;
+    forceInvalidate?: boolean;
+    errorCode?: string;
+  } = {},
 ) {
   const store = useRegistrationStore.getState();
   const email = store.formData.member1.email;
@@ -50,10 +58,33 @@ async function recoverFromError(
     }
   }
 
-  store.setErrors((prev) => ({
-    ...prev,
-    terms: stillVerified ? message : message || VERIFICATION_EXPIRED_MSG,
-  }));
+  const friendlyMessage =
+    (opts.errorCode && ERROR_MESSAGES[opts.errorCode]) || message;
+
+  if (opts.errorCode === "TEAM_NAME_TAKEN") {
+    store.goToStep(1);
+    store.setErrors((prev) => ({
+      ...prev,
+      teamName: friendlyMessage,
+    }));
+  } else if (opts.errorCode === "EMAIL_TAKEN") {
+    store.goToStep(1);
+    store.setErrors((prev) => ({
+      ...prev,
+      "member1.email": friendlyMessage,
+    }));
+  } else if (opts.errorCode === "SOLD_OUT") {
+    store.setErrors((prev) => ({
+      ...prev,
+      terms: friendlyMessage,
+    }));
+    store.fetchSeats();
+  } else {
+    store.setErrors((prev) => ({
+      ...prev,
+      terms: stillVerified ? message : message || VERIFICATION_EXPIRED_MSG,
+    }));
+  }
 }
 
 export function usePaymentSimulation(onPaymentInitiated?: () => void) {
@@ -96,10 +127,18 @@ export function usePaymentSimulation(onPaymentInitiated?: () => void) {
         const notVerified =
           err instanceof ApiError &&
           (err.code === "EMAIL_NOT_VERIFIED" || err.status === 403);
-        await recoverFromError(
-          notVerified ? VERIFICATION_EXPIRED_MSG : err.message,
-          { forceInvalidate: notVerified },
-        );
+        const errorCode = err instanceof ApiError ? err.code : undefined;
+        const friendlyMessage = notVerified
+          ? VERIFICATION_EXPIRED_MSG
+          : (errorCode && ERROR_MESSAGES[errorCode]) ||
+            err.message ||
+            (err.status ? getFriendlyErrorMessage(err.status) : null) ||
+            "Registration failed. Please try again.";
+
+        await recoverFromError(friendlyMessage, {
+          forceInvalidate: notVerified,
+          errorCode,
+        });
         throw err;
       }
 
@@ -128,7 +167,7 @@ export function usePaymentSimulation(onPaymentInitiated?: () => void) {
           amount: regResult.amount * 100, // In paise (e.g. 60000)
           currency: (regResult.currency as any) || "INR",
           name: "DVINE",
-          description: `${formData.registrationType === "solo" ? "Solo registration" : "Team registration"}: ${formData.teamName}`,
+          description: `${formData.registrationType === "solo" ? "Solo registration" : "Team registration"}: ${formData.teamName.trim()}`,
           prefill: {
             name: `${formData.member1.firstName} ${formData.member1.lastName}`.trim(),
             email: formData.member1.email.trim(),
@@ -145,7 +184,12 @@ export function usePaymentSimulation(onPaymentInitiated?: () => void) {
                   regResult.teamId,
                 );
 
-                if (cancelRes.reason === "PAYMENT_IN_PROGRESS") {
+                if (
+                  cancelRes.reason === "PAYMENT_IN_PROGRESS" ||
+                  cancelRes.reason === "ALREADY_PAID" ||
+                  cancelRes.reason === "CHECK_FAILED" ||
+                  cancelRes.cancelled === false
+                ) {
                   s.setCurrentStep(4);
                   if (onPaymentInitiated) onPaymentInitiated();
                   s.setPaymentStatePolling(true);
@@ -191,13 +235,25 @@ export function usePaymentSimulation(onPaymentInitiated?: () => void) {
                 s.setPaymentSuccess(response.razorpay_payment_id, verifyRes.team);
                 s.fetchSeats();
                 resolve();
+              } else {
+                s.setPaymentFailed(
+                  "Payment verification failed. Please contact support.",
+                );
+                resolve();
               }
             } catch (err: any) {
-              s.setPaymentFailed(
-                err.message ||
-                  "Payment verification failed. Please contact support.",
-              );
-              reject(err);
+              if (err instanceof ApiError && err.status === 0) {
+                s.setPaymentStatePolling(true);
+                s.pollTeamPaymentStatus(regResult.teamId);
+                resolve();
+              } else {
+                const friendlyMessage =
+                  err?.message ||
+                  (err?.status ? getFriendlyErrorMessage(err.status) : null) ||
+                  "Payment verification failed. Please contact support.";
+                s.setPaymentFailed(friendlyMessage);
+                reject(err);
+              }
             }
           },
         };
@@ -229,21 +285,8 @@ export function usePaymentSimulation(onPaymentInitiated?: () => void) {
     [Razorpay, isRzpLoading, rzpError, store, onPaymentInitiated],
   );
 
-  let currentStatus: PaymentLifecycleStatus = "processing";
-  if (store.paymentState.errorMessage) {
-    currentStatus = "failed";
-  } else if (store.paymentState.isPolling) {
-    currentStatus = "verifying";
-  } else if (
-    store.paymentState.txId &&
-    store.paymentState.txId !== "tx_pending" &&
-    !store.paymentState.errorMessage
-  ) {
-    currentStatus = "success";
-  }
-
   return {
-    paymentStatus: currentStatus,
+    paymentStatus: store.paymentState.status,
     setPaymentStatus: store.setPaymentStatus,
     txId: store.paymentState.txId,
     paymentState: store.paymentState,

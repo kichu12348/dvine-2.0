@@ -53,6 +53,7 @@ function RegistrationForm() {
     recheckVerification,
     seatStatus,
     isSeatsLoading,
+    basePrice,
   } = useRegisterForm();
 
   const {
@@ -70,7 +71,7 @@ function RegistrationForm() {
     formData.member1.email.trim().toLowerCase();
 
   const isSoldOut = Boolean(seatStatus && seatStatus.available === 0);
-  const registrationAmount = getRegistrationAmount(formData);
+  const registrationAmount = getRegistrationAmount(formData, basePrice);
 
   const onSlidePayment = async () => {
     try {
@@ -96,7 +97,7 @@ function RegistrationForm() {
         <RegisterHeader seatStatus={seatStatus} isLoading={isSeatsLoading} />
 
         <main className={styles.shell}>
-          <RegistrationIntro amount={registrationAmount} isSolo={formData.registrationType === "solo"} />
+          <RegistrationIntro amount={basePrice * (formData.registrationType === "solo" ? 1 : 2)} isSolo={formData.registrationType === "solo"} />
           <div className={styles.formSurface}>
             <RegisterStepper
               currentStep={currentStep}
@@ -115,6 +116,8 @@ function RegistrationForm() {
                   isSoldOut={isSoldOut}
                   initialMember={editingMember}
                   onRegistrationTypeChange={setRegistrationType}
+                  seatStatus={seatStatus}
+                  basePrice={basePrice}
                 />
               )}
 
@@ -143,6 +146,7 @@ function RegistrationForm() {
                   onSlidePayment={onSlidePayment}
                   onSetTermsError={handleSetTermsError}
                   amount={registrationAmount}
+                  basePrice={basePrice}
                   isLeaderEmailVerified={isLeaderEmailVerified}
                   otpState={otpState}
                   onSendOtp={sendOtp}
@@ -164,6 +168,7 @@ function RegistrationForm() {
                   amount={paymentState.orderId ? paymentState.amount : registrationAmount}
                   errorMessage={paymentState.errorMessage}
                   isPolling={paymentState.isPolling}
+                  paidTeam={paymentState.paidTeam}
                 />
               )}
             </AnimatePresence>

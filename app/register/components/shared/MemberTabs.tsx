@@ -51,7 +51,7 @@ export function focusMemberField(container: HTMLElement | null, errorsOnly = fal
   window.requestAnimationFrame(() => {
     const selector = errorsOnly
       ? '#team-name[aria-invalid="true"], [data-member-panel]:not([hidden]) [aria-invalid="true"]'
-      : '[data-member-panel]:not([hidden]) input:not([type="radio"]), [data-member-panel]:not([hidden]) select';
+      : '[data-member-panel]:not([hidden]) input:not([type="radio"]), [data-member-panel]:not([hidden]) select, [data-member-panel]:not([hidden]) button[role="combobox"]';
     container?.querySelector<HTMLElement>(selector)?.focus();
   });
 }

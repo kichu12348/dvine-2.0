@@ -3,7 +3,7 @@
 import React, { use, useEffect, useState, useRef } from "react";
 import Link from "next/link";
 import { motion } from "framer-motion";
-import { Download, AlertCircle, Home, ShieldCheck } from "lucide-react";
+import { Download, AlertCircle, Home } from "lucide-react";
 import { toPng } from "html-to-image";
 import { registrationApi } from "../../register/services/registrationApi";
 import { TicketDetailsResponse } from "../../register/types";
@@ -28,26 +28,18 @@ export default function TicketPage({ params }: TicketPageProps) {
         setLoading(true);
         setError(null);
         const data = await registrationApi.getTicket(hash);
-        if (isMounted) {
-          setTicket(data);
-        }
+        if (isMounted) setTicket(data);
       } catch (err: any) {
-        if (isMounted) {
+        if (isMounted)
           setError(
             err?.message ||
-              "Ticket not found or registration payment is pending. Please verify your link or check your email.",
+              "Ticket not found or registration payment is pending.",
           );
-        }
       } finally {
-        if (isMounted) {
-          setLoading(false);
-        }
+        if (isMounted) setLoading(false);
       }
     }
-
-    if (hash) {
-      loadTicket();
-    }
+    if (hash) loadTicket();
     return () => {
       isMounted = false;
     };
@@ -59,7 +51,7 @@ export default function TicketPage({ params }: TicketPageProps) {
       setIsDownloading(true);
       const dataUrl = await toPng(ticketRef.current, {
         cacheBust: true,
-        pixelRatio: 2, // Crisp high-DPI image
+        pixelRatio: 3,
       });
       const link = document.createElement("a");
       const name = ticket?.member?.firstName
@@ -75,157 +67,94 @@ export default function TicketPage({ params }: TicketPageProps) {
     }
   };
 
-  // State: Loading Skeleton
+  // ── Loading ──
   if (loading) {
     return (
-      <div className="min-h-screen bg-[#020817] text-neutral-100 py-10 sm:py-16 px-4 flex flex-col items-center justify-center">
-        <div className="w-full max-w-[320px] mx-auto space-y-4">
-          {/* Skeleton Nav */}
-          <div className="flex items-center justify-between px-1">
-            <div className="w-20 h-4 rounded bg-white/5 animate-pulse" />
-          </div>
-
-          {/* Skeleton Ticket Card */}
-          <div className="w-full rounded-2xl border border-white/10 bg-[#0B0F17] p-6 shadow-2xl flex flex-col items-center text-center space-y-4">
-            {/* Logo skeleton */}
-            <div className="w-24 h-7 rounded-lg bg-white/5 animate-pulse" />
-
-            {/* Delegate & Team skeleton */}
-            <div className="space-y-1.5 flex flex-col items-center w-full">
-              <div className="w-36 h-4 rounded bg-white/10 animate-pulse" />
-              <div className="w-28 h-4 rounded bg-white/10 animate-pulse" />
-            </div>
-
-            {/* QR box skeleton */}
-            <div className="p-2 rounded-2xl bg-white/10 animate-pulse my-1">
-              <div className="w-[140px] h-[140px] rounded-xl bg-white/5" />
-            </div>
-
-            {/* Hash skeleton */}
-            <div className="w-44 h-3 rounded bg-white/5 animate-pulse" />
-          </div>
-
-          {/* Download button skeleton */}
-          <div className="w-full h-11 rounded-xl bg-white/10 animate-pulse" />
+      <div className="min-h-screen bg-[#020817] flex items-center justify-center">
+        <div className="w-[260px] rounded-2xl border border-white/8 bg-[#0B0F17] p-8 flex flex-col items-center gap-5">
+          <div className="w-20 h-5 rounded bg-white/5 animate-pulse" />
+          <div className="w-36 h-4 rounded bg-white/5 animate-pulse" />
+          <div className="w-[160px] h-[160px] rounded-xl bg-white/5 animate-pulse" />
+          <div className="w-32 h-2.5 rounded bg-white/5 animate-pulse" />
         </div>
       </div>
     );
   }
 
-  // State: Not Found or Error
+  // ── Error ──
   if (error || !ticket) {
     return (
       <div className="min-h-screen bg-[#020817] text-white flex flex-col items-center justify-center p-4">
-        <div className="w-full max-w-sm p-8 rounded-3xl border border-rose-500/20 bg-[#0E1118]/90 backdrop-blur-md text-center space-y-5 shadow-2xl">
-          <div className="w-16 h-16 mx-auto rounded-full bg-rose-500/10 border border-rose-500/30 flex items-center justify-center text-rose-400">
-            <AlertCircle className="w-8 h-8" />
+        <div className="w-full max-w-xs p-8 rounded-2xl border border-rose-500/20 bg-[#0B0F17] text-center space-y-4">
+          <div className="w-12 h-12 mx-auto rounded-full bg-rose-500/10 border border-rose-500/30 flex items-center justify-center text-rose-400">
+            <AlertCircle className="w-6 h-6" />
           </div>
-          <div className="space-y-2">
-            <h2 className="text-xl font-bold tracking-tight text-white">
+          <div className="space-y-1.5">
+            <h2 className="text-base font-semibold text-white">
               Ticket Not Available
             </h2>
-            <p className="text-xs text-neutral-400 leading-relaxed">
+            <p className="text-xs text-neutral-500 leading-relaxed">
               {error ||
                 "This ticket could not be found or registration payment is pending."}
             </p>
           </div>
-          <div className="pt-2 flex flex-col gap-2.5">
-            <Link
-              href="/"
-              className="inline-flex items-center justify-center gap-2 px-5 py-2.5 rounded-xl bg-white hover:bg-neutral-200 text-black text-xs font-semibold transition-colors"
-            >
-              <Home className="w-4 h-4" />
-              <span>Go to Homepage</span>
-            </Link>
-          </div>
+          <Link
+            href="/"
+            className="inline-flex items-center gap-1.5 px-4 py-2 rounded-lg bg-white hover:bg-neutral-200 text-black text-xs font-semibold transition-colors"
+          >
+            <Home className="w-3.5 h-3.5" />
+            Homepage
+          </Link>
         </div>
       </div>
     );
   }
 
-  const { member, team } = ticket;
-  const qrTarget =
-    typeof window !== "undefined"
-      ? window.location.href
-      : `https://www.dvine.live/ticket/${ticket.ticketHash}`;
+  const { member } = ticket;
 
   return (
-    <div className="min-h-screen bg-[#020817] text-neutral-100 py-10 sm:py-16 px-4 selection:bg-cyan-500/30 selection:text-white flex flex-col items-center justify-center">
-      <div className="w-full max-w-[320px] mx-auto space-y-4">
-        {/* Navigation Bar */}
-        <div className="flex items-center justify-between text-xs text-neutral-400 px-1">
-          <Link
-            href="/"
-            className="inline-flex items-center gap-1.5 hover:text-white transition-colors"
-          >
-            <Home className="w-4 h-4" />
-            <span>D&apos;VINE 2.0</span>
-          </Link>
-        </div>
-
-        {/* ─── THE TICKET (Only Logo, Participant Name, QR, and Hash) ─── */}
+    <div className="min-h-screen bg-[#020817] flex flex-col items-center justify-center px-4 py-12">
+      <div className="w-full max-w-[260px] flex flex-col items-center gap-4">
+        {/* ── Ticket Card ── */}
         <motion.div
           ref={ticketRef}
-          initial={{ opacity: 0, y: 16 }}
+          initial={{ opacity: 0, y: 12 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.35, ease: "easeOut" }}
-          className="w-full rounded-2xl border border-white/10 bg-[#0B0F17] p-6 shadow-2xl flex flex-col items-center text-center space-y-4"
+          transition={{ duration: 0.3, ease: "easeOut" }}
+          className="w-full rounded-2xl border border-white/8 bg-[#0B0F17] p-7 flex flex-col items-center gap-5"
         >
-          {/* 1. D'VINE Logo */}
-          <div className="w-full flex items-center justify-center pt-1">
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img
-              src="/dvine.svg"
-              alt="D'VINE"
-              className="h-7 w-auto object-contain select-none"
-            />
-          </div>
+          {/* Logo */}
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img
+            src="/dvine.svg"
+            alt="D'VINE"
+            className="h-6 w-auto object-contain select-none"
+          />
 
-          {/* 2. Delegate & Team */}
-          <div className="space-y-1 text-center">
-            <p className="text-sm text-neutral-400 font-medium">
-              Delegate:{" "}
-              <span className="text-white font-semibold">
-                {member.firstName} {member.lastName}
-              </span>
-            </p>
-            {team?.teamName && (
-              <p className="text-sm text-neutral-400 font-medium">
-                Team:{" "}
-                <span className="text-white font-semibold">
-                  {team.teamName}
-                </span>
-              </p>
-            )}
-          </div>
+          {/* Name */}
+          <p className="text-sm font-semibold text-white tracking-tight">
+            {member.firstName} {member.lastName}
+          </p>
 
-          {/* 3. QR Code */}
-          <div className="py-1">
-            <TicketQrCode value={qrTarget} size={140} />
-          </div>
+          {/* QR Code */}
+          <TicketQrCode value={ticket.ticketHash} size={160} />
 
-          {/* 4. Hash */}
-          <div className="w-full pt-0.5">
-            <p className="font-mono text-[11px] text-neutral-400 tracking-wider break-all select-all">
-              {ticket.ticketHash}
-            </p>
-          </div>
+          {/* Hash */}
+          <p className="font-mono text-[9px] text-neutral-600 tracking-widest break-all select-all text-center leading-relaxed">
+            {ticket.ticketHash}
+          </p>
         </motion.div>
 
-        {/* ─── DOWNLOAD BUTTON (Using html-to-image / dom-to-image) ─── */}
-        <div className="pt-1 flex flex-col items-center">
-          <button
-            type="button"
-            onClick={handleDownload}
-            disabled={isDownloading}
-            className="w-full inline-flex items-center justify-center gap-2 px-5 py-3 rounded-xl bg-white hover:bg-neutral-200 text-black font-semibold text-sm transition-all cursor-pointer shadow-lg active:scale-[0.99] disabled:opacity-50"
-          >
-            <Download className="w-4 h-4" />
-            <span>
-              {isDownloading ? "Generating Image..." : "Download Ticket"}
-            </span>
-          </button>
-        </div>
+        {/* ── Download ── */}
+        <button
+          type="button"
+          onClick={handleDownload}
+          disabled={isDownloading}
+          className="w-full inline-flex items-center justify-center gap-2 py-2.5 rounded-xl bg-white hover:bg-neutral-100 text-black font-semibold text-xs transition-all cursor-pointer active:scale-[0.98] disabled:opacity-50"
+        >
+          <Download className="w-3.5 h-3.5" />
+          {isDownloading ? "Generating…" : "Download"}
+        </button>
       </div>
     </div>
   );
