@@ -6,7 +6,7 @@ export const REGISTRATION_NOTICE = {
   message: "Registrations haven’t started yet. Please check back soon.",
 } as const;
 
-export const PRIZEPOOL_REVEAL_AT = Date.parse("2026-10-21T00:00:00+05:30");
+export const PRIZEPOOL_REVEAL_AT = Date.parse("2026-10-25T00:00:00+05:30");
 
 const revealDate = new Date(PRIZEPOOL_REVEAL_AT);
 const revealFormat = { timeZone: "Asia/Kolkata", day: "numeric" } as const;

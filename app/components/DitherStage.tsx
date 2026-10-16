@@ -42,7 +42,7 @@ export default function DitherStage() {
         observer.disconnect();
         setLoadVeil(true);
       },
-      { rootMargin: "1000px 0px" }
+      { rootMargin: "1000px 0px" },
     );
     observer.observe(target);
     return () => {
@@ -73,7 +73,7 @@ export default function DitherStage() {
         frame = requestAnimationFrame(() => setPhase(1));
       },
       // Trigger once the frame is genuinely on screen, not just peeking in.
-      { threshold: 0.2 }
+      { threshold: 0.2 },
     );
 
     observer.observe(target);
@@ -91,24 +91,13 @@ export default function DitherStage() {
   }, [phase]);
 
   return (
-    <div ref={observerRef} className="relative h-[24rem] w-full sm:h-[30rem] lg:h-[36rem]">
+    <div
+      ref={observerRef}
+      className="relative h-[24rem] w-full sm:h-[30rem] lg:h-[36rem]"
+    >
       <div
         className={`aperture ${phase > 0 ? "is-open" : ""} relative h-full w-full overflow-hidden border border-[var(--line)] shadow-2xl backdrop-blur-sm`}
       >
-      {/* Corner tech reticles */}
-        <div
-          className="pointer-events-none absolute left-3 top-3 z-10 font-mono text-[0.58rem] uppercase tracking-widest text-[var(--blue-light)]/60"
-          aria-hidden="true"
-        >
-          + VISUAL.VEIL // FLOYD-STEINBERG
-        </div>
-        <div
-          className="pointer-events-none absolute right-3 bottom-3 z-10 font-mono text-[0.58rem] uppercase tracking-widest text-[var(--blue-light)]/60"
-          aria-hidden="true"
-        >
-          [INTERACTIVE DITHER]
-        </div>
-
         {(loadVeil || phase > 0) && (
           <DitherVeil
             src="https://images.unsplash.com/photo-1737071371043-761e02b1ef95?q=80&w=1400&auto=format&fit=crop"

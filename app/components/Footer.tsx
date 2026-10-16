@@ -4,6 +4,7 @@ import { useLayoutEffect, useRef } from "react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import AnatomyButton from "./ui/AnatomyButton";
+import { RegistrationIcon } from "./RegistrationAccess";
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -131,7 +132,9 @@ export default function Footer() {
             <p className="max-w-[15rem] text-center text-sm leading-5 text-[var(--muted)] md:text-right">
               A 24-hour designathon for ideas that deserve to be felt.
             </p>
-            <AnatomyButton href="#schedule">Join us</AnatomyButton>
+            <AnatomyButton href="/register" variant="navbar" icon={<RegistrationIcon size={15} />}>
+              Join us
+            </AnatomyButton>
           </div>
         </div>
 
