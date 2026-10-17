@@ -54,6 +54,10 @@ function RegistrationForm() {
     seatStatus,
     isSeatsLoading,
     basePrice,
+    discountState,
+    setDiscountCode,
+    applyDiscount,
+    clearDiscount,
   } = useRegisterForm();
 
   const {
@@ -71,7 +75,12 @@ function RegistrationForm() {
     formData.member1.email.trim().toLowerCase();
 
   const isSoldOut = Boolean(seatStatus && seatStatus.available === 0);
-  const registrationAmount = getRegistrationAmount(formData, basePrice);
+  const registrationAmount = getRegistrationAmount(formData, basePrice, {
+    applied: discountState.status === "applied",
+    perMember: discountState.discountPerMember,
+    slotsRemaining:
+      discountState.slotsRemaining ?? seatStatus?.discountSlotsRemaining ?? null,
+  });
 
   const onSlidePayment = async () => {
     try {
@@ -154,6 +163,15 @@ function RegistrationForm() {
                   onVerificationExpired={() =>
                     recheckVerification(formData.member1.email)
                   }
+                  discountState={discountState}
+                  discountSlotsRemaining={
+                    discountState.slotsRemaining ??
+                    seatStatus?.discountSlotsRemaining ??
+                    null
+                  }
+                  onChangeDiscountCode={setDiscountCode}
+                  onApplyDiscount={applyDiscount}
+                  onClearDiscount={clearDiscount}
                 />
               )}
 

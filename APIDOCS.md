@@ -23,15 +23,15 @@ Add Razorpay Checkout SDK to `index.html`:
 
 ## 2. Key Business & Pricing Rules
 
-| Rule                   | Details                                                                                                                                                                                                                                                                                                   |
-| ---------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| **Capacity**           | **60 Total Seats** (counted per person across all individual and duo teams).                                                                                                                                                                                                                              |
-| **Registration Types** | **Individual (Solo)**: 1 person, optional team name.<br>**Duo (2 members)**: 2 persons, required team name.                                                                                                                                                                                               |
-| **Standard Pricing**   | **₹300 per person** (`price: 300`, `currency: "INR"`).<br>• Solo: ₹300<br>• Duo: ₹600                                                                                                                                                                                                                     |
-| **College Discount**   | **₹100 discount per eligible member** for students from **"College of Engineering Chengannur"** (case-insensitive).                                                                                                                                                                                       |
-| **Discount Capacity**  | Capped at the **first 10 discount slots** across the entire event (`discountSlotsRemaining`).<br>• Solo CEC: ₹200 (saves ₹100)<br>• Duo both CEC: ₹400 (saves ₹200, if 2 slots available; ₹500 if only 1 slot left)<br>• Duo 1 CEC + 1 other: ₹500 (saves ₹100)<br>• Duo both non-CEC: ₹600 (no discount) |
-| **Seat Hold (Lock)**   | **15 minutes** (`lockExpiresAt`). A temporary pending team holds the seat(s) while the user completes payment.                                                                                                                                                                                            |
-| **OTP Verification**   | Required for **Member 1 (Lead)** before submitting registration. Valid for 5 minutes.                                                                                                                                                                                                                     |
+| Rule                   | Details                                                                                                                                                                                                                                                                                                                                                                                                                                              |
+| ---------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Capacity**           | **60 Total Seats** (counted per person across all individual and duo teams).                                                                                                                                                                                                                                                                                                                                                                         |
+| **Registration Types** | **Individual (Solo)**: 1 person, optional team name.<br>**Duo (2 members)**: 2 persons, required team name.                                                                                                                                                                                                                                                                                                                                          |
+| **Standard Pricing**   | **₹349 per person** (`price: 349`, `currency: "INR"`, `discountPerMember: 100`).<br>• Solo: ₹349<br>• Duo: ₹698                                                                                                                                                                                                                                                                                                                                      |
+| **College Discount**   | **₹100 discount per eligible member** applied ONLY when **BOTH** are true:<br>1. Valid discount code (`JAIN100`, case-insensitive) entered for the team.<br>2. That member's own `collegeName` matches **"Jain University Kochi"** (case-insensitive, normalized for punctuation/spacing).<br>_Note: College alone without the code gives no discount. A valid code with non-Jain college is rejected._                                              |
+| **Discount Capacity**  | Capped at the **first 10 discount slots** across the entire event (`discountSlotsRemaining`).<br>• Solo Jain + code: ₹249 (saves ₹100)<br>• Duo both Jain + code: ₹498 (saves ₹200, if 2 slots available; ₹598 if only 1 slot left)<br>• Duo 1 Jain + 1 other + code: ₹598 (saves ₹100 for the Jain member)<br>• Duo both non-Jain + code: Rejected (`DISCOUNT_NOT_APPLICABLE`)<br>• Any registration without code: Full price (Solo ₹349, Duo ₹698) |
+| **Seat Hold (Lock)**   | **15 minutes** (`lockExpiresAt`). A temporary pending team holds the seat(s) while the user completes payment.                                                                                                                                                                                                                                                                                                                                       |
+| **OTP Verification**   | Required for **Member 1 (Lead)** before submitting registration. Valid for 5 minutes.                                                                                                                                                                                                                                                                                                                                                                |
 
 ---
 
@@ -46,8 +46,9 @@ export interface ApiErrorResponse {
 
 // --- Pricing Details (/payment/details) ---
 export interface PaymentDetailsResponse {
-  price: number; // 300 (base fee per member in INR)
+  price: number; // 349 (base fee per member in INR)
   currency: string; // "INR"
+  discountPerMember: number; // 100 (discount amount per eligible member in INR)
 }
 
 // --- Seat Availability (/register/get-av-seats) ---
@@ -57,6 +58,18 @@ export interface SeatStatusResponse {
   locked: number; // Seats currently locked in pending checkout
   available: number; // Remaining available seats (total - registered - locked)
   discountSlotsRemaining: number; // Remaining ₹100 discount slots out of 10
+}
+
+// --- Discount Code Validation (/register/discount/validate) ---
+export interface ValidateDiscountRequest {
+  code: string; // 1 to 32 characters, e.g. "JAIN100" (trimmed)
+  collegeName: string; // 1 to 150 characters, e.g. "Jain University Kochi"
+}
+
+export interface ValidateDiscountResponse {
+  valid: true;
+  discountPerMember: number; // 100
+  slotsRemaining: number; // Remaining discount slots out of 10
 }
 
 // --- OTP Flow ---
@@ -84,20 +97,21 @@ export interface MemberData {
   gender: string; // e.g. "Male" | "Female" | "Other"
   email: string;
   phone: string; // 10 digits, e.g. "9876543210"
-  collegeName: string; // If "College of Engineering Chengannur", qualifies for ₹100 discount
+  collegeName: string; // If "Jain University Kochi" AND discount code is valid, qualifies for ₹100 discount
   yearOfStudy: string; // e.g. "1st Year", "2nd Year", "3rd Year", "4th Year"
   department: string;
 }
 
 export interface RegisterRequest {
   teamName?: string; // Optional for solo (1 member); REQUIRED for duo (2 members)
+  discountCode?: string; // Optional: discount coupon (e.g. "JAIN100", max 32 chars, normalized to uppercase)
   member1: MemberData; // Lead (email must match verified OTP)
   member2?: MemberData; // Optional: omit or leave undefined for solo registration
 }
 
 export interface RegisterSuccessResponse {
   teamId: string;
-  amount: number; // Total payable amount in INR (e.g. 200, 300, 400, 500, 600)
+  amount: number; // Total payable amount in INR (e.g. 249, 349, 498, 598, 698)
   discountApplied: number; // Total discount in INR deducted from base fee (0, 100, or 200)
   currency: string; // "INR"
   orderId: string; // Razorpay order ID (e.g. "order_xyz123")
@@ -230,9 +244,13 @@ POST /payment/verify        POST /register/cancel
 - **Endpoint:** `GET /payment/details`
 - **Response:**
   ```json
-  { "price": 300, "currency": "INR" }
+  {
+    "price": 349,
+    "currency": "INR",
+    "discountPerMember": 100
+  }
   ```
-- Use this to display standard registration fees dynamically (`₹300 / person`).
+- Use this to display standard registration fees dynamically (`₹349 / person`) and the available member discount (`₹100 / person`).
 
 #### B. Fetch Available Seats & Discount Capacity
 
@@ -252,7 +270,7 @@ POST /payment/verify        POST /register/cancel
   - If `available === 1`: Disable Duo registration (only Solo can fit the remaining seat).
   - Display seat counter: `"40 / 60 seats remaining"`.
   - Display discount promo badge:
-    - If `discountSlotsRemaining > 0`: _"🔥 ₹100 discount available for the first 10 CEC registrants! (6 slots left)"_
+    - If `discountSlotsRemaining > 0`: _"🔥 ₹100 discount per member available for the first 10 Jain University Kochi registrants with code JAIN100! (6 slots left)"_
     - If `discountSlotsRemaining === 0`: _"College discount slots have been fully claimed."_
 
 ---
@@ -295,27 +313,62 @@ Provide a toggle for the user to choose:
 
 #### Form Validation Rules
 
-| Field                   | Applicable To | Rule                                                                            |
-| ----------------------- | ------------- | ------------------------------------------------------------------------------- |
-| `teamName`              | Solo          | Optional. If provided, max 80 characters.                                       |
-| `teamName`              | Duo           | **Required**. 1 to 80 characters (trimmed).                                     |
-| `member1.email`         | Solo & Duo    | Read-only, locked to verified OTP email.                                        |
-| `member2.email`         | Duo only      | Valid email, **must not match** `member1.email`.                                |
-| `phone`                 | All Members   | 10-digit Indian mobile format: `^[6-9]\d{9}$` (strip spaces, dashes, or `+91`). |
-| `firstName`, `lastName` | All Members   | Required, max 100 characters.                                                   |
-| `collegeName`           | All Members   | Required, max 150 characters.                                                   |
-| `gender`                | All Members   | Dropdown (`Male`, `Female`, `Other`).                                           |
-| `yearOfStudy`           | All Members   | Dropdown/text (e.g., `1st Year`, `2nd Year`, `3rd Year`, `4th Year`).           |
-| `department`            | All Members   | Required, max 100 characters.                                                   |
+| Field                   | Applicable To | Rule                                                                                                                   |
+| ----------------------- | ------------- | ---------------------------------------------------------------------------------------------------------------------- |
+| `teamName`              | Solo          | Optional. If provided, max 80 characters.                                                                              |
+| `teamName`              | Duo           | **Required**. 1 to 80 characters (trimmed).                                                                            |
+| `discountCode`          | Solo & Duo    | Optional. Up to 32 characters (trimmed). Empty or whitespace-only is treated as not provided. Normalized to uppercase. |
+| `member1.email`         | Solo & Duo    | Read-only, locked to verified OTP email.                                                                               |
+| `member2.email`         | Duo only      | Valid email, **must not match** `member1.email`.                                                                       |
+| `phone`                 | All Members   | 10-digit Indian mobile format: `^[6-9]\d{9}$` (strip spaces, dashes, or `+91`).                                        |
+| `firstName`, `lastName` | All Members   | Required, max 100 characters.                                                                                          |
+| `collegeName`           | All Members   | Required, max 150 characters. Matches "Jain University Kochi" (case & punctuation insensitive).                        |
+| `gender`                | All Members   | Dropdown (`Male`, `Female`, `Other`).                                                                                  |
+| `yearOfStudy`           | All Members   | Dropdown/text (e.g., `1st Year`, `2nd Year`, `3rd Year`, `4th Year`).                                                  |
+| `department`            | All Members   | Required, max 100 characters.                                                                                          |
+
+#### Discount Code Validation ("Apply" Button Helper)
+
+If the user enters a discount code and clicks **"Apply"**, call the advisory validation endpoint:
+
+- **Endpoint:** `POST /register/discount/validate`
+- **Body:**
+  ```json
+  {
+    "code": "JAIN100",
+    "collegeName": "Jain University Kochi"
+  }
+  ```
+- **Responses:**
+  - **`200 OK`**:
+    ```json
+    {
+      "valid": true,
+      "discountPerMember": 100,
+      "slotsRemaining": 6
+    }
+    ```
+    Show green confirmation badge: _"Coupon applied! ₹100 discount per eligible member."_
+  - **`400 Bad Request` (`INVALID_DISCOUNT_CODE`)**: _"That discount code is not valid."_
+  - **`400 Bad Request` (`DISCOUNT_NOT_APPLICABLE`)**: _"This code is only for Jain University Kochi students."_
+  - **`409 Conflict` (`DISCOUNT_SOLD_OUT`)**: _"This discount is no longer available."_
+  - **`429 Too Many Requests` (`RATE_LIMITED`)**: _"Too many attempts. Try again in a minute."_ (Guard allows 20 attempts/min per IP)
+
+> [!NOTE]
+> `/register/discount/validate` is advisory for instant UI feedback. The authoritative check is atomic inside `POST /register`.
 
 #### Real-time Estimated Fee Indicator (Frontend UI Helper)
 
 Before form submission, calculate and show the user the estimated fee:
 
-- Base fee: `teamSize * 300`
-- If college matches `"college of engineering chengannur"` (case-insensitive) and `discountSlotsRemaining > 0`:
-  - Subtract ₹100 per eligible member.
-- _Note:_ The backend atomically verifies remaining discount slots at checkout.
+- Base fee: `teamSize * 349`
+- If a valid discount code (`JAIN100`) is entered AND `discountSlotsRemaining > 0`:
+  - Deduct ₹100 for each member whose `collegeName` matches `"Jain University Kochi"` (e.g., "Jain University, Kochi", "jain university kochi").
+  - _Example 1 (Solo, Jain + code):_ ₹349 - ₹100 = **₹249**
+  - _Example 2 (Duo, both Jain + code):_ (2 × ₹349) - ₹200 = **₹498** (or ₹598 if only 1 slot left)
+  - _Example 3 (Duo, 1 Jain + 1 non-Jain + code):_ (2 × ₹349) - ₹100 = **₹598**
+  - _Example 4 (No code or non-Jain):_ Solo **₹349**, Duo **₹698**
+- _Note:_ The backend atomically reserves remaining discount slots during the database transaction.
 
 #### Submit Registration
 
@@ -325,13 +378,14 @@ Before form submission, calculate and show the user the estimated fee:
     ```json
     {
       "teamName": "SoloHacker",
+      "discountCode": "JAIN100",
       "member1": {
         "firstName": "Alex",
         "lastName": "Kumar",
         "gender": "Male",
         "email": "alex@example.com",
         "phone": "9876543210",
-        "collegeName": "College of Engineering Chengannur",
+        "collegeName": "Jain University Kochi",
         "yearOfStudy": "3rd Year",
         "department": "CSE"
       }
@@ -341,13 +395,14 @@ Before form submission, calculate and show the user the estimated fee:
     ```json
     {
       "teamName": "ByteBusters",
+      "discountCode": "JAIN100",
       "member1": {
         "firstName": "Alex",
         "lastName": "Kumar",
         "gender": "Male",
         "email": "alex@example.com",
         "phone": "9876543210",
-        "collegeName": "College of Engineering Chengannur",
+        "collegeName": "Jain University Kochi",
         "yearOfStudy": "3rd Year",
         "department": "CSE"
       },
@@ -357,7 +412,7 @@ Before form submission, calculate and show the user the estimated fee:
         "gender": "Female",
         "email": "sam@example.com",
         "phone": "9876543211",
-        "collegeName": "College of Engineering Chengannur",
+        "collegeName": "Jain University Kochi",
         "yearOfStudy": "3rd Year",
         "department": "ECE"
       }
@@ -369,7 +424,7 @@ Before form submission, calculate and show the user the estimated fee:
     ```json
     {
       "teamId": "9b1deb4d-3b7d-4bad-9bdd-2b0d7b3dcb6d",
-      "amount": 400,
+      "amount": 498,
       "discountApplied": 200,
       "currency": "INR",
       "orderId": "order_ODZ123456",
@@ -381,11 +436,16 @@ Before form submission, calculate and show the user the estimated fee:
     - Launch **Razorpay Checkout Modal** (Step 4).
     - If `discountApplied > 0`, display a congratulatory notice: `₹${discountApplied} College Discount applied!`.
     - Start a 15-minute countdown timer matching `lockExpiresAt`.
+  - **`400 Bad Request`**:
+    - `INVALID_DISCOUNT_CODE`: _"That discount code is not valid."_
+    - `DISCOUNT_NOT_APPLICABLE`: _"This code is only for Jain University Kochi students."_
   - **`403 Forbidden` (`EMAIL_NOT_VERIFIED`)**: Show _"Please verify the lead member's email first."_
   - **`409 Conflict`**:
+    - `DISCOUNT_SOLD_OUT`: _"Discount slots are over. Remove the code to continue at the regular price."_
     - `SOLD_OUT`: _"Registrations just filled up. Seats are no longer available."_
     - `TEAM_NAME_TAKEN`: _"Team name already taken. Please choose another."_
     - `EMAIL_TAKEN`: _"One of these emails is already registered or currently in checkout."_
+  - **`502 Bad Gateway` (`PAYMENT_INIT_FAILED`)**: _"Could not initialize payment gateway. Please retry."_
   - **`502 Bad Gateway` (`PAYMENT_INIT_FAILED`)**: _"Could not initialize payment gateway. Please retry."_
 
 ---
@@ -608,18 +668,22 @@ All error responses from the API return HTTP status `>= 400` with the format:
 }
 ```
 
-| HTTP Status | Error Code            | Recommended User-Facing Notification                                                        |
-| ----------- | --------------------- | ------------------------------------------------------------------------------------------- |
-| `400`       | `INVALID_CODE`        | "Invalid OTP code. Please check and re-enter."                                              |
-| `400`       | `CODE_EXPIRED`        | "Verification code has expired. Request a new one."                                         |
-| `400`       | `BAD_SIGNATURE`       | "Payment security verification failed. Please contact support."                             |
-| `403`       | `EMAIL_NOT_VERIFIED`  | "Please verify the lead member's email before registering."                                 |
-| `404`       | `TICKET_NOT_FOUND`    | "Ticket not found or registration payment is pending."                                      |
-| `409`       | `SOLD_OUT`            | "Registrations are now full. No seats remaining."                                           |
-| `409`       | `TEAM_NAME_TAKEN`     | "This team name is already taken. Please choose a different name."                          |
-| `409`       | `EMAIL_TAKEN`         | "One of the provided email addresses is already registered or in checkout."                 |
-| `410`       | `LOCK_EXPIRED`        | "Your 15-minute seat reservation expired. Deducted payment will be automatically refunded." |
-| `429`       | `COOLDOWN`            | "Please wait 60 seconds before requesting another verification code."                       |
-| `429`       | `TOO_MANY_ATTEMPTS`   | "Maximum OTP attempts exceeded (5 max). Please request a new code."                         |
-| `502`       | `EMAIL_FAILED`        | "Unable to send verification email. Please check the address or try again."                 |
-| `502`       | `PAYMENT_INIT_FAILED` | "Could not connect to payment gateway. Please try again."                                   |
+| HTTP Status | Error Code                | Recommended User-Facing Notification                                                        |
+| ----------- | ------------------------- | ------------------------------------------------------------------------------------------- |
+| `400`       | `INVALID_CODE`            | "Invalid OTP code. Please check and re-enter."                                              |
+| `400`       | `CODE_EXPIRED`            | "Verification code has expired. Request a new one."                                         |
+| `400`       | `INVALID_DISCOUNT_CODE`   | "That discount code is not valid."                                                          |
+| `400`       | `DISCOUNT_NOT_APPLICABLE` | "This code is only for Jain University Kochi students."                                     |
+| `400`       | `BAD_SIGNATURE`           | "Payment security verification failed. Please contact support."                             |
+| `403`       | `EMAIL_NOT_VERIFIED`      | "Please verify the lead member's email before registering."                                 |
+| `404`       | `TICKET_NOT_FOUND`        | "Ticket not found or registration payment is pending."                                      |
+| `409`       | `DISCOUNT_SOLD_OUT`       | "Discount slots are over. Remove the code to continue at the regular price."                |
+| `409`       | `SOLD_OUT`                | "Registrations are now full. No seats remaining."                                           |
+| `409`       | `TEAM_NAME_TAKEN`         | "This team name is already taken. Please choose a different name."                          |
+| `409`       | `EMAIL_TAKEN`             | "One of the provided email addresses is already registered or in checkout."                 |
+| `410`       | `LOCK_EXPIRED`            | "Your 15-minute seat reservation expired. Deducted payment will be automatically refunded." |
+| `429`       | `RATE_LIMITED`            | "Too many attempts. Try again in a minute."                                                 |
+| `429`       | `COOLDOWN`                | "Please wait 60 seconds before requesting another verification code."                       |
+| `429`       | `TOO_MANY_ATTEMPTS`       | "Maximum OTP attempts exceeded (5 max). Please request a new code."                         |
+| `502`       | `EMAIL_FAILED`            | "Unable to send verification email. Please check the address or try again."                 |
+| `502`       | `PAYMENT_INIT_FAILED`     | "Could not connect to payment gateway. Please try again."                                   |

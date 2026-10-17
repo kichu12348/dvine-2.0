@@ -47,5 +47,12 @@ export function useRegisterForm() {
     fetchSeats: store.fetchSeats,
     basePrice: store.basePrice,
     fetchPricing: store.fetchPricing,
+
+    // Discount
+    discountState: store.discountState,
+    discountPerMember: store.discountPerMember,
+    setDiscountCode: store.setDiscountCode,
+    applyDiscount: store.applyDiscount,
+    clearDiscount: store.clearDiscount,
   };
 }

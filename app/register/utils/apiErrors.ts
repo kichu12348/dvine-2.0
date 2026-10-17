@@ -14,6 +14,10 @@ export const ERROR_MESSAGES: Record<string, string> = {
   EMAIL_FAILED: "Unable to send verification email. Please check the address or try again.",
   PAYMENT_INIT_FAILED: "Could not connect to payment gateway. Please try again.",
   TICKET_NOT_FOUND: "Ticket not found or registration payment is pending.",
+  INVALID_DISCOUNT_CODE: "That discount code is not valid.",
+  DISCOUNT_NOT_APPLICABLE: "This code is only for Jain University Kochi students.",
+  DISCOUNT_SOLD_OUT: "Discount slots are over. Remove the code to continue at the regular price.",
+  RATE_LIMITED: "Too many attempts. Try again in a minute.",
 };
 
 export class ApiError extends Error {

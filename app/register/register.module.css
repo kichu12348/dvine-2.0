@@ -1142,6 +1142,109 @@
   font-size: 12px;
 }
 
+.priceRowDiscount {
+  color: #a1e7c9;
+  font-weight: 500;
+}
+
+.discountBox {
+  margin: 16px 0;
+  padding: 14px 16px;
+  border: 1px solid #283e50;
+  border-radius: 8px;
+  background: #111a24;
+}
+
+.discountRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  margin-bottom: 9px;
+}
+
+.discountLabel {
+  font-size: 12px;
+  font-weight: 500;
+  color: #cedfe9;
+}
+
+.discountNote {
+  font-size: 11px;
+  color: #7da5c2;
+}
+
+.discountInputRow {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.discountInputRow .input {
+  flex: 1;
+  min-width: 0;
+  height: 40px;
+  font-size: 13px;
+  text-transform: uppercase;
+}
+
+.discountInputRow .secondaryButton {
+  min-height: 40px;
+  padding: 0 16px;
+  font-size: 12px;
+  flex-shrink: 0;
+}
+
+.discountInputRow .textButton {
+  font-size: 12px;
+  padding: 0 4px;
+  min-height: 40px;
+  color: #9bafbe;
+  flex-shrink: 0;
+}
+
+.discountSuccess {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  margin-top: 10px;
+  padding: 9px 12px;
+  border: 1px solid #345c50;
+  border-radius: 6px;
+  background: #142c26;
+  color: #a1e7c9;
+  font-size: 12px;
+  line-height: 1.4;
+}
+
+.discountSuccess button {
+  padding: 0;
+  border: 0;
+  background: none;
+  color: #a1e7c9;
+  font-size: 11px;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+  cursor: pointer;
+  flex-shrink: 0;
+}
+
+.discountSuccess button:hover {
+  color: #ffffff;
+}
+
+.discountWarning {
+  margin-top: 9px;
+  padding: 8px 12px;
+  border: 1px solid #634b22;
+  border-radius: 6px;
+  background: #261f14;
+  color: #fcd34d;
+  font-size: 12px;
+  line-height: 1.4;
+}
+
 .priceTotal {
   display: flex;
   align-items: center;
@@ -1713,6 +1816,24 @@
   }
   .confirmationActions {
     flex-direction: column;
+  }
+  .discountInputRow {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 8px;
+  }
+  .discountInputRow .input {
+    width: 100%;
+    min-height: 44px;
+    height: 44px;
+  }
+  .discountInputRow .secondaryButton {
+    width: 100%;
+    min-height: 44px;
+  }
+  .discountInputRow .textButton {
+    min-height: 44px;
+    align-self: center;
   }
 }
 

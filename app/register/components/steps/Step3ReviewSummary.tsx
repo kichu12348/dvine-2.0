@@ -2,10 +2,18 @@
 
 import React from "react";
 import { motion } from "framer-motion";
-import { Pencil, Crown, UserCheck, ShieldCheck, ArrowLeft } from "lucide-react";
+import {
+  Pencil,
+  Crown,
+  UserCheck,
+  ShieldCheck,
+  ArrowLeft,
+  RefreshCw,
+} from "lucide-react";
 import { motionTransitions } from "../../../lib/motion-tokens";
 import SlideCommit from "../../../components/ui/SlideCommit";
 import {
+  DiscountState,
   FormErrors,
   MemberKey,
   OtpState,
@@ -14,7 +22,12 @@ import {
 import { MemberReviewCard } from "../shared/MemberReviewCard";
 import { LeaderEmailOtpArea } from "../shared/LeaderEmailOtpArea";
 import { loadRazorpayScript } from "../../utils/loadRazorpay";
-import { getMemberKeys, getRegistrationAmount } from "../../utils/registration";
+import {
+  getEligibleMemberCount,
+  getMemberKeys,
+  getRegistrationAmount,
+  isDiscountCollege,
+} from "../../utils/registration";
 import { PRICING_CONFIG } from "../../constants";
 import styles from "../../register.module.css";
 
@@ -35,6 +48,11 @@ export interface Step3ReviewSummaryProps {
   onSendOtp: (email: string) => Promise<boolean>;
   onVerifyOtp: (email: string, code: string) => Promise<boolean>;
   onVerificationExpired?: () => void;
+  discountState?: DiscountState;
+  discountSlotsRemaining?: number | null;
+  onChangeDiscountCode?: (code: string) => void;
+  onApplyDiscount?: () => Promise<boolean>;
+  onClearDiscount?: () => void;
 }
 
 export function Step3ReviewSummary({
@@ -51,10 +69,35 @@ export function Step3ReviewSummary({
   onSendOtp,
   onVerifyOtp,
   onVerificationExpired,
+  discountState = {
+    status: "idle",
+    message: null,
+    discountPerMember: PRICING_CONFIG.discountPerMember,
+    slotsRemaining: null,
+  },
+  discountSlotsRemaining = null,
+  onChangeDiscountCode = () => {},
+  onApplyDiscount = async () => false,
+  onClearDiscount = () => {},
 }: Step3ReviewSummaryProps) {
   const isSolo = formData.registrationType === "solo";
   const memberCount = getMemberKeys(formData).length;
-  const isSlideEnabled = formData.confirmAccuracy && isLeaderEmailVerified;
+  const isSlideEnabled =
+    formData.confirmAccuracy &&
+    isLeaderEmailVerified &&
+    discountState.status !== "validating";
+
+  const eligibleCount = getEligibleMemberCount(formData);
+  const showNoEligibleWarning =
+    discountState.status === "applied" && eligibleCount === 0;
+
+  const effectiveSlotsRemaining =
+    discountState.slotsRemaining ?? discountSlotsRemaining ?? null;
+  const isSlotsZero = effectiveSlotsRemaining === 0;
+  const isApplyDisabled =
+    discountState.status === "validating" ||
+    !formData.discountCode?.trim() ||
+    isSlotsZero;
 
   React.useEffect(() => {
     loadRazorpayScript();
@@ -128,6 +171,148 @@ export function Step3ReviewSummary({
             </div>
           )}
 
+          {discountState.status === "applied" &&
+            (() => {
+              let slotsLeft = effectiveSlotsRemaining ?? Infinity;
+              const rows: React.ReactNode[] = [];
+              if (
+                isDiscountCollege(formData.member1.collegeName) &&
+                slotsLeft > 0
+              ) {
+                slotsLeft--;
+                rows.push(
+                  <div
+                    className={[styles.priceRow, styles.priceRowDiscount].join(
+                      " ",
+                    )}
+                    key="discount-m1"
+                  >
+                    <span>
+                      College discount ({isSolo ? "Participant" : "Team leader"}
+                      )
+                    </span>
+                    <span>-Rs {discountState.discountPerMember}.00</span>
+                  </div>,
+                );
+              }
+              if (
+                !isSolo &&
+                isDiscountCollege(formData.member2.collegeName) &&
+                slotsLeft > 0
+              ) {
+                slotsLeft--;
+                rows.push(
+                  <div
+                    className={[styles.priceRow, styles.priceRowDiscount].join(
+                      " ",
+                    )}
+                    key="discount-m2"
+                  >
+                    <span>College discount (Teammate)</span>
+                    <span>-Rs {discountState.discountPerMember}.00</span>
+                  </div>,
+                );
+              }
+              return rows;
+            })()}
+
+          <div className={styles.discountBox}>
+            <div className={styles.discountRow}>
+              <label htmlFor="discount-code" className={styles.discountLabel}>
+                Have a discount code?
+              </label>
+            </div>
+            <div className={styles.discountInputRow}>
+              <input
+                id="discount-code"
+                type="text"
+                value={formData.discountCode || ""}
+                onChange={(e) => onChangeDiscountCode(e.target.value)}
+                onKeyDown={(e) => {
+                  if (e.key === "Enter") {
+                    e.preventDefault();
+                    if (!isApplyDisabled) {
+                      onApplyDiscount();
+                    }
+                  }
+                }}
+                placeholder={
+                  isSlotsZero ? "Slots fully claimed" : "Enter coupon code"
+                }
+                autoCapitalize="characters"
+                autoComplete="off"
+                spellCheck={false}
+                maxLength={32}
+                className={styles.input}
+                disabled={isSlotsZero || discountState.status === "validating"}
+              />
+              <button
+                type="button"
+                onClick={() => onApplyDiscount()}
+                className={styles.secondaryButton}
+                disabled={isApplyDisabled}
+              >
+                {discountState.status === "validating" ? (
+                  <>
+                    <RefreshCw
+                      size={13}
+                      className={styles.spinner}
+                      aria-hidden="true"
+                    />
+                    <span>Applying...</span>
+                  </>
+                ) : (
+                  "Apply"
+                )}
+              </button>
+              {discountState.status === "idle" &&
+                Boolean(formData.discountCode?.trim()) && (
+                  <button
+                    type="button"
+                    onClick={onClearDiscount}
+                    className={styles.textButton}
+                  >
+                    Remove
+                  </button>
+                )}
+            </div>
+
+            {isSlotsZero && (
+              <p className={styles.discountWarning}>
+                College discount slots have been fully claimed.
+              </p>
+            )}
+
+            {discountState.status === "applied" && (
+              <div className={styles.discountSuccess} role="status">
+                <span>
+                  {discountState.message ||
+                    `Coupon applied! Rs ${discountState.discountPerMember} off per eligible member.`}
+                </span>
+                <button
+                  type="button"
+                  onClick={onClearDiscount}
+                  className={styles.textButton}
+                >
+                  Remove
+                </button>
+              </div>
+            )}
+
+            {showNoEligibleWarning && (
+              <p className={styles.discountWarning} role="alert">
+                None of the members are from Jain University Kochi, so no
+                discount will apply.
+              </p>
+            )}
+
+            {discountState.status === "error" && discountState.message && (
+              <p className={styles.error} role="alert">
+                {discountState.message}
+              </p>
+            )}
+          </div>
+
           <div className={styles.priceTotal}>
             <span>Total payable (estimate)</span>
             <strong>₹{amount}</strong>
@@ -180,11 +365,13 @@ export function Step3ReviewSummary({
             dangerColor="#f43f5e"
             disabled={!isSlideEnabled}
             disabledReason={
-              !formData.confirmAccuracy
-                ? "Please confirm that the information above is accurate."
-                : !isLeaderEmailVerified
-                  ? "Please verify your registration email before proceeding."
-                  : undefined
+              discountState.status === "validating"
+                ? "Validating discount code..."
+                : !formData.confirmAccuracy
+                  ? "Please confirm that the information above is accurate."
+                  : !isLeaderEmailVerified
+                    ? "Please verify your registration email before proceeding."
+                    : undefined
             }
             onConfirm={onSlidePayment}
             onError={(reason) => {

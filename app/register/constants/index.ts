@@ -17,6 +17,7 @@ export const INITIAL_MEMBER: MemberData = {
 export const INITIAL_DATA: TeamRegistrationData = {
   registrationType: "solo",
   teamName: "",
+  discountCode: "",
   member1: { ...INITIAL_MEMBER },
   member2: { ...INITIAL_MEMBER },
   confirmAccuracy: false,
@@ -45,7 +46,10 @@ export const PRICING_CONFIG = {
   totalAmount: 698,
   currencySymbol: "₹",
   currencyCode: "INR",
+  discountPerMember: 100,
 } as const;
+
+export const DISCOUNT_COLLEGE_NAME = "Jain University Kochi";
 
 export const COMMON_COLLEGES = colleges;
 export { colleges };

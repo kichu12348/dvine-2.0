@@ -47,6 +47,7 @@ export function Step4Confirmation({
   paidTeam,
 }: Step4ConfirmationProps) {
   const storePaidTeam = useRegistrationStore((s) => s.paymentState.paidTeam);
+  const discountApplied = useRegistrationStore((s) => s.paymentState.discountApplied);
   const effectivePaidTeam = paidTeam !== undefined ? paidTeam : storePaidTeam;
   const isSolo = formData.registrationType === "solo";
 
@@ -249,6 +250,13 @@ export function Step4Confirmation({
                   </div>
                 )}
               </dd>
+            </div>
+          )}
+
+          {discountApplied > 0 && (
+            <div>
+              <dt>College discount</dt>
+              <dd>-Rs {discountApplied}</dd>
             </div>
           )}
 

@@ -121,7 +121,7 @@ export default function TicketPage({ params }: TicketPageProps) {
           initial={{ opacity: 0, y: 12 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.3, ease: "easeOut" }}
-          className="w-full rounded-2xl border border-white/8 bg-[#0B0F17] p-7 flex flex-col items-center gap-5"
+          className="w-full rounded-2xl border border-white/8 bg-[#0B0F17] p-[0.5rem] flex flex-col items-center gap-5"
         >
           {/* Logo */}
           {/* eslint-disable-next-line @next/next/no-img-element */}
@@ -129,6 +129,9 @@ export default function TicketPage({ params }: TicketPageProps) {
             src="/dvine.svg"
             alt="D'VINE"
             className="h-6 w-auto object-contain select-none"
+            style={{
+              height: "60px",
+            }}
           />
 
           {/* Name */}
