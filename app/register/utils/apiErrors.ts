@@ -13,6 +13,7 @@ export const ERROR_MESSAGES: Record<string, string> = {
   TOO_MANY_ATTEMPTS: "Maximum OTP attempts exceeded. Please request a new code.",
   EMAIL_FAILED: "Unable to send verification email. Please check the address or try again.",
   PAYMENT_INIT_FAILED: "Could not connect to payment gateway. Please try again.",
+  TICKET_NOT_FOUND: "Ticket not found or registration payment is pending.",
 };
 
 export class ApiError extends Error {

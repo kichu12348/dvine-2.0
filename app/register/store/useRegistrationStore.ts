@@ -22,6 +22,10 @@ interface RegistrationStore {
   seatError: string | null;
   fetchSeats: () => Promise<void>;
 
+  // Pricing
+  basePrice: number;
+  fetchPricing: () => Promise<void>;
+
   // Form State
   currentStep: number;
   formData: TeamRegistrationData;
@@ -60,6 +64,7 @@ interface RegistrationStore {
     amount: number;
     currency: string;
     lockExpiresAt: number;
+    discountApplied?: number;
   }) => void;
   setPaymentVerifying: (txId: string) => void;
   setPaymentSuccess: (txId: string, paidTeam?: PaidTeamDetails) => void;
@@ -91,6 +96,20 @@ export const useRegistrationStore = create<RegistrationStore>((set, get) => ({
     }
   },
 
+  // --- Pricing State ---
+  basePrice: PRICING_CONFIG.feePerMember,
+
+  fetchPricing: async () => {
+    try {
+      const data = await registrationApi.getPaymentDetails();
+      if (typeof data.price === "number") {
+        set({ basePrice: data.price });
+      }
+    } catch {
+      // on failure keep the default
+    }
+  },
+
   // --- Form Wizard State ---
   currentStep: 1,
   formData: INITIAL_DATA,
@@ -106,7 +125,14 @@ export const useRegistrationStore = create<RegistrationStore>((set, get) => ({
         errors: {},
         activeCollegeTarget: null,
         collegeSuggestions: [],
-        paymentState: { ...state.paymentState, amount: getRegistrationAmount(formData) },
+        paymentState: {
+          ...state.paymentState,
+          amount: getRegistrationAmount(
+            formData,
+            state.basePrice,
+            state.seatStatus?.discountSlotsRemaining ?? 0
+          ),
+        },
       };
     });
   },
@@ -389,6 +415,7 @@ export const useRegistrationStore = create<RegistrationStore>((set, get) => ({
 
   // --- Payment State ---
   paymentState: {
+    status: "idle",
     teamId: null,
     orderId: null,
     keyId: null,
@@ -399,6 +426,7 @@ export const useRegistrationStore = create<RegistrationStore>((set, get) => ({
     errorMessage: null,
     isPolling: false,
     paidTeam: null,
+    discountApplied: 0,
   },
 
   setPaymentStatus: (status: PaymentLifecycleStatus) => {
@@ -420,6 +448,7 @@ export const useRegistrationStore = create<RegistrationStore>((set, get) => ({
         amount: details.amount,
         currency: details.currency,
         lockExpiresAt: details.lockExpiresAt,
+        discountApplied: details.discountApplied ?? 0,
         errorMessage: null,
       },
     }));
@@ -429,6 +458,7 @@ export const useRegistrationStore = create<RegistrationStore>((set, get) => ({
     set((state) => ({
       paymentState: {
         ...state.paymentState,
+        status: "verifying",
         txId,
         isPolling: false,
         errorMessage: null,
@@ -440,6 +470,7 @@ export const useRegistrationStore = create<RegistrationStore>((set, get) => ({
     set((state) => ({
       paymentState: {
         ...state.paymentState,
+        status: "success",
         txId,
         isPolling: false,
         errorMessage: null,
@@ -452,6 +483,7 @@ export const useRegistrationStore = create<RegistrationStore>((set, get) => ({
     set((state) => ({
       paymentState: {
         ...state.paymentState,
+        status: "failed",
         isPolling: false,
         errorMessage,
       },
@@ -463,6 +495,7 @@ export const useRegistrationStore = create<RegistrationStore>((set, get) => ({
       paymentState: {
         ...state.paymentState,
         isPolling,
+        status: isPolling ? "verifying" : state.paymentState.status,
         errorMessage: null,
       },
     }));
@@ -483,20 +516,27 @@ export const useRegistrationStore = create<RegistrationStore>((set, get) => ({
 
         if (data.status === "paid") {
           if (paymentPollingInterval) clearInterval(paymentPollingInterval);
-          set((state) => ({
-            paymentState: {
-              ...state.paymentState,
-              isPolling: false,
-              errorMessage: null,
-              paidTeam: data.team || state.paymentState.paidTeam,
-            },
-          }));
+          set((state) => {
+            const paidTeam = data.team || state.paymentState.paidTeam;
+            const txId = paidTeam?.txId || state.paymentState.txId;
+            return {
+              paymentState: {
+                ...state.paymentState,
+                status: "success",
+                txId,
+                isPolling: false,
+                errorMessage: null,
+                paidTeam,
+              },
+            };
+          });
           get().fetchSeats();
         } else if (data.status === "expired" || attempts >= maxAttempts) {
           if (paymentPollingInterval) clearInterval(paymentPollingInterval);
           set((state) => ({
             paymentState: {
               ...state.paymentState,
+              status: "failed",
               isPolling: false,
               errorMessage:
                 "Payment timed out or failed. If money was debited, it will be refunded automatically.",
@@ -510,6 +550,14 @@ export const useRegistrationStore = create<RegistrationStore>((set, get) => ({
   },
 
   retryPayment: () => {
+    set((state) => ({
+      paymentState: {
+        ...state.paymentState,
+        errorMessage: null,
+        txId: "tx_pending",
+        status: "idle",
+      },
+    }));
     get().goToStep(3);
   },
 }));

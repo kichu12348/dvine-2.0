@@ -165,5 +165,4 @@ export const colleges = [
   "Younus College of Engineering",
   "Younus College of Engineering & Technology",
   "Younus Institute of Technology",
-  "Other",
 ];

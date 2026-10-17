@@ -38,6 +38,7 @@ export function validateStep1(
 
   // Team Name
   const trimmedTeam = formData.teamName.trim();
+  const isSolo = formData.registrationType === "solo";
   if (!trimmedTeam) {
     errors.teamName = "Team name is required";
   } else if (trimmedTeam.length > 80) {

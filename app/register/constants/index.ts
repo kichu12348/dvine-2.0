@@ -19,7 +19,7 @@ export const INITIAL_DATA: TeamRegistrationData = {
   teamName: "",
   member1: { ...INITIAL_MEMBER },
   member2: { ...INITIAL_MEMBER },
-  confirmAccuracy: true,
+  confirmAccuracy: false,
 };
 
 export const STEPS: RegistrationStep[] = [
@@ -29,7 +29,7 @@ export const STEPS: RegistrationStep[] = [
   { id: 4, label: "Confirmation", shortLabel: "Receipt" },
 ];
 
-export const GENDER_OPTIONS = ["Male", "Female"] as const;
+export const GENDER_OPTIONS = ["Male", "Female", "Other"] as const;
 
 export const YEAR_OPTIONS = [
   "1st Year",

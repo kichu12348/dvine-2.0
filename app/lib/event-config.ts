@@ -12,17 +12,26 @@ const revealDate = new Date(PRIZEPOOL_REVEAL_AT);
 const revealFormat = { timeZone: "Asia/Kolkata", day: "numeric" } as const;
 
 export const PRIZEPOOL_REVEAL_DATE = new Intl.DateTimeFormat("en-GB", {
-  ...revealFormat, month: "long",
+  ...revealFormat,
+  month: "long",
 }).format(revealDate);
 
 export const PRIZEPOOL_REVEAL_FULL_DATE = new Intl.DateTimeFormat("en-GB", {
-  ...revealFormat, month: "long", year: "numeric",
+  ...revealFormat,
+  month: "long",
+  year: "numeric",
 }).format(revealDate);
 
 export const PRIZEPOOL_REVEAL_SHORT_DATE = new Intl.DateTimeFormat("en-GB", {
-  ...revealFormat, month: "short",
-}).format(revealDate).toUpperCase();
+  ...revealFormat,
+  month: "short",
+})
+  .format(revealDate)
+  .toUpperCase();
 
 export const PRIZEPOOL_REVEAL_TIME = new Intl.DateTimeFormat("en-GB", {
-  timeZone: "Asia/Kolkata", hour: "2-digit", minute: "2-digit", hourCycle: "h23",
+  timeZone: "Asia/Kolkata",
+  hour: "2-digit",
+  minute: "2-digit",
+  hourCycle: "h23",
 }).format(revealDate);

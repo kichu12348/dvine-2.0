@@ -4,9 +4,10 @@ import { useRegistrationStore } from "../store/useRegistrationStore";
 export function useRegisterForm() {
   const store = useRegistrationStore();
 
-  // Load live seat availability on initial mount
+  // Load live seat availability and pricing on initial mount
   useEffect(() => {
     store.fetchSeats();
+    store.fetchPricing();
   }, []);
 
   return {
@@ -39,10 +40,12 @@ export function useRegisterForm() {
     resetOtp: store.resetOtp,
     recheckVerification: store.recheckVerification,
 
-    // Seat Availability
+    // Seat Availability & Pricing
     seatStatus: store.seatStatus,
     isSeatsLoading: store.isSeatsLoading,
     seatError: store.seatError,
     fetchSeats: store.fetchSeats,
+    basePrice: store.basePrice,
+    fetchPricing: store.fetchPricing,
   };
 }

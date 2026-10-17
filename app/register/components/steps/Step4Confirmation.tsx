@@ -1,6 +1,7 @@
 "use client";
 
 import { motion } from "framer-motion";
+import Link from "next/link";
 import {
   Check,
   Mail,
@@ -10,16 +11,18 @@ import {
   RefreshCw,
   Home,
   ArrowLeft,
+  Ticket,
 } from "lucide-react";
 import { motionTransitions } from "../../../lib/motion-tokens";
 import { PaymentLifecycleStatus } from "../../../components/register/PaymentStatus";
-import { TeamRegistrationData } from "../../types";
+import { PaidTeamDetails, TeamRegistrationData } from "../../types";
+import { useRegistrationStore } from "../../store/useRegistrationStore";
 import styles from "../../register.module.css";
 import { getRegistrationAmount } from "../../utils/registration";
 
 export interface Step4ConfirmationProps {
   formData: TeamRegistrationData;
-  paymentStatus: PaymentLifecycleStatus;
+  paymentStatus: "idle" | PaymentLifecycleStatus;
   txId: string;
   onSetPaymentStatus: (status: PaymentLifecycleStatus) => void;
   onRetryPayment: () => void;
@@ -27,6 +30,8 @@ export interface Step4ConfirmationProps {
   amount?: number;
   errorMessage?: string | null;
   isPolling?: boolean;
+  basePrice?: number;
+  paidTeam?: PaidTeamDetails | null;
 }
 
 export function Step4Confirmation({
@@ -35,12 +40,33 @@ export function Step4Confirmation({
   txId,
   onRetryPayment,
   onChangePaymentMethod,
-  amount = getRegistrationAmount(formData),
+  basePrice,
+  amount = getRegistrationAmount(formData, basePrice),
   errorMessage,
   isPolling,
+  paidTeam,
 }: Step4ConfirmationProps) {
+  const storePaidTeam = useRegistrationStore((s) => s.paymentState.paidTeam);
+  const effectivePaidTeam = paidTeam !== undefined ? paidTeam : storePaidTeam;
   const isSolo = formData.registrationType === "solo";
-  if (paymentStatus === "processing" || paymentStatus === "verifying") {
+
+  const leadMember =
+    effectivePaidTeam?.members?.find(
+      (m) => m.role === "lead" || m.slot === 1,
+    ) || effectivePaidTeam?.members?.[0];
+
+  const teammateMember =
+    effectivePaidTeam?.members?.find(
+      (m) => m.role === "member" || m.slot === 2,
+    ) ||
+    (effectivePaidTeam?.members && effectivePaidTeam.members.length > 1
+      ? effectivePaidTeam.members[1]
+      : undefined);
+  if (
+    paymentStatus === "idle" ||
+    paymentStatus === "processing" ||
+    paymentStatus === "verifying"
+  ) {
     return (
       <motion.div
         key="step-4-verifying"
@@ -139,9 +165,13 @@ export function Step4Confirmation({
       <div className={styles.confirmationEmail}>
         <Mail size={17} aria-hidden="true" />
         <div>
-          {isSolo ? "Your confirmation and event ticket will be sent to:" : "Confirmation emails with your event tickets will be sent to:"}
+          {isSolo
+            ? "Your confirmation and event ticket will be sent to:"
+            : "Confirmation emails with your event tickets will be sent to:"}
           <strong>{formData.member1.email}</strong>
-          {!isSolo && formData.member2.email && <strong>{formData.member2.email}</strong>}
+          {!isSolo && formData.member2.email && (
+            <strong>{formData.member2.email}</strong>
+          )}
           <p className={styles.fieldHint}>
             Check your inbox and spam folder in the next few minutes.
           </p>
@@ -154,8 +184,8 @@ export function Step4Confirmation({
         </div>
         <dl className={styles.reviewDetails}>
           <div>
-            <dt>Team name</dt>
-            <dd>{formData.teamName || "D'VINE Team"}</dd>
+            <dt>{isSolo ? "Name" : "Team name"}</dt>
+            <dd>{formData.teamName?.trim()}</dd>
           </div>
           <div>
             <dt>College</dt>
@@ -164,17 +194,64 @@ export function Step4Confirmation({
           <div>
             <dt>{isSolo ? "Participant" : "Team leader"}</dt>
             <dd>
-              {formData.member1.firstName} {formData.member1.lastName}
+              <div>
+                {formData.member1.firstName} {formData.member1.lastName}
+              </div>
+              {leadMember?.ticketHash && (
+                <div style={{ marginTop: 6 }}>
+                  <Link
+                    href={`/ticket/${leadMember.ticketHash}`}
+                    style={{
+                      display: "inline-flex",
+                      alignItems: "center",
+                      gap: 4,
+                      color: "#a6dfff",
+                      fontSize: 12,
+                      fontWeight: 500,
+                      textDecoration: "underline",
+                      textUnderlineOffset: 3,
+                    }}
+                  >
+                    View ticket <ArrowUpRight size={12} aria-hidden="true" />
+                  </Link>
+                </div>
+              )}
             </dd>
           </div>
-          {!isSolo && <div>
-            <dt>Teammate</dt>
-            <dd>
-              {formData.member2.firstName
-                ? formData.member2.firstName + " " + formData.member2.lastName
-                : "—"}
-            </dd>
-          </div>}
+          {!isSolo && (
+            <div>
+              <dt>Teammate</dt>
+              <dd>
+                <div>
+                  {formData.member2.firstName
+                    ? formData.member2.firstName +
+                      " " +
+                      formData.member2.lastName
+                    : "—"}
+                </div>
+                {teammateMember?.ticketHash && (
+                  <div style={{ marginTop: 6 }}>
+                    <Link
+                      href={`/ticket/${teammateMember.ticketHash}`}
+                      style={{
+                        display: "inline-flex",
+                        alignItems: "center",
+                        gap: 4,
+                        color: "#a6dfff",
+                        fontSize: 12,
+                        fontWeight: 500,
+                        textDecoration: "underline",
+                        textUnderlineOffset: 3,
+                      }}
+                    >
+                      View ticket <ArrowUpRight size={12} aria-hidden="true" />
+                    </Link>
+                  </div>
+                )}
+              </dd>
+            </div>
+          )}
+
           {txId && (
             <div className={styles.fullWidth}>
               <dt>Transaction reference</dt>
@@ -183,6 +260,74 @@ export function Step4Confirmation({
           )}
         </dl>
       </div>
+      {effectivePaidTeam?.members && effectivePaidTeam.members.length > 0 && (
+        <div className={styles.receipt} style={{ marginTop: 20 }}>
+          <div className={styles.receiptHeader}>
+            <span>DIGITAL TICKETS</span>
+            <strong>
+              {effectivePaidTeam.members.length}{" "}
+              {effectivePaidTeam.members.length === 1 ? "TICKET" : "TICKETS"}
+            </strong>
+          </div>
+          <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
+            {effectivePaidTeam.members.map((member, index) => (
+              <div
+                key={member.ticketHash || index}
+                style={{
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "space-between",
+                  flexWrap: "wrap",
+                  gap: 12,
+                  padding: "14px 16px",
+                  borderRadius: 8,
+                  background: "#141f2a",
+                  border: "1px solid #283e50",
+                }}
+              >
+                <div>
+                  <strong
+                    style={{
+                      display: "block",
+                      color: "#ecf2f7",
+                      fontSize: 13,
+                      fontWeight: 500,
+                    }}
+                  >
+                    {member.firstName} {member.lastName}
+                  </strong>
+                  <span style={{ fontSize: 11, color: "#8da5b8" }}>
+                    {member.role === "lead"
+                      ? isSolo
+                        ? "Solo Attendee"
+                        : "Team Leader"
+                      : "Teammate"}{" "}
+                    • {member.email}
+                  </span>
+                </div>
+                <Link
+                  href={`/ticket/${member.ticketHash}`}
+                  className={styles.secondaryButton}
+                  style={{
+                    display: "inline-flex",
+                    alignItems: "center",
+                    gap: 6,
+                    padding: "8px 14px",
+                    minHeight: "unset",
+                    fontSize: 12,
+                    fontWeight: 500,
+                    textDecoration: "none",
+                  }}
+                >
+                  <Ticket size={14} aria-hidden="true" />
+                  <span>View ticket</span>
+                  <ArrowUpRight size={14} aria-hidden="true" />
+                </Link>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
       <a
         href="https://chat.whatsapp.com/invite/dvine2026"
         target="_blank"
