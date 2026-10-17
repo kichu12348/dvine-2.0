@@ -6,6 +6,7 @@ import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { scheduleScrollTriggerRefresh } from "../lib/refresh-scroll-triggers";
 import DitherStage from "./DitherStage";
 import Reveal from "./Reveal";
+import Venue from "./Venue";
 
 const highlights = [
   { value: "24", label: "Hours" },
@@ -218,6 +219,8 @@ export default function AboutEvent() {
             <DitherStage />
           </div>
         </div>
+
+        <Venue />
       </div>
     </section>
   );
