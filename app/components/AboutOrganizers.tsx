@@ -62,7 +62,7 @@ export default function AboutOrganizers() {
             scrollTrigger: { trigger: organizer, start: "top 92%", end: "top 60%", scrub: .8 } },
         );
       });
-      root.querySelectorAll<HTMLElement>("[data-organizer-copy]").forEach((paragraph) => {
+      root.querySelectorAll<HTMLElement>("[data-organizer] [data-organizer-copy]").forEach((paragraph) => {
         gsap.fromTo(paragraph, { y: 16, opacity: .3 }, {
           y: 0, opacity: 1, ease: "power2.out",
           scrollTrigger: { trigger: paragraph, start: "top 95%", end: "top 77%", scrub: .5 },
@@ -80,7 +80,17 @@ export default function AboutOrganizers() {
           opacity: 1,
         });
       });
-      const togetherTimeline = gsap.timeline({ paused: true });
+      // Drive the entire connection/logo reveal from scroll distance so a fast
+      // scroll completes it immediately, without a timed catch-up animation.
+      const togetherTimeline = gsap.timeline({
+        scrollTrigger: {
+          trigger: together,
+          start: "top 90%",
+          end: "top 40%",
+          scrub: true,
+          once: true,
+        },
+      });
       togetherTimeline
         .to(
           root.querySelectorAll("[data-line-outer]"),
@@ -98,7 +108,6 @@ export default function AboutOrganizers() {
           root.querySelectorAll("[data-line-center]"),
           { strokeDashoffset: 0, duration: .3, ease: "power2.inOut" },
         )
-        .to({}, { duration: .2 })
         .fromTo(
           root.querySelectorAll("[data-together-intro]"),
           { opacity: 0, y: 26, scale: .97 },
@@ -111,12 +120,6 @@ export default function AboutOrganizers() {
             ease: "power3.out",
           },
         );
-      ScrollTrigger.create({
-        trigger: together,
-        start: "top 75%",
-        once: true,
-        onEnter: () => togetherTimeline.play(),
-      });
     }, root);
     let cancelled = false;
     document.fonts.ready.then(() => { if (!cancelled) scheduleScrollTriggerRefresh(); });
@@ -164,7 +167,7 @@ export default function AboutOrganizers() {
             <path data-connection data-line-center d="M500 145V180" />
           </svg>
           <span data-together-intro className="relative font-mono text-[9px] tracking-[0.17em] text-[var(--blue-light)] uppercase">Together</span>
-          <h3 data-together-intro aria-label="IEDC Bootcamp CEC and IEEE Student Branch CEC" className="relative my-[22px] flex flex-col items-center justify-center gap-5 md:my-[25px] md:flex-row md:gap-5 min-[68.8125rem]:gap-[30px]">
+          <h3 aria-label="IEDC Bootcamp CEC and IEEE Student Branch CEC" className="relative my-[22px] flex flex-col items-center justify-center gap-5 md:my-[25px] md:flex-row md:gap-5 min-[68.8125rem]:gap-[30px]">
             <Image
               data-together-intro
               src="/assets/IEDC_logosvg.svg"
