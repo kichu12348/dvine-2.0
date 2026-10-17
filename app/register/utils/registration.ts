@@ -6,8 +6,21 @@ export function getMemberKeys(formData: TeamRegistrationData): MemberKey[] {
   return formData.registrationType === "solo" ? ["member1"] : ["member1", "member2"];
 }
 
-export function getRegistrationAmount(formData: TeamRegistrationData): number {
-  return getMemberKeys(formData).length * PRICING_CONFIG.feePerMember;
+/** @deprecated Discounts have been removed. Always returns 0. */
+export function getDiscountEstimate(
+  _formData?: TeamRegistrationData,
+  _discountSlotsRemaining?: number
+): number {
+  return 0;
+}
+
+export function getRegistrationAmount(
+  formData: TeamRegistrationData,
+  basePrice: number = PRICING_CONFIG.feePerMember,
+  _discountSlotsRemaining?: number
+): number {
+  const memberCount = getMemberKeys(formData).length;
+  return memberCount * basePrice;
 }
 
 function prepareMember(member: MemberData): MemberData {
@@ -19,9 +32,18 @@ function prepareMember(member: MemberData): MemberData {
 }
 
 export function buildRegisterPayload(formData: TeamRegistrationData): RegisterRequest {
-  return {
-    teamName: formData.teamName.trim(),
+  const trimmedTeam = formData.teamName.trim();
+  const payload: RegisterRequest = {
     member1: prepareMember(formData.member1),
-    member2: formData.registrationType === "team" ? prepareMember(formData.member2) : null,
   };
+
+  if (trimmedTeam) {
+    payload.teamName = trimmedTeam;
+  }
+
+  if (formData.registrationType === "team") {
+    payload.member2 = prepareMember(formData.member2);
+  }
+
+  return payload;
 }
