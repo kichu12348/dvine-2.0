@@ -83,6 +83,7 @@ export const colleges = [
   "ILM College of Engineering and Technology",
   "Indira Gandhi Institute of Engineering & Technology for Women",
   "Jai Bharath College of Management and Engineering Technology",
+  "Jain University Kochi",
   "Jawaharlal College of Engineering and Technology",
   "John Cox Memorial CSI Institute of Technology",
   "Jyothi Engineering College",

@@ -14,6 +14,7 @@ export const API_ENDPOINTS = {
 
   // Team Registration & Seat Lock
   register: `${BASE_URL}/register`,
+  validateDiscount: `${BASE_URL}/register/discount/validate`,
 
   // Payment Verification & Details
   paymentDetails: `${BASE_URL}/payment/details`,

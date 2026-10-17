@@ -13,6 +13,7 @@ export interface MemberData {
 export interface TeamRegistrationData {
   registrationType: "solo" | "team";
   teamName: string;
+  discountCode: string;
   member1: MemberData;
   member2: MemberData;
   confirmAccuracy: boolean;
@@ -64,6 +65,7 @@ export interface IsEmailVerifiedResponse {
 // --- Registration ---
 export interface RegisterRequest {
   teamName?: string;
+  discountCode?: string;
   member1: MemberData;
   member2?: MemberData;
 }
@@ -82,6 +84,19 @@ export interface RegisterSuccessResponse {
 export interface PaymentDetailsResponse {
   price: number;
   currency: string;
+  discountPerMember: number;
+}
+
+// --- Discount Code Validation ---
+export interface ValidateDiscountRequest {
+  code: string;
+  collegeName: string;
+}
+
+export interface ValidateDiscountResponse {
+  valid: true;
+  discountPerMember: number;
+  slotsRemaining: number;
 }
 
 // --- Paid Team & Ticket Details ---
@@ -197,4 +212,11 @@ export interface PaymentState {
   isPolling: boolean;
   paidTeam: PaidTeamDetails | null;
   discountApplied: number;
+}
+
+export interface DiscountState {
+  status: "idle" | "validating" | "applied" | "error";
+  message: string | null;
+  discountPerMember: number;
+  slotsRemaining: number | null;
 }

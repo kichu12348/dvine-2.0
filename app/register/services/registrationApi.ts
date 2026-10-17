@@ -12,6 +12,8 @@ import {
   SendOtpRequest,
   TeamStatusResponse,
   TicketDetailsResponse,
+  ValidateDiscountRequest,
+  ValidateDiscountResponse,
   VerifyOtpRequest,
   VerifyOtpResponse,
 } from "../types";
@@ -245,5 +247,33 @@ export const registrationApi = {
       cache: "no-store",
     });
     return parseResponse<TicketDetailsResponse>(res);
+  },
+
+  /**
+   * Validates a discount code against a member's college name.
+   * POST /register/discount/validate
+   */
+  async validateDiscount(
+    code: string,
+    collegeName: string
+  ): Promise<ValidateDiscountResponse> {
+    try {
+      const payload: ValidateDiscountRequest = {
+        code: code.trim(),
+        collegeName: collegeName.trim(),
+      };
+      const res = await fetch(API_ENDPOINTS.validateDiscount, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload),
+      });
+      return await parseResponse<ValidateDiscountResponse>(res);
+    } catch (err: any) {
+      if (err instanceof ApiError) throw err;
+      throw new ApiError(
+        0,
+        "Unable to check the discount code. Please try again."
+      );
+    }
   },
 };

@@ -1,5 +1,6 @@
 import { create } from "zustand";
 import {
+  DiscountState,
   FormErrors,
   MemberData,
   MemberKey,
@@ -10,7 +11,8 @@ import {
   TeamRegistrationData,
 } from "../types";
 import { COMMON_COLLEGES, INITIAL_DATA, PRICING_CONFIG } from "../constants";
-import { getRegistrationAmount } from "../utils/registration";
+import { getMemberKeys, getRegistrationAmount, isDiscountCollege } from "../utils/registration";
+import { ApiError, ERROR_MESSAGES } from "../utils/apiErrors";
 import { validateStep1, validateStep2 } from "../utils/validation";
 import { registrationApi, checkEmailVerified } from "../services/registrationApi";
 import { PaymentLifecycleStatus } from "../../components/register/PaymentStatus";
@@ -22,9 +24,14 @@ interface RegistrationStore {
   seatError: string | null;
   fetchSeats: () => Promise<void>;
 
-  // Pricing
+  // Pricing & Discount
   basePrice: number;
+  discountPerMember: number;
+  discountState: DiscountState;
   fetchPricing: () => Promise<void>;
+  setDiscountCode: (value: string) => void;
+  clearDiscount: () => void;
+  applyDiscount: () => Promise<boolean>;
 
   // Form State
   currentStep: number;
@@ -96,14 +103,30 @@ export const useRegistrationStore = create<RegistrationStore>((set, get) => ({
     }
   },
 
-  // --- Pricing State ---
+  // --- Pricing & Discount State ---
   basePrice: PRICING_CONFIG.feePerMember,
+  discountPerMember: PRICING_CONFIG.discountPerMember,
+  discountState: {
+    status: "idle",
+    message: null,
+    discountPerMember: PRICING_CONFIG.discountPerMember,
+    slotsRemaining: null,
+  },
 
   fetchPricing: async () => {
     try {
       const data = await registrationApi.getPaymentDetails();
       if (typeof data.price === "number") {
         set({ basePrice: data.price });
+      }
+      if (typeof data.discountPerMember === "number") {
+        set((state) => ({
+          discountPerMember: data.discountPerMember,
+          discountState: {
+            ...state.discountState,
+            discountPerMember: data.discountPerMember,
+          },
+        }));
       }
     } catch {
       // on failure keep the default
@@ -125,16 +148,133 @@ export const useRegistrationStore = create<RegistrationStore>((set, get) => ({
         errors: {},
         activeCollegeTarget: null,
         collegeSuggestions: [],
+        discountState: {
+          status: "idle",
+          message: null,
+          discountPerMember: state.discountPerMember,
+          slotsRemaining: null,
+        },
         paymentState: {
           ...state.paymentState,
           amount: getRegistrationAmount(
             formData,
-            state.basePrice,
-            state.seatStatus?.discountSlotsRemaining ?? 0
+            state.basePrice
           ),
         },
       };
     });
+  },
+
+  setDiscountCode: (value: string) => {
+    set((state) => {
+      const nextErrors = { ...state.errors };
+      delete nextErrors.discount;
+      delete nextErrors.terms;
+      return {
+        formData: { ...state.formData, discountCode: value },
+        errors: nextErrors,
+        discountState: {
+          status: "idle",
+          message: null,
+          discountPerMember: state.discountPerMember,
+          slotsRemaining: null,
+        },
+      };
+    });
+  },
+
+  clearDiscount: () => {
+    set((state) => {
+      const nextErrors = { ...state.errors };
+      delete nextErrors.discount;
+      delete nextErrors.terms;
+      return {
+        formData: { ...state.formData, discountCode: "" },
+        errors: nextErrors,
+        discountState: {
+          status: "idle",
+          message: null,
+          discountPerMember: state.discountPerMember,
+          slotsRemaining: null,
+        },
+      };
+    });
+  },
+
+  applyDiscount: async () => {
+    const { formData, discountPerMember } = get();
+    const trimmedCode = formData.discountCode.trim();
+    if (!trimmedCode) {
+      set((state) => ({
+        discountState: {
+          status: "error",
+          message: "Enter a discount code first",
+          discountPerMember: state.discountPerMember,
+          slotsRemaining: null,
+        },
+      }));
+      return false;
+    }
+
+    const memberKeys = getMemberKeys(formData);
+    const jainMemberKey = memberKeys.find((key) => isDiscountCollege(formData[key].collegeName));
+    const chosenCollege = jainMemberKey ? formData[jainMemberKey].collegeName : formData.member1.collegeName;
+
+    if (!chosenCollege || !chosenCollege.trim()) {
+      set((state) => ({
+        discountState: {
+          status: "error",
+          message: "Add your college details first",
+          discountPerMember: state.discountPerMember,
+          slotsRemaining: null,
+        },
+      }));
+      return false;
+    }
+
+    set((state) => ({
+      discountState: {
+        ...state.discountState,
+        status: "validating",
+        message: null,
+      },
+    }));
+
+    try {
+      const res = await registrationApi.validateDiscount(trimmedCode, chosenCollege.trim());
+      const perMember = typeof res.discountPerMember === "number" ? res.discountPerMember : discountPerMember;
+      set((state) => {
+        const nextErrors = { ...state.errors };
+        delete nextErrors.discount;
+        delete nextErrors.terms;
+        return {
+          errors: nextErrors,
+          discountPerMember: perMember,
+          discountState: {
+            status: "applied",
+            message: `Coupon applied! Rs ${perMember} off per eligible member.`,
+            discountPerMember: perMember,
+            slotsRemaining: res.slotsRemaining,
+          },
+        };
+      });
+      return true;
+    } catch (err: any) {
+      const errorCode = err instanceof ApiError ? err.code : undefined;
+      const message = (errorCode && ERROR_MESSAGES[errorCode]) || err.message || "Unable to check the discount code. Please try again.";
+      set((state) => ({
+        discountState: {
+          status: "error",
+          message,
+          discountPerMember: state.discountPerMember,
+          slotsRemaining: null,
+        },
+      }));
+      if (errorCode === "DISCOUNT_SOLD_OUT") {
+        get().fetchSeats();
+      }
+      return false;
+    }
   },
 
   setErrors: (errorsOrUpdater) => {

@@ -73,6 +73,26 @@ async function recoverFromError(
       ...prev,
       "member1.email": friendlyMessage,
     }));
+  } else if (
+    opts.errorCode === "INVALID_DISCOUNT_CODE" ||
+    opts.errorCode === "DISCOUNT_NOT_APPLICABLE" ||
+    opts.errorCode === "DISCOUNT_SOLD_OUT"
+  ) {
+    store.goToStep(3);
+    useRegistrationStore.setState((state) => ({
+      discountState: {
+        ...state.discountState,
+        status: "error",
+        message: friendlyMessage,
+      },
+      errors: {
+        ...state.errors,
+        terms: friendlyMessage,
+      },
+    }));
+    if (opts.errorCode === "DISCOUNT_SOLD_OUT") {
+      store.fetchSeats();
+    }
   } else if (opts.errorCode === "SOLD_OUT") {
     store.setErrors((prev) => ({
       ...prev,
@@ -117,8 +137,19 @@ export function usePaymentSimulation(onPaymentInitiated?: () => void) {
         throw new Error(VERIFICATION_EXPIRED_MSG);
       }
 
+      // Auto-validate discount if entered but not yet applied
+      const { discountState } = useRegistrationStore.getState();
+      if (formData.discountCode.trim() && discountState.status !== "applied") {
+        const success = await store.applyDiscount();
+        if (!success) {
+          const latestState = useRegistrationStore.getState().discountState;
+          throw new Error(latestState.message || "Invalid discount code.");
+        }
+      }
+
       // 1. Submit Registration to backend
-      const registerPayload = buildRegisterPayload(formData);
+      const currentFormData = useRegistrationStore.getState().formData;
+      const registerPayload = buildRegisterPayload(currentFormData);
 
       let regResult;
       try {

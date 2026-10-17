@@ -15,12 +15,18 @@ export function RegisterHeader({ seatStatus, isLoading }: RegisterHeaderProps) {
       <div className={styles.headerInner}>
         <div className={styles.brand}>
           <Link href="/" aria-label="D'VINE home">
-            <Image src="/dvine.svg" alt="D'VINE 2.0" width={831} height={322} className={styles.logo} />
+            <Image
+              src="/dvine.svg"
+              alt="D'VINE 2.0"
+              width={831}
+              height={322}
+              className={styles.logo}
+            />
           </Link>
           <span className={styles.brandLabel}>Registration</span>
         </div>
         <div className={styles.headerActions}>
-          <div className={styles.availability} role="status">
+          {/* <div className={styles.availability} role="status">
             {isLoading ? (
               <span>Checking…</span>
             ) : seatStatus ? (
@@ -38,7 +44,7 @@ export function RegisterHeader({ seatStatus, isLoading }: RegisterHeaderProps) {
                 </>
               )
             ) : null}
-          </div>
+          </div> */}
           <Link href="/" className={styles.backLink}>
             <ArrowLeft size={13} aria-hidden="true" />
             <span>Back</span>

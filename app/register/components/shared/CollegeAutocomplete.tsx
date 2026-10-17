@@ -71,6 +71,9 @@ export function CollegeAutocomplete({
         onCloseAutoFocus={(e) => e.preventDefault()}
         className="w-[var(--radix-popover-anchor-width)] max-h-[260px] overflow-y-auto p-1.5"
         sideOffset={6}
+        style={{
+          scrollbarColor: "var(--muted) transparent",
+        }}
       >
         {suggestions.map((college) => (
           <button
