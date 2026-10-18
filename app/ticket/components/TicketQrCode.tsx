@@ -1,81 +1,77 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import { useEffect, useState } from "react";
 import QRCode from "qrcode";
+import styles from "../ticket.module.css";
 
 interface TicketQrCodeProps {
   value: string;
   size?: number;
   className?: string;
+  onReady?: (value: string) => void;
 }
 
-export const TicketQrCode: React.FC<TicketQrCodeProps> = ({
+export function TicketQrCode({
   value,
-  size = 140,
+  size = 188,
   className = "",
-}) => {
-  const [dataUrl, setDataUrl] = useState<string | null>(null);
-  const [loading, setLoading] = useState(true);
+  onReady,
+}: TicketQrCodeProps) {
+  const [result, setResult] = useState<{
+    value: string;
+    size: number;
+    url?: string;
+    error?: boolean;
+  } | null>(null);
+  const current =
+    result?.value === value && result.size === size ? result : null;
 
   useEffect(() => {
-    let isMounted = true;
-    setLoading(true);
-
+    let active = true;
     QRCode.toDataURL(value, {
-      width: Math.max(size * 2, 280),
-      margin: 1,
+      width: Math.max(size * 3, 480),
+      margin: 4,
       errorCorrectionLevel: "M",
-      color: {
-        dark: "#000000",
-        light: "#FFFFFF",
+      color: { dark: "#071827", light: "#FFFFFF" },
+    }).then(
+      (url) => {
+        if (active) {
+          setResult({ value, size, url });
+          onReady?.(value);
+        }
       },
-    })
-      .then((url) => {
-        if (isMounted) {
-          setDataUrl(url);
-          setLoading(false);
-        }
-      })
-      .catch((err) => {
-        console.error("Failed to generate QR code using qrcode lib", err);
-        if (isMounted) {
-          setLoading(false);
-        }
-      });
-
+      () => {
+        if (active) setResult({ value, size, error: true });
+      },
+    );
     return () => {
-      isMounted = false;
+      active = false;
     };
-  }, [value, size]);
+  }, [value, size, onReady]);
 
   return (
-    <div className={`flex flex-col items-center justify-center ${className}`}>
-      <div
-        style={{ width: size + 16, height: size + 16 }}
-        className="p-2 rounded-2xl bg-white shadow-md flex items-center justify-center shrink-0"
-      >
-        {loading || !dataUrl ? (
-          <div
-            style={{ width: size, height: size }}
-            className="rounded-xl bg-neutral-200 animate-pulse flex items-center justify-center"
-          >
-            <div className="w-8 h-8 rounded-lg bg-neutral-300 animate-pulse" />
-          </div>
-        ) : (
-          /* eslint-disable-next-line @next/next/no-img-element */
-          <img
-            src={dataUrl}
-            alt="Ticket QR Code"
-            width={size}
-            height={size}
-            style={{ width: `${size}px`, height: `${size}px` }}
-            className="block select-none rounded-lg"
-            loading="eager"
-          />
-        )}
-      </div>
+    <div
+      className={[styles.qrFrame, className].filter(Boolean).join(" ")}
+      style={{ width: size }}
+    >
+      {current?.url ? (
+        // Data URLs are generated locally for the ticket download.
+        // eslint-disable-next-line @next/next/no-img-element
+        <img
+          src={current.url}
+          alt="Your ticket QR code for event check-in"
+          width={size}
+          height={size}
+          className={styles.qrImage}
+          draggable={false}
+        />
+      ) : (
+        <div className={styles.qrPlaceholder} role="status">
+          {current?.error
+            ? "Unable to generate QR code. Please refresh."
+            : "Preparing your QR code…"}
+        </div>
+      )}
     </div>
   );
-};
-
-export default TicketQrCode;
+}
