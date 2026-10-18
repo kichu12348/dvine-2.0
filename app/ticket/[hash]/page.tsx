@@ -1,6 +1,6 @@
 "use client";
 
-import React, { use, useEffect, useState, useRef } from "react";
+import { use, useEffect, useState, useRef } from "react";
 import Link from "next/link";
 import { motion } from "framer-motion";
 import { Download, AlertCircle, Home } from "lucide-react";

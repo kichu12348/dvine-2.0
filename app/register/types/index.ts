@@ -21,6 +21,13 @@ export interface TeamRegistrationData {
 
 export type MemberKey = "member1" | "member2";
 
+export type PaymentLifecycleStatus =
+  | "processing"
+  | "verifying"
+  | "success"
+  | "failed"
+  | "refunded";
+
 export type FormErrors = Record<string, string>;
 
 export interface RegistrationStep {

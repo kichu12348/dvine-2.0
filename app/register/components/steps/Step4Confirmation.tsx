@@ -14,8 +14,7 @@ import {
   Ticket,
 } from "lucide-react";
 import { motionTransitions } from "../../../lib/motion-tokens";
-import { PaymentLifecycleStatus } from "../../../components/register/PaymentStatus";
-import { PaidTeamDetails, TeamRegistrationData } from "../../types";
+import { PaidTeamDetails, PaymentLifecycleStatus, TeamRegistrationData } from "../../types";
 import { useRegistrationStore } from "../../store/useRegistrationStore";
 import styles from "../../register.module.css";
 import { getRegistrationAmount } from "../../utils/registration";
@@ -24,7 +23,6 @@ export interface Step4ConfirmationProps {
   formData: TeamRegistrationData;
   paymentStatus: "idle" | PaymentLifecycleStatus;
   txId: string;
-  onSetPaymentStatus: (status: PaymentLifecycleStatus) => void;
   onRetryPayment: () => void;
   onChangePaymentMethod: () => void;
   amount?: number;

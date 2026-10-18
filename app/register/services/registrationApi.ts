@@ -15,7 +15,6 @@ import {
   ValidateDiscountRequest,
   ValidateDiscountResponse,
   VerifyOtpRequest,
-  VerifyOtpResponse,
 } from "../types";
 import { ApiError, getFriendlyErrorMessage } from "../utils/apiErrors";
 

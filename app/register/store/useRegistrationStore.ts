@@ -15,7 +15,6 @@ import { getMemberKeys, getRegistrationAmount, isDiscountCollege } from "../util
 import { ApiError, ERROR_MESSAGES } from "../utils/apiErrors";
 import { validateStep1, validateStep2 } from "../utils/validation";
 import { registrationApi, checkEmailVerified } from "../services/registrationApi";
-import { PaymentLifecycleStatus } from "../../components/register/PaymentStatus";
 
 interface RegistrationStore {
   // Seats
@@ -63,7 +62,6 @@ interface RegistrationStore {
 
   // Payment State
   paymentState: PaymentState;
-  setPaymentStatus: (status: PaymentLifecycleStatus) => void;
   setOrderDetails: (details: {
     teamId: string;
     orderId: string;
@@ -567,15 +565,6 @@ export const useRegistrationStore = create<RegistrationStore>((set, get) => ({
     isPolling: false,
     paidTeam: null,
     discountApplied: 0,
-  },
-
-  setPaymentStatus: (status: PaymentLifecycleStatus) => {
-    set((state) => ({
-      paymentState: {
-        ...state.paymentState,
-        errorMessage: status === "failed" ? state.paymentState.errorMessage : null,
-      },
-    }));
   },
 
   setOrderDetails: (details) => {

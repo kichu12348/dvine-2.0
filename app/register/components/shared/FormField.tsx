@@ -17,7 +17,7 @@ export function FormField({ id, label, error, hint, icon, prefix, optional, clas
     <div className={className}>
       <Label htmlFor={id} className={styles.fieldLabel}>
         <span>
-          {label} {optional ? <span className={styles.optional || styles.required}>(optional)</span> : <span className={styles.required}>*</span>}
+          {label} {optional ? <span className={styles.required}>(optional)</span> : <span className={styles.required}>*</span>}
         </span>
       </Label>
       <div className={prefix ? styles.phoneWrap : styles.inputWrap}>

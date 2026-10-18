@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import { School } from "lucide-react";
 import { MemberKey } from "../../types";
 import { FormField } from "./FormField";

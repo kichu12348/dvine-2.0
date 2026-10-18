@@ -52,7 +52,6 @@ function RegistrationForm() {
     verifyOtp,
     recheckVerification,
     seatStatus,
-    isSeatsLoading,
     basePrice,
     discountState,
     setDiscountCode,
@@ -62,7 +61,6 @@ function RegistrationForm() {
 
   const {
     paymentStatus,
-    setPaymentStatus,
     txId,
     handleSlidePayment,
     retryPayment,
@@ -103,7 +101,7 @@ function RegistrationForm() {
   return (
     <MotionConfig reducedMotion="user">
       <div className={styles.page}>
-        <RegisterHeader seatStatus={seatStatus} isLoading={isSeatsLoading} />
+        <RegisterHeader />
 
         <main className={styles.shell}>
           <RegistrationIntro amount={basePrice * (formData.registrationType === "solo" ? 1 : 2)} isSolo={formData.registrationType === "solo"} />
@@ -180,7 +178,6 @@ function RegistrationForm() {
                   formData={formData}
                   paymentStatus={paymentStatus}
                   txId={txId}
-                  onSetPaymentStatus={setPaymentStatus}
                   onRetryPayment={retryPayment}
                   onChangePaymentMethod={() => goToStep(3)}
                   amount={paymentState.orderId ? paymentState.amount : registrationAmount}

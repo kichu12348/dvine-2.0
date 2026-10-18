@@ -7,7 +7,6 @@ import {
   registrationApi,
   checkEmailVerified,
 } from "../services/registrationApi";
-import { PaymentLifecycleStatus } from "../../components/register/PaymentStatus";
 import { buildRegisterPayload } from "../utils/registration";
 import { cleanPhoneNumber } from "../utils/validation";
 import {
@@ -318,7 +317,6 @@ export function usePaymentSimulation(onPaymentInitiated?: () => void) {
 
   return {
     paymentStatus: store.paymentState.status,
-    setPaymentStatus: store.setPaymentStatus,
     txId: store.paymentState.txId,
     paymentState: store.paymentState,
     handleSlidePayment,

@@ -30,15 +30,11 @@ export function isValidIndianPhone(phone: string): boolean {
  * Validates the required team name and the selected participant contact details.
  * Pure function adhering to the Single Responsibility Principle.
  */
-export function validateStep1(
-  formData: TeamRegistrationData,
-  isMember1EmailVerified?: boolean
-): FormErrors {
+export function validateStep1(formData: TeamRegistrationData): FormErrors {
   const errors: FormErrors = {};
 
   // Team Name
   const trimmedTeam = formData.teamName.trim();
-  const isSolo = formData.registrationType === "solo";
   if (!trimmedTeam) {
     errors.teamName = "Team name is required";
   } else if (trimmedTeam.length > 80) {

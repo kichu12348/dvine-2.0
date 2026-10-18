@@ -11,7 +11,6 @@
 :root {
   --font-owners: "Owners", sans-serif;
   --ink: #020817;
-  --ink-blue: #061634;
   --surface: #0a2149;
   --line: rgba(152, 213, 255, 0.19);
   --line-strong: rgba(109, 203, 255, 0.48);
@@ -19,7 +18,6 @@
   --muted: #9cbad1;
   --blue: #1abaff;
   --blue-light: #9de4ff;
-  --radius: 16px;
 }
 
 * {
@@ -70,19 +68,6 @@ summary:focus-visible {
 /* Fixed header clearance: anchor jumps must not hide section titles underneath it */
 section[id] {
   scroll-margin-top: 5.25rem;
-}
-
-/* Animations & Transitions */
-@keyframes hero-enter {
-  from {
-    opacity: 0;
-    transform: translateY(1.5rem);
-  }
-
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
 }
 
 /* Fullscreen menu: header wordmark fades in/out (it sits above the panel's clip) */
@@ -219,108 +204,6 @@ section[id] {
   }
 }
 
-.motion-ready .reveal,
-.motion-ready .process-card,
-.motion-ready .process-cursor {
-  opacity: 0;
-  transform: translateY(2rem) scale(0.985);
-}
-
-.motion-ready .process-card-2 {
-  transform: translateX(2rem) rotate(2deg);
-}
-
-.motion-ready .process-card-3 {
-  transform: translateX(-2rem) rotate(-2deg);
-}
-
-.motion-ready .process-cursor {
-  transform: translate(2rem, -1rem) scale(0.6);
-}
-
-.motion-ready .reveal.is-visible,
-.motion-ready .process-card.is-visible,
-.motion-ready .process-cursor.is-visible {
-  opacity: 1;
-  transform: translate(0) rotate(0) scale(1);
-  transition:
-    opacity 720ms cubic-bezier(0.16, 1, 0.3, 1),
-    transform 720ms cubic-bezier(0.16, 1, 0.3, 1);
-}
-
-.motion-ready .reveal-delay.is-visible {
-  transition-delay: 100ms;
-}
-
-.motion-ready .reveal-step-2.is-visible {
-  transition-delay: 90ms;
-}
-
-.motion-ready .reveal-step-3.is-visible {
-  transition-delay: 180ms;
-}
-
-/* Keyword typography: gradient fill + thin stroke + accent underline */
-.text-keyword {
-  position: relative;
-  display: inline-block;
-  white-space: nowrap;
-  background-image: linear-gradient(
-    100deg,
-    var(--blue) 0%,
-    var(--blue-light) 55%,
-    #38bdf8 100%
-  );
-  -webkit-background-clip: text;
-  background-clip: text;
-  -webkit-text-fill-color: transparent;
-  color: transparent;
-  -webkit-text-stroke: 1px rgba(157, 228, 255, 0.55);
-  filter: drop-shadow(0 0 14px rgba(26, 186, 255, 0.22));
-  padding-bottom: 0.04em;
-}
-
-.text-keyword::after {
-  content: "";
-  position: absolute;
-  left: 0.03em;
-  right: 0.03em;
-  bottom: 0;
-  height: 0.075em;
-  border-radius: 999px;
-  background: linear-gradient(
-    90deg,
-    var(--blue) 0%,
-    rgba(157, 228, 255, 0.7) 55%,
-    transparent 100%
-  );
-  pointer-events: none;
-}
-
-/* Hollow display type: transparent fill + light stroke */
-.text-outline {
-  position: relative;
-  display: inline-block;
-  white-space: nowrap;
-  color: transparent;
-  -webkit-text-stroke: 0.04em rgba(157, 228, 255, 0.72);
-  filter: drop-shadow(0 0 16px rgba(26, 186, 255, 0.2));
-}
-
-/* Gradient-only text (no stroke / underline) */
-.text-gradient {
-  background-image: linear-gradient(
-    100deg,
-    var(--blue) 0%,
-    var(--blue-light) 55%,
-    #38bdf8 100%
-  );
-  -webkit-background-clip: text;
-  background-clip: text;
-  -webkit-text-fill-color: transparent;
-  color: transparent;
-}
-
 /* Kinetic marquee strip */
 .marquee {
   position: relative;
@@ -346,11 +229,6 @@ section[id] {
   width: max-content;
   animation: marquee-scroll 30s linear infinite;
   will-change: transform;
-}
-
-/* Keep the moving type light — the glow filter is expensive on a repeating track */
-.marquee .text-outline {
-  filter: none;
 }
 
 /* Marquee on a white band: invert the display type so it stays crisp */
@@ -411,10 +289,6 @@ section[id] {
 .text-stroke-huge:hover {
   -webkit-text-stroke: 1.5px rgba(26, 186, 255, 0.85);
   filter: drop-shadow(0 0 24px rgba(26, 186, 255, 0.35));
-}
-
-.text-stroke-solid {
-  -webkit-text-stroke: 1px rgba(157, 228, 255, 0.45);
 }
 
 .footer-wordmark {

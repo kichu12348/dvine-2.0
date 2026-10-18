@@ -78,29 +78,6 @@
   color: var(--r-accent);
 }
 
-.availability {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  color: #96a9ba;
-  font-size: 11px;
-}
-
-.availability strong {
-  color: #d8e6f1;
-}
-
-.statusDot {
-  width: 5px;
-  height: 5px;
-  background: #8cddbb;
-  border-radius: 50%;
-}
-
-.soldOut {
-  color: #ffabb9;
-}
-
 .shell {
   max-width: 872px;
   margin: auto;
@@ -576,21 +553,6 @@
   color: #738799;
 }
 
-.selectTriggerIcon {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: #819aaf;
-  margin-left: 8px;
-  transition: transform 200ms cubic-bezier(0.16, 1, 0.3, 1), color 150ms;
-  flex-shrink: 0;
-}
-
-.selectTrigger[data-state="open"] .selectTriggerIcon {
-  transform: rotate(180deg);
-  color: #a6dfff;
-}
-
 .selectContent {
   position: relative;
   z-index: 9999;
@@ -639,10 +601,6 @@
   }
 }
 
-.selectViewport {
-  padding: 2px;
-}
-
 .selectItem {
   position: relative;
   display: flex;
@@ -669,24 +627,6 @@
   background: #162432;
   color: #a6dfff;
   font-weight: 500;
-}
-
-.selectItemIndicator {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  color: #a6dfff;
-  margin-left: 8px;
-}
-
-.selectScrollButton {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  height: 24px;
-  background: rgba(12, 18, 25, 0.95);
-  color: #819aaf;
-  cursor: default;
 }
 
 .error {
@@ -826,10 +766,6 @@
   padding: 0;
   border: 0;
   background: none;
-}
-
-.memberPanel .memberHeader {
-  display: none;
 }
 
 .choiceGroup {
@@ -977,43 +913,6 @@
   display: flex;
   align-items: center;
   gap: 6px;
-}
-
-.autocomplete {
-  position: relative;
-}
-
-.suggestions {
-  position: absolute;
-  z-index: 30;
-  top: 100%;
-  left: 0;
-  right: 0;
-  max-height: 210px;
-  overflow-y: auto;
-  margin-top: 6px;
-  padding: 5px;
-  border: 1px solid #476075;
-  border-radius: 8px;
-  background: #1a2734;
-  box-shadow: 0 12px 24px #0005;
-}
-
-.suggestions button {
-  display: block;
-  width: 100%;
-  padding: 12px;
-  border: 0;
-  border-radius: 5px;
-  background: none;
-  color: #c5d9e9;
-  font-size: 12px;
-  text-align: left;
-  line-height: 1.5;
-}
-
-.suggestions button:hover, .suggestions button:focus-visible {
-  background: #2a4054;
 }
 
 .memberGrid {
@@ -1167,11 +1066,6 @@
   font-size: 12px;
   font-weight: 500;
   color: #cedfe9;
-}
-
-.discountNote {
-  font-size: 11px;
-  color: #7da5c2;
 }
 
 .discountInputRow {
@@ -1558,12 +1452,6 @@
   }
   .headerActions {
     gap: 18px;
-  }
-  .availability {
-    font-size: 10px;
-  }
-  .availabilityTotal, .availabilitySuffix {
-    display: none;
   }
   .shell {
     padding: 28px 20px 24px;
