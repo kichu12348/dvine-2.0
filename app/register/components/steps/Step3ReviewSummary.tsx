@@ -317,9 +317,6 @@ export function Step3ReviewSummary({
             <span>Total payable (estimate)</span>
             <strong>₹{amount}</strong>
           </div>
-          <p className={styles.fieldHint}>
-            Estimated amount; final amount comes from the server · Includes GST
-          </p>
         </div>
         <div className={styles.checkoutAction}>
           <LeaderEmailOtpArea
