@@ -73,6 +73,7 @@ export function CollegeAutocomplete({
         sideOffset={6}
         style={{
           scrollbarColor: "var(--muted) transparent",
+          maxWidth: "100vw",
         }}
       >
         {suggestions.map((college) => (
