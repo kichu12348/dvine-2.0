@@ -14,7 +14,11 @@ import {
   Ticket,
 } from "lucide-react";
 import { motionTransitions } from "../../../lib/motion-tokens";
-import { PaidTeamDetails, PaymentLifecycleStatus, TeamRegistrationData } from "../../types";
+import {
+  PaidTeamDetails,
+  PaymentLifecycleStatus,
+  TeamRegistrationData,
+} from "../../types";
 import { useRegistrationStore } from "../../store/useRegistrationStore";
 import styles from "../../register.module.css";
 import { getRegistrationAmount } from "../../utils/registration";
@@ -45,7 +49,9 @@ export function Step4Confirmation({
   paidTeam,
 }: Step4ConfirmationProps) {
   const storePaidTeam = useRegistrationStore((s) => s.paymentState.paidTeam);
-  const discountApplied = useRegistrationStore((s) => s.paymentState.discountApplied);
+  const discountApplied = useRegistrationStore(
+    (s) => s.paymentState.discountApplied,
+  );
   const effectivePaidTeam = paidTeam !== undefined ? paidTeam : storePaidTeam;
   const isSolo = formData.registrationType === "solo";
 
@@ -335,7 +341,7 @@ export function Step4Confirmation({
         </div>
       )}
       <a
-        href="https://chat.whatsapp.com/invite/dvine2026"
+        href="https://chat.whatsapp.com/JxqacnPYlWZEJhg8CTM9Jc?s=cl&p=a&mlu=4&ilr=4"
         target="_blank"
         rel="noopener noreferrer"
         className={styles.communityLink}
