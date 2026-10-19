@@ -13,7 +13,7 @@ interface TicketQrCodeProps {
 
 export function TicketQrCode({
   value,
-  size = 188,
+  size = 100,
   className = "",
   onReady,
 }: TicketQrCodeProps) {
@@ -30,9 +30,9 @@ export function TicketQrCode({
     let active = true;
     QRCode.toDataURL(value, {
       width: Math.max(size * 3, 480),
-      margin: 4,
+      margin: 1,
       errorCorrectionLevel: "M",
-      color: { dark: "#071827", light: "#FFFFFF" },
+      color: { dark: "#071827", light: "#f1eadc" },
     }).then(
       (url) => {
         if (active) {
