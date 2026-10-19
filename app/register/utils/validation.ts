@@ -1,4 +1,5 @@
 import { FormErrors, TeamRegistrationData } from "../types";
+import { FOOD_OPTIONS } from "../constants";
 
 export const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 export const INDIAN_PHONE_REGEX = /^[6-9]\d{9}$/;
@@ -60,6 +61,10 @@ export function validateStep1(formData: TeamRegistrationData): FormErrors {
     errors["member1.gender"] = "Please select gender";
   }
 
+  if (!FOOD_OPTIONS.some((option) => option.value === formData.member1.foodPreference)) {
+    errors["member1.foodPreference"] = "Please select a food preference";
+  }
+
   const em1 = formData.member1.email.trim();
   if (!em1) {
     errors["member1.email"] = "Email address is required";
@@ -94,6 +99,10 @@ export function validateStep1(formData: TeamRegistrationData): FormErrors {
 
   if (!formData.member2.gender) {
     errors["member2.gender"] = "Please select gender";
+  }
+
+  if (!FOOD_OPTIONS.some((option) => option.value === formData.member2.foodPreference)) {
+    errors["member2.foodPreference"] = "Please select a food preference";
   }
 
   const em2 = formData.member2.email.trim();

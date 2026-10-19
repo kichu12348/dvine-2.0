@@ -1,6 +1,7 @@
 import React from "react";
 import { Pencil } from "lucide-react";
 import { MemberData } from "../../types";
+import { FOOD_OPTIONS } from "../../constants";
 import styles from "../../register.module.css";
 
 export interface MemberReviewCardProps {
@@ -14,6 +15,7 @@ export function MemberReviewCard({ title, icon, memberData, onEdit }: MemberRevi
   const details = [
     ["Full name", memberData.firstName + " " + memberData.lastName],
     ["Gender", memberData.gender],
+    ["Food preference", FOOD_OPTIONS.find((option) => option.value === memberData.foodPreference)?.label ?? "—"],
     ["Email address", memberData.email],
     ["Phone number", "+91 " + memberData.phone],
     ["Institution", memberData.collegeName],

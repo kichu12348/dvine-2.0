@@ -1,8 +1,11 @@
 // Domain Types
+export type FoodPreference = "veg" | "non-veg";
+
 export interface MemberData {
   firstName: string;
   lastName: string;
   gender: string;
+  foodPreference: FoodPreference | "";
   phone: string;
   email: string;
   collegeName: string;

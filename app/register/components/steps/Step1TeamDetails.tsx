@@ -204,7 +204,7 @@ export function Step1TeamDetails({
           onSelect={setActiveMember}
           formData={formData}
           errors={errors}
-          fields={["firstName", "lastName", "email", "phone", "gender"]}
+          fields={["firstName", "lastName", "email", "phone", "gender", "foodPreference"]}
         />
       )}
       {getMemberKeys(formData).map((member) => (

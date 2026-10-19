@@ -7,6 +7,7 @@ export const INITIAL_MEMBER: MemberData = {
   firstName: "",
   lastName: "",
   gender: "",
+  foodPreference: "",
   phone: "",
   email: "",
   collegeName: "",
@@ -31,6 +32,11 @@ export const STEPS: RegistrationStep[] = [
 ];
 
 export const GENDER_OPTIONS = ["Male", "Female", "Other"] as const;
+
+export const FOOD_OPTIONS = [
+  { value: "veg", label: "Veg" },
+  { value: "non-veg", label: "Non-veg" },
+] as const;
 
 export const YEAR_OPTIONS = [
   "1st Year",

@@ -37,6 +37,11 @@ Add Razorpay Checkout SDK to `index.html`:
 
 ## 3. TypeScript Definitions (Copy-Paste Ready)
 
+> **Food preference frontend extension:** The first registration step now requires
+> a choice for each attendee and sends `foodPreference: "veg" | "non-veg"` inside
+> `member1` and (for teams) `member2`. The API must accept and persist this field;
+> backend storage support has not been verified from this frontend repository.
+
 ```typescript
 // --- API Common ---
 export interface ApiErrorResponse {
@@ -95,6 +100,7 @@ export interface MemberData {
   firstName: string;
   lastName: string;
   gender: string; // e.g. "Male" | "Female" | "Other"
+  foodPreference: "veg" | "non-veg";
   email: string;
   phone: string; // 10 digits, e.g. "9876543210"
   collegeName: string; // If "Jain University Kochi" AND discount code is valid, qualifies for ₹100 discount
@@ -383,6 +389,7 @@ Before form submission, calculate and show the user the estimated fee:
         "firstName": "Alex",
         "lastName": "Kumar",
         "gender": "Male",
+        "foodPreference": "veg",
         "email": "alex@example.com",
         "phone": "9876543210",
         "collegeName": "Jain University Kochi",
@@ -400,6 +407,7 @@ Before form submission, calculate and show the user the estimated fee:
         "firstName": "Alex",
         "lastName": "Kumar",
         "gender": "Male",
+        "foodPreference": "veg",
         "email": "alex@example.com",
         "phone": "9876543210",
         "collegeName": "Jain University Kochi",
@@ -410,6 +418,7 @@ Before form submission, calculate and show the user the estimated fee:
         "firstName": "Sam",
         "lastName": "Varghese",
         "gender": "Female",
+        "foodPreference": "non-veg",
         "email": "sam@example.com",
         "phone": "9876543211",
         "collegeName": "Jain University Kochi",
